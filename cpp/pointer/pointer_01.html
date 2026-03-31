@@ -1,48 +1,77 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>C++ Memory Management: Pointers & Lifecycle</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        .code-block { position: relative; }
-        .pointer-life { border-left: 4px solid #3b82f6; }
-        .unique-life { border-left: 4px solid #10b981; }
-        .param-life { border-left: 4px solid #f59e0b; }
-        .solution-card { border-left: 4px solid #8b5cf6; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .code-block {
+            position: relative;
+        }
+
+        .pointer-life {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .unique-life {
+            border-left: 4px solid #10b981;
+        }
+
+        .param-life {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .solution-card {
+            border-left: 4px solid #8b5cf6;
+        }
     </style>
 </head>
+
 <body class="bg-slate-50 text-slate-900">
 
     <!-- Header -->
     <header class="bg-slate-900 text-white py-12 px-6 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Làm Chủ Bộ Nhớ Trong C++</h1>
-        <p class="text-slate-400 max-w-2xl mx-auto">Tìm hiểu sâu về Raw Pointers, Smart Pointers và cách tối ưu hóa Lifecycle để tránh rò rỉ bộ nhớ.</p>
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Basic Pointer in C++</h1>
+        <p class="text-slate-400 max-w-2xl mx-auto">Tìm hiểu về Raw Pointers, Smart Pointers, Lifecycle để tránh rò rỉ
+            bộ nhớ.</p>
     </header>
 
     <main class="max-w-5xl mx-auto px-6 py-12">
-        
+
         <!-- Section 1: Raw Pointer -->
         <section class="mb-16">
             <div class="flex items-center mb-6">
                 <div class="bg-blue-600 text-white p-2 rounded-lg mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                 </div>
                 <h2 class="text-3xl font-bold">1. Con trỏ Thô (Raw Pointer)</h2>
             </div>
-            
+
             <div class="grid md:grid-cols-2 gap-8 mb-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 pointer-life">
                     <h3 class="font-bold text-lg mb-3">Vòng đời (Lifecycle)</h3>
                     <ul class="space-y-2 text-sm text-slate-700">
-                        <li><strong>Khởi tạo:</strong> Dùng từ khóa <code>new</code> để cấp phát trên vùng nhớ <strong>Heap</strong>.</li>
-                        <li><strong>Sử dụng:</strong> Truy cập giá trị qua toán tử giải tham chiếu <code>*</code> hoặc <code>-></code>.</li>
+                        <li><strong>Khởi tạo:</strong> Dùng từ khóa <code>new</code> để cấp phát trên vùng nhớ
+                            <strong>Heap</strong>.</li>
+                        <li><strong>Sử dụng:</strong> Truy cập giá trị qua toán tử giải tham chiếu <code>*</code> hoặc
+                            <code>-></code>.</li>
                         <li><strong>Hủy bỏ:</strong> PHẢI dùng <code>delete</code> thủ công.</li>
                     </ul>
                 </div>
@@ -61,7 +90,11 @@ void rawPointerDemo() {
         <section class="mb-16">
             <div class="flex items-center mb-6">
                 <div class="bg-emerald-600 text-white p-2 rounded-lg mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
                 </div>
                 <h2 class="text-3xl font-bold">2. Con trỏ Thông minh (std::unique_ptr)</h2>
             </div>
@@ -90,18 +123,25 @@ void smartPointerDemo() {
         <section class="mb-16">
             <div class="flex items-center mb-6">
                 <div class="bg-amber-500 text-white p-2 rounded-lg mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
                 </div>
                 <h2 class="text-3xl font-bold">3. Truyền Tham số & Vấn đề Tiếp tục sử dụng</h2>
             </div>
 
-            <p class="mb-6 text-slate-700 font-semibold text-red-600 italic">⚠️ Chú ý: Khi bạn dùng std::move(uPtr), biến uPtr đó sẽ bị rỗng (nullptr). Bạn KHÔNG THỂ dùng nó sau đó.</p>
+            <p class="mb-6 text-slate-700 font-semibold text-red-600 italic">⚠️ Chú ý: Khi bạn dùng std::move(uPtr),
+                biến uPtr đó sẽ bị rỗng (nullptr). Bạn KHÔNG THỂ dùng nó sau đó.</p>
 
             <div class="space-y-8">
                 <!-- Solution 1 -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 solution-card">
-                    <h3 class="font-bold text-lg text-purple-700 mb-2">Cách A: Dùng tiếp sau hàm - Truyền Tham chiếu (Borrowing)</h3>
-                    <p class="text-sm text-slate-600 mb-4">Đây là cách tốt nhất nếu bạn muốn hàm xử lý xong mà bạn vẫn nắm quyền sở hữu.</p>
+                    <h3 class="font-bold text-lg text-purple-700 mb-2">Cách A: Dùng tiếp sau hàm - Truyền Tham chiếu
+                        (Borrowing)</h3>
+                    <p class="text-sm text-slate-600 mb-4">Đây là cách tốt nhất nếu bạn muốn hàm xử lý xong mà bạn vẫn
+                        nắm quyền sở hữu.</p>
                     <div class="grid md:grid-cols-2 gap-4">
                         <pre><code class="language-cpp">// Hàm nhận tham chiếu (không sở hữu)
 void work(Entity& e) {
@@ -116,15 +156,18 @@ void demo() {
 }</code></pre>
                         <div class="text-sm space-y-2 bg-purple-50 p-4 rounded-lg">
                             <p class="font-bold">Tại sao tránh leak?</p>
-                            <p>Vì hàm <code>work</code> không bao giờ gọi <code>delete</code>. Quyền hủy bỏ vẫn nằm hoàn toàn ở <code>uPtr</code> trong hàm <code>demo</code>.</p>
+                            <p>Vì hàm <code>work</code> không bao giờ gọi <code>delete</code>. Quyền hủy bỏ vẫn nằm hoàn
+                                toàn ở <code>uPtr</code> trong hàm <code>demo</code>.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Solution 2 -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 solution-card">
-                    <h3 class="font-bold text-lg text-purple-700 mb-2">Cách B: Hàm lấy rồi trả lại (Return Ownership)</h3>
-                    <p class="text-sm text-slate-600 mb-4">Dùng khi hàm cần "biến đổi" chính cái pointer đó rồi đưa lại cho bạn.</p>
+                    <h3 class="font-bold text-lg text-purple-700 mb-2">Cách B: Hàm lấy rồi trả lại (Return Ownership)
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-4">Dùng khi hàm cần "biến đổi" chính cái pointer đó rồi đưa lại
+                        cho bạn.</p>
                     <div class="grid md:grid-cols-2 gap-4">
                         <pre><code class="language-cpp">std::unique_ptr&lt;Entity&gt; transform(std::unique_ptr&lt;Entity&gt; ptr) {
     ptr->modify();
@@ -139,14 +182,18 @@ void demo() {
 }</code></pre>
                         <div class="text-sm space-y-2 bg-purple-50 p-4 rounded-lg">
                             <p class="font-bold">Cơ chế hoạt động:</p>
-                            <p>Quyền sở hữu đi vào hàm qua <code>move</code>, sau đó đi ra khỏi hàm qua <code>return</code>. Bộ nhớ không bao giờ bị "vô chủ".</p>
+                            <p>Quyền sở hữu đi vào hàm qua <code>move</code>, sau đó đi ra khỏi hàm qua
+                                <code>return</code>. Bộ nhớ không bao giờ bị "vô chủ".</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Shared Pointer Hint -->
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
-                    <p class="text-blue-800"><strong>💡 Mẹo:</strong> Nếu logic của bạn thực sự đòi hỏi nhiều nơi cùng dùng một vùng nhớ lâu dài mà không biết ai sẽ là người cuối cùng, hãy cân nhắc <code>std::shared_ptr</code>. Khi đó bạn không cần <code>std::move</code> mà chỉ cần copy nó.</p>
+                    <p class="text-blue-800"><strong>💡 Mẹo:</strong> Nếu logic của bạn thực sự đòi hỏi nhiều nơi cùng
+                        dùng một vùng nhớ lâu dài mà không biết ai sẽ là người cuối cùng, hãy cân nhắc
+                        <code>std::shared_ptr</code>. Khi đó bạn không cần <code>std::move</code> mà chỉ cần copy nó.
+                    </p>
                 </div>
             </div>
         </section>
@@ -187,11 +234,12 @@ void demo() {
     </main>
 
     <footer class="bg-slate-900 text-slate-500 py-8 text-center text-sm">
-        <p>© 2024 C++ Mastery Guide. Optimized for Memory Safety.</p>
+        <p>© 2026 Raymond Truong. All rights reserved.</p>
     </footer>
 
     <script>
         hljs.highlightAll();
     </script>
 </body>
+
 </html>

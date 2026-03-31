@@ -1,23 +1,49 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>C++ Shared & Weak Pointers: Collaborative Ownership</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        .code-block { position: relative; }
-        .shared-life { border-left: 4px solid #06b6d4; }
-        .weak-life { border-left: 4px solid #f97316; }
-        .circular-danger { border-left: 4px solid #ef4444; }
-        .ref-count-badge { background: #06b6d4; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .code-block {
+            position: relative;
+        }
+
+        .shared-life {
+            border-left: 4px solid #06b6d4;
+        }
+
+        .weak-life {
+            border-left: 4px solid #f97316;
+        }
+
+        .circular-danger {
+            border-left: 4px solid #ef4444;
+        }
+
+        .ref-count-badge {
+            background: #06b6d4;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
     </style>
 </head>
+
 <body class="bg-slate-50 text-slate-900">
 
     <!-- Header -->
@@ -27,23 +53,30 @@
     </header>
 
     <main class="max-w-5xl mx-auto px-6 py-12">
-        
+
         <!-- Section 1: Shared Pointer -->
         <section class="mb-16">
             <div class="flex items-center mb-6">
                 <div class="bg-cyan-600 text-white p-2 rounded-lg mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
                 </div>
                 <h2 class="text-3xl font-bold">1. std::shared_ptr (Sở hữu chung)</h2>
             </div>
-            
+
             <div class="grid md:grid-cols-2 gap-8 mb-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 shared-life">
                     <h3 class="font-bold text-lg mb-3">Reference Counting (Đếm tham chiếu)</h3>
                     <ul class="space-y-4 text-sm text-slate-700">
-                        <li><strong>Cơ chế:</strong> Mỗi khi copy một <code>shared_ptr</code>, số lượng chủ sở hữu (Ref Count) tăng lên 1.</li>
-                        <li><strong>Tự động hủy:</strong> Vùng nhớ chỉ bị <code>delete</code> khi Ref Count trở về 0.</li>
-                        <li><strong>An toàn:</strong> Tránh được Dangling Pointer vì vùng nhớ luôn tồn tại chừng nào còn ít nhất 1 con trỏ trỏ tới.</li>
+                        <li><strong>Cơ chế:</strong> Mỗi khi copy một <code>shared_ptr</code>, số lượng chủ sở hữu (Ref
+                            Count) tăng lên 1.</li>
+                        <li><strong>Tự động hủy:</strong> Vùng nhớ chỉ bị <code>delete</code> khi Ref Count trở về 0.
+                        </li>
+                        <li><strong>An toàn:</strong> Tránh được Dangling Pointer vì vùng nhớ luôn tồn tại chừng nào còn
+                            ít nhất 1 con trỏ trỏ tới.</li>
                     </ul>
                 </div>
                 <div class="code-block">
@@ -64,13 +97,19 @@ void sharedDemo() {
         <section class="mb-16">
             <div class="flex items-center mb-6 text-red-600">
                 <div class="bg-red-600 text-white p-2 rounded-lg mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
                 </div>
                 <h2 class="text-3xl font-bold">2. Thảm họa: Circular Dependency</h2>
             </div>
 
             <div class="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
-                <p class="text-red-800 font-medium italic">Lỗi này xảy ra khi Đối tượng A giữ shared_ptr tới B, và B cũng giữ shared_ptr ngược lại tới A. Kết quả: Ref Count không bao giờ về 0 -> Memory Leak vĩnh viễn!</p>
+                <p class="text-red-800 font-medium italic">Lỗi này xảy ra khi Đối tượng A giữ shared_ptr tới B, và B
+                    cũng giữ shared_ptr ngược lại tới A. Kết quả: Ref Count không bao giờ về 0 -> Memory Leak vĩnh viễn!
+                </p>
             </div>
 
             <div class="code-block mb-8">
@@ -91,7 +130,13 @@ void leakDemo() {
         <section class="mb-16">
             <div class="flex items-center mb-6">
                 <div class="bg-orange-500 text-white p-2 rounded-lg mr-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
                 </div>
                 <h2 class="text-3xl font-bold">3. Giải pháp: std::weak_ptr</h2>
             </div>
@@ -99,14 +144,23 @@ void leakDemo() {
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 weak-life">
                     <h3 class="font-bold text-lg mb-3">Người quan sát (Observer)</h3>
-                    <p class="text-sm text-slate-600 mb-4"><code>weak_ptr</code> trỏ vào vùng nhớ của <code>shared_ptr</code> nhưng <strong>không làm tăng Ref Count</strong>.</p>
+                    <p class="text-sm text-slate-600 mb-4"><code>weak_ptr</code> trỏ vào vùng nhớ của
+                        <code>shared_ptr</code> nhưng <strong>không làm tăng Ref Count</strong>.</p>
                     <div class="space-y-3 text-sm">
                         <div class="flex items-center text-emerald-700">
-                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z">
+                                </path>
+                            </svg>
                             Phá vỡ vòng lặp Circular Dependency.
                         </div>
                         <div class="flex items-center text-emerald-700">
-                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z">
+                                </path>
+                            </svg>
                             Kiểm tra được dữ liệu còn tồn tại hay không (<code>expired()</code>).
                         </div>
                     </div>
@@ -163,11 +217,12 @@ void weakDemo() {
     </main>
 
     <footer class="bg-slate-900 text-slate-500 py-8 text-center text-sm">
-        <p>© 2024 C++ Mastery Guide. Phần 2: Smart Pointer nâng cao.</p>
+        p>© 2026 Raymond Truong. All rights reserved.</p>
     </footer>
 
     <script>
         hljs.highlightAll();
     </script>
 </body>
+
 </html>
