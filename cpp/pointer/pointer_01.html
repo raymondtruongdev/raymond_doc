@@ -22,6 +22,10 @@
             position: relative;
         }
 
+        pre {
+            margin: 0 !important;
+        }
+
         .pointer-life {
             border-left: 4px solid #3b82f6;
         }
@@ -42,41 +46,55 @@
 
 <body class="bg-slate-50 text-slate-900">
 
-    <!-- Header -->
-    <header class="bg-slate-900 text-white py-12 px-6 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Basic Pointer in C++</h1>
-        <p class="text-slate-400 max-w-2xl mx-auto">Tìm hiểu về Raw Pointers, Smart Pointers, Lifecycle để tránh rò rỉ
-            bộ nhớ.</p>
+    <!-- Header - Full Width -->
+    <header class="bg-[#0f172a] text-white py-16 px-6 text-center shadow-lg">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">Basic Pointer in C++</h1>
+            <p class="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto">
+                Tìm hiểu về Raw Pointers, Smart Pointers, Lifecycle để kiểm soát bộ nhớ hiệu quả và tránh rò rỉ.
+            </p>
+        </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-6 py-12">
+    <!-- Main Content - Wider Container -->
+    <main class="max-w-7xl mx-auto px-6 py-12">
 
         <!-- Section 1: Raw Pointer -->
         <section class="mb-16">
-            <div class="flex items-center mb-6">
-                <div class="bg-blue-600 text-white p-2 rounded-lg mr-4">
+            <div class="flex items-center mb-8">
+                <div class="bg-blue-600 text-white p-3 rounded-xl mr-4 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <h2 class="text-3xl font-bold">1. Con trỏ Thô (Raw Pointer)</h2>
+                <h2 class="text-3xl font-bold text-slate-800">1. Raw Pointer</h2>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8 mb-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 pointer-life">
-                    <h3 class="font-bold text-lg mb-3">Vòng đời (Lifecycle)</h3>
-                    <ul class="space-y-2 text-sm text-slate-700">
-                        <li><strong>Khởi tạo:</strong> Dùng từ khóa <code>new</code> để cấp phát trên vùng nhớ
-                            <strong>Heap</strong>.</li>
-                        <li><strong>Sử dụng:</strong> Truy cập giá trị qua toán tử giải tham chiếu <code>*</code> hoặc
-                            <code>-></code>.</li>
-                        <li><strong>Hủy bỏ:</strong> PHẢI dùng <code>delete</code> thủ công.</li>
+            <div class="grid lg:grid-cols-2 gap-8 mb-6">
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 pointer-life flex flex-col justify-center">
+                    <h3 class="font-bold text-slate-500 uppercase text-xs tracking-wider mb-4">Vòng đời (Lifecycle)</h3>
+                    <ul class="space-y-4 text-lg text-slate-700">
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2">•</span>
+                            <span><strong>Khởi tạo:</strong> Dùng từ khóa <code>new</code> để cấp phát trên vùng nhớ
+                                <strong>Heap</strong>.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2">•</span>
+                            <span><strong>Sử dụng:</strong> Truy cập giá trị qua toán tử giải tham chiếu <code>*</code>
+                                hoặc <code>-></code>.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-600 mr-2">•</span>
+                            <span><strong>Hủy bỏ:</strong> PHẢI dùng <code>delete</code> thủ công để giải phóng.</span>
+                        </li>
                     </ul>
                 </div>
-                <div class="code-block">
-                    <pre><code class="language-cpp">// Ví dụ Raw Pointer nguy hiểm
+                <div class="code-block rounded-2xl overflow-hidden shadow-lg border border-slate-800">
+                    <pre class="h-full"><code class="language-cpp h-full">// Ví dụ Raw Pointer nguy hiểm
 void rawPointerDemo() {
     int* ptr = new int(10); 
     if (error()) return; // Memory Leak!
@@ -88,32 +106,47 @@ void rawPointerDemo() {
 
         <!-- Section 2: Unique Pointer -->
         <section class="mb-16">
-            <div class="flex items-center mb-6">
-                <div class="bg-emerald-600 text-white p-2 rounded-lg mr-4">
+            <div class="flex items-center mb-8">
+                <div class="bg-emerald-600 text-white p-3 rounded-xl mr-4 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                 </div>
-                <h2 class="text-3xl font-bold">2. Con trỏ Thông minh (std::unique_ptr)</h2>
+                <h2 class="text-3xl font-bold text-slate-800">2. Unique Pointer</h2>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="code-block">
-                    <pre><code class="language-cpp">#include &lt;memory&gt;
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="code-block rounded-2xl overflow-hidden shadow-lg border border-slate-800">
+                    <pre class="h-full"><code class="language-cpp h-full">#include &lt;memory&gt;
 
 void smartPointerDemo() {
     auto uPtr = std::make_unique&lt;Entity&gt;(); 
     // Tự động giải phóng khi ra khỏi scope
 } </code></pre>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 unique-life">
-                    <h3 class="font-bold text-lg mb-3">Quy trình Hủy (Destroy)</h3>
-                    <div class="space-y-3 text-sm">
-                        <p>1. <strong>Scope Exit:</strong> <code>uPtr</code> bị xóa khỏi Stack.</p>
-                        <p>2. <strong>Destructor:</strong> Hàm hủy được kích hoạt.</p>
-                        <p>3. <strong>Cleanup:</strong> Tự động <code>delete</code> vùng nhớ Heap.</p>
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 unique-life flex flex-col justify-center">
+                    <h3 class="font-bold text-slate-500 uppercase text-xs tracking-wider mb-4">Quy trình Hủy tự động
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-emerald-50 rounded-lg">
+                            <span
+                                class="bg-emerald-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3">1</span>
+                            <p class="text-slate-700"><strong>Scope Exit:</strong> <code>uPtr</code> bị xóa khỏi Stack.
+                            </p>
+                        </div>
+                        <div class="flex items-center p-3 bg-emerald-50 rounded-lg">
+                            <span
+                                class="bg-emerald-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3">2</span>
+                            <p class="text-slate-700"><strong>Destructor:</strong> Hàm hủy được kích hoạt ngay.</p>
+                        </div>
+                        <div class="flex items-center p-3 bg-emerald-50 rounded-lg">
+                            <span
+                                class="bg-emerald-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3">3</span>
+                            <p class="text-slate-700"><strong>Cleanup:</strong> Vùng nhớ Heap được giải phóng.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -121,78 +154,89 @@ void smartPointerDemo() {
 
         <!-- Section 3: Function Parameters -->
         <section class="mb-16">
-            <div class="flex items-center mb-6">
-                <div class="bg-amber-500 text-white p-2 rounded-lg mr-4">
+            <div class="flex items-center mb-8">
+                <div class="bg-amber-500 text-white p-3 rounded-xl mr-4 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     </svg>
                 </div>
-                <h2 class="text-3xl font-bold">3. Truyền Tham số & Vấn đề Tiếp tục sử dụng</h2>
+                <h2 class="text-3xl font-bold text-slate-800">3. Truyền Tham số & Quyền Sở hữu</h2>
             </div>
 
-            <p class="mb-6 text-slate-700 font-semibold text-red-600 italic">⚠️ Chú ý: Khi bạn dùng std::move(uPtr),
-                biến uPtr đó sẽ bị rỗng (nullptr). Bạn KHÔNG THỂ dùng nó sau đó.</p>
+            <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8 rounded-r-2xl">
+                <p class="text-lg text-red-800 font-medium">
+                    <span class="font-bold">⚠️ Chú ý:</span> Khi bạn dùng <code>std::move(uPtr)</code>, biến gốc sẽ bị
+                    rỗng (<code>nullptr</code>). Bạn KHÔNG THỂ sử dụng nó sau dòng lệnh đó.
+                </p>
+            </div>
 
             <div class="space-y-8">
                 <!-- Solution 1 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 solution-card">
-                    <h3 class="font-bold text-lg text-purple-700 mb-2">Cách A: Dùng tiếp sau hàm - Truyền Tham chiếu
-                        (Borrowing)</h3>
-                    <p class="text-sm text-slate-600 mb-4">Đây là cách tốt nhất nếu bạn muốn hàm xử lý xong mà bạn vẫn
-                        nắm quyền sở hữu.</p>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <pre><code class="language-cpp">// Hàm nhận tham chiếu (không sở hữu)
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 solution-card">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                        <h3 class="font-bold text-xl text-purple-700">Cách A: Truyền Tham chiếu (Borrowing)</h3>
+                        <span
+                            class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full uppercase mt-2 md:mt-0 self-start md:self-auto">Khuyên
+                            dùng</span>
+                    </div>
+                    <p class="text-slate-600 mb-6 text-lg">Đây là cách tốt nhất nếu bạn muốn hàm xử lý xong mà bạn vẫn
+                        nắm quyền sở hữu đối tượng.</p>
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <div class="code-block rounded-xl overflow-hidden border border-slate-800 shadow-md">
+                            <pre><code class="language-cpp">// Hàm mượn (Borrowing)
 void work(Entity& e) {
     e.doSomething();
 }
 
 void demo() {
     auto uPtr = std::make_unique&lt;Entity&gt;();
-    work(*uPtr); // Truyền nội dung bên trong
-    
-    uPtr->stillHere(); // OK! uPtr vẫn còn dữ liệu
+    work(*uPtr); // Truyền nội dung
+    uPtr->stillHere(); // OK!
 }</code></pre>
-                        <div class="text-sm space-y-2 bg-purple-50 p-4 rounded-lg">
-                            <p class="font-bold">Tại sao tránh leak?</p>
-                            <p>Vì hàm <code>work</code> không bao giờ gọi <code>delete</code>. Quyền hủy bỏ vẫn nằm hoàn
-                                toàn ở <code>uPtr</code> trong hàm <code>demo</code>.</p>
+                        </div>
+                        <div
+                            class="text-lg space-y-4 bg-purple-50 p-6 rounded-2xl flex flex-col justify-center border border-purple-100">
+                            <p class="font-bold text-purple-900">Tại sao tránh rò rỉ?</p>
+                            <p class="text-slate-700">Vì hàm <code>work</code> không có quyền hủy. Quyền hủy bỏ vẫn nằm
+                                hoàn toàn ở <code>uPtr</code> trong phạm vi hàm gọi.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Solution 2 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 solution-card">
-                    <h3 class="font-bold text-lg text-purple-700 mb-2">Cách B: Hàm lấy rồi trả lại (Return Ownership)
-                    </h3>
-                    <p class="text-sm text-slate-600 mb-4">Dùng khi hàm cần "biến đổi" chính cái pointer đó rồi đưa lại
-                        cho bạn.</p>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <pre><code class="language-cpp">std::unique_ptr&lt;Entity&gt; transform(std::unique_ptr&lt;Entity&gt; ptr) {
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 solution-card">
+                    <h3 class="font-bold text-xl text-purple-700 mb-6">Cách B: Return Ownership (Lấy rồi trả lại)</h3>
+                    <p class="text-slate-600 mb-6 text-lg">Dùng khi hàm cần biến đổi chính cái pointer đó rồi bàn giao
+                        lại quyền quản lý cho bạn.</p>
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <div class="code-block rounded-xl overflow-hidden border border-slate-800 shadow-md">
+                            <pre><code class="language-cpp">std::unique_ptr&lt;Entity&gt; transform(std::unique_ptr&lt;Entity&gt; ptr) {
     ptr->modify();
     return ptr; // Trả lại quyền sở hữu
 }
 
 void demo() {
-    auto uPtr = std::make_unique&lt;Entity&gt;();
-    uPtr = transform(std::move(uPtr)); // Nhận lại
-    
-    uPtr->stillHere(); // OK! uPtr đã có dữ liệu mới
+    auto u = std::make_unique&lt;Entity&gt;();
+    u = transform(std::move(u)); // Nhận lại
+    u->stillHere(); // OK!
 }</code></pre>
-                        <div class="text-sm space-y-2 bg-purple-50 p-4 rounded-lg">
-                            <p class="font-bold">Cơ chế hoạt động:</p>
-                            <p>Quyền sở hữu đi vào hàm qua <code>move</code>, sau đó đi ra khỏi hàm qua
-                                <code>return</code>. Bộ nhớ không bao giờ bị "vô chủ".</p>
+                        </div>
+                        <div
+                            class="text-lg space-y-4 bg-purple-50 p-6 rounded-2xl flex flex-col justify-center border border-purple-100">
+                            <p class="font-bold text-purple-900">Cơ chế hoạt động:</p>
+                            <p class="text-slate-700">Quyền sở hữu đi vào hàm qua <code>move</code>, sau đó đi ra khỏi
+                                hàm qua <code>return</code>. Đối tượng luôn có chủ sở hữu rõ ràng.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Shared Pointer Hint -->
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
-                    <p class="text-blue-800"><strong>💡 Mẹo:</strong> Nếu logic của bạn thực sự đòi hỏi nhiều nơi cùng
-                        dùng một vùng nhớ lâu dài mà không biết ai sẽ là người cuối cùng, hãy cân nhắc
-                        <code>std::shared_ptr</code>. Khi đó bạn không cần <code>std::move</code> mà chỉ cần copy nó.
+                <!-- Hint -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-2xl shadow-sm">
+                    <p class="text-blue-800 text-lg">
+                        <strong>💡 Mẹo:</strong> Nếu logic đòi hỏi nhiều nơi cùng dùng một vùng nhớ lâu dài, hãy dùng
+                        <code>std::shared_ptr</code>. Khi đó bạn chỉ cần copy thay vì dùng <code>std::move</code>.
                     </p>
                 </div>
             </div>
@@ -200,31 +244,37 @@ void demo() {
 
         <!-- Final Summary Table -->
         <section class="mb-16">
-            <h2 class="text-2xl font-bold mb-6">Tóm tắt Chiến lược Truyền tham số</h2>
-            <div class="overflow-x-auto">
+            <h2 class="text-2xl font-bold mb-8 text-slate-800">Tóm tắt Chiến lược</h2>
+            <div class="overflow-hidden shadow-md rounded-2xl border border-slate-200">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-200">
-                            <th class="p-4 border">Kiểu tham số</th>
-                            <th class="p-4 border">Mục đích</th>
-                            <th class="p-4 border">Dùng tiếp được không?</th>
+                        <tr class="bg-slate-100">
+                            <th class="p-6 border-b font-bold text-slate-600">Kiểu tham số</th>
+                            <th class="p-6 border-b font-bold text-slate-600">Mục đích chính</th>
+                            <th class="p-6 border-b font-bold text-center text-slate-600">Dùng tiếp được không?</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td class="p-4 border font-mono text-sm">Entity&</td>
-                            <td class="p-4 border italic">Truy cập dữ liệu nhanh</td>
-                            <td class="p-4 border text-green-600 font-bold">CÓ (Tốt nhất)</td>
+                    <tbody class="bg-white">
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-6 border-b font-mono text-blue-600 font-bold">Entity&</td>
+                            <td class="p-6 border-b text-slate-700">Truy cập nhanh, mượn dữ liệu tạm thời</td>
+                            <td class="p-6 border-b text-center"><span
+                                    class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-bold uppercase">Có
+                                    (Tốt nhất)</span></td>
                         </tr>
-                        <tr>
-                            <td class="p-4 border font-mono text-sm">Entity*</td>
-                            <td class="p-4 border italic">Truy cập (có thể null)</td>
-                            <td class="p-4 border text-green-600 font-bold">CÓ</td>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-6 border-b font-mono text-blue-600 font-bold">Entity*</td>
+                            <td class="p-6 border-b text-slate-700">Truy cập dữ liệu (có thể xử lý NULL)</td>
+                            <td class="p-6 border-b text-center"><span
+                                    class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-bold uppercase">Có</span>
+                            </td>
                         </tr>
-                        <tr>
-                            <td class="p-4 border font-mono text-sm">unique_ptr&lt;T&gt;</td>
-                            <td class="p-4 border italic">Chuyển quyền sở hữu</td>
-                            <td class="p-4 border text-red-600 font-bold">KHÔNG</td>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-6 font-mono text-blue-600 font-bold">unique_ptr&lt;T&gt;</td>
+                            <td class="p-6 text-slate-700">Chuyển giao toàn bộ quyền quản lý</td>
+                            <td class="p-6 text-center"><span
+                                    class="bg-red-100 text-red-700 px-4 py-1 rounded-full text-xs font-bold uppercase">Không</span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -233,12 +283,16 @@ void demo() {
 
     </main>
 
-    <footer class="bg-slate-900 text-slate-500 py-8 text-center text-sm">
-        <p>© 2026 Raymond Truong. All rights reserved.</p>
+    <footer class="bg-[#0f172a] text-slate-500 py-12 text-center text-sm border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="mb-2">© 2026 Raymond Truong</p>
+        </div>
     </footer>
 
     <script>
-        hljs.highlightAll();
+        document.addEventListener('DOMContentLoaded', (event) => {
+            hljs.highlightAll();
+        });
     </script>
 </body>
 
