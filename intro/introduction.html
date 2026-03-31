@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raymond Truong - Resume</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -49,6 +50,11 @@
             margin-left: -1.5rem;
             position: absolute;
         }
+
+        /* Đảm bảo hình ảnh giữ tỉ lệ và không bị méo */
+        .profile-img {
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -57,10 +63,13 @@
         <div class="p-8 md:p-12">
             <!-- Header: Avatar & Info -->
             <div class="flex flex-col md:flex-row gap-8 items-center md:items-start mb-16">
-                <div
-                    class="w-32 h-32 bg-blue-600 rounded-2xl flex items-center justify-center text-5xl shadow-lg shadow-blue-200 shrink-0 text-white">
-                    RT
+                <!-- Avatar replaced with <img> tag -->
+                <div class="shrink-0">
+                    <img src="https://raw.githubusercontent.com/raymondtruongdev/raymond_doc/refs/heads/main/res/img/raymond_1.png"
+                        alt="Raymond Truong Profile" class="w-32 h-32 profile-img drop-shadow-md"
+                        onerror="this.src='https://via.placeholder.com/128?text=RT'">
                 </div>
+
                 <div class="text-center md:text-left">
                     <h1 class="text-4xl font-extrabold text-slate-900 mb-2 tracking-tight">Raymond Truong</h1>
                     <p class="text-xl text-blue-600 font-semibold mb-6">Software Engineer / Embedded Developer</p>
@@ -119,7 +128,8 @@
                                 <ul class="work-list text-slate-600 text-[15px] leading-relaxed">
                                     <li>Phát triển ứng dụng cho thiết bị <strong>Android Open Source Project
                                             (AOSP)</strong>.</li>
-                                    <li>Phát triển các dự án cá nhân đa nền tảng: <strong>Android, WearOS, iOS</strong>.</li>
+                                    <li>Phát triển các dự án cá nhân đa nền tảng: <strong>Android, WearOS, iOS</strong>.
+                                    </li>
                                     <li>Thiết kế <strong>Robot Arm kết hợp AI</strong> cho các tác vụ tự động hóa công
                                         nghiệp và gia dụng.</li>
                                     <li>Xây dựng hệ thống <strong>RTOS</strong> đa thiết bị với cấu trúc base code đồng
@@ -169,7 +179,8 @@
                                     <li> Nghiên cứu & cải tiến tối ưu thuật toán đếm bước chân
                                         <strong>(Pedometer)</strong> giúp giảm
                                         thiểu sai số và tăng độ
-                                        chính xác trong việc theo dõi hoạt động hàng ngày</li>
+                                        chính xác trong việc theo dõi hoạt động hàng ngày
+                                    </li>
 
                                     <li> Cải tiến thuật toán về <strong>Sleep Tracking</strong> phân biệt trạng
                                         thái nghỉ ngơi và ngủ thật sự.</li>
@@ -195,8 +206,7 @@
                                     class="absolute -left-[9px] top-0 w-4 h-4 bg-white border-2 border-blue-600 rounded-full">
                                 </div>
                                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3">
-                                    <h4 class="font-bold text-slate-800 text-lg"> Lecturer @ Ho Chi Minh City University
-                                        of Technology (HCMUT)
+                                    <h4 class="font-bold text-slate-800 text-lg"> Lecturer @ HCMUT
                                     </h4>
 
                                     <span
@@ -206,17 +216,20 @@
                                 <ul class="work-list text-slate-600 text-[15px] leading-relaxed">
                                     <h5 class="text-m font-bold text-blue-500 italic mt-1">Giảng dạy:</h5>
                                     <li>Giảng dạy các môn học về <strong>Microcontroller</strong>, <strong>PLC</strong>,
-                                        <strong>Automation systems</strong>, <strong>Servo control</strong>.</li>
-                                    control.</li>. Các môn học được thiết kế kết hợp giữa lý thuyết và thực hành, giúp
-                                    sinh viên nắm vững kiến thức và kỹ năng thực tế.</li>
+                                        <strong>Automation systems</strong>, <strong>AC Servo control</strong>,
+                                        <strong>Industrial Robotics</strong>.
+                                    </li>
+                                    <li>Thực hiện soạn thảo các bài giảng và bài thực hành kết hợp giữa lý thuyết và
+                                        thực hành, giúp
+                                        sinh viên nắm vững kiến thức và kỹ năng thực tế.</li>
                                     <h5 class="text-m font-bold text-blue-500 italic mt-1">Chuyển giao công nghệ:</h5>
                                     <li>Hệ thống quản lý đơn hàng dựa trên Barcode.
-                                        Sản phẩm trên băng tải với sự điều khiển từ PC, PLC, Servo motor, xylanh khí nén được
-                                         tự động phân loại hàng vào các khay theo các đơn hàng</li>
+                                        Sản phẩm trên băng tải với sự điều khiển từ PC, PLC, Servo motor, xylanh khí nén
+                                        được
+                                        tự động phân loại hàng vào các khay theo các đơn hàng</li>
                                     <li>Hệ thống kiểm tra đo áp lực gối cao su thành phẩm và lưu trữ vào cơ sở dữ liệu
                                         bằng sự kết hợp <strong>PLC</strong> + <strong>Visual studio
                                             application</strong>.</li>
-
                                 </ul>
                             </div>
 
@@ -226,8 +239,8 @@
                                     class="absolute -left-[9px] top-0 w-4 h-4 bg-white border-2 border-blue-600 rounded-full">
                                 </div>
                                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3">
-                                    <h4 class="font-bold text-slate-800 text-lg">Researcher Engineer @ Hitech
-                                        Lab - Ho Chi Minh City University of Technology (HCMUT)</h4>
+                                    <h4 class="font-bold text-slate-800 text-lg">Researcher Engineer @ Hitech Lab
+                                        (HCMUT)</h4>
                                     <span
                                         class="text-xs font-bold px-3 py-1 bg-slate-100 text-slate-500 rounded-md mt-1 sm:mt-0 uppercase tracking-wider">2010
                                         - 2012</span>
@@ -237,10 +250,9 @@
                                         và trên các vách trần.</li>
                                     <li>Thiết kế và lập trình các hệ thống tự động hóa thông mình để kiểm soát nhiệt độ,
                                         độ ẩm và tưới cây trong nhà kính</li>
-
                                 </ul>
                             </div>
-
+                        </div>
                     </section>
                 </div>
 
@@ -276,19 +288,20 @@
                         <h3 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-6">Học vấn</h3>
                         <div class="p-5 border border-slate-100 rounded-2xl bg-slate-50 mb-6">
                             <p class="text-[15px] font-bold text-slate-800">Ho Chi Minh City University of Technology
-                                (HCMUT)</p>
+                            </p>
                             <p class="text-sm text-slate-500 italic mt-1">Master - Mechatronics (Excellent)</p>
                             <p class="text-[11px] text-slate-400 mt-3 font-semibold uppercase tracking-wider">2012 -
                                 2014</p>
                         </div>
                         <div class="p-5 border border-slate-100 rounded-2xl bg-slate-50 mb-6">
                             <p class="text-[15px] font-bold text-slate-800">Ho Chi Minh City University of Technology
-                                (HCMUT)</p>
+                            </p>
                             <p class="text-sm text-slate-500 italic mt-1">Engineer - Mechanical Engineering (Good)</p>
                             <p class="text-[11px] text-slate-400 mt-3 font-semibold uppercase tracking-wider">2005 -
                                 2010</p>
                         </div>
                     </section>
+
                     <section>
                         <h3 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-6">Ngôn ngữ</h3>
                         <div class="space-y-3">
