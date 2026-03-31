@@ -20,12 +20,18 @@
     /* Fix iframe height */
     #content-frame {
       width: 100%;
-      height: calc(100vh - 64px); /* Trừ đi chiều cao của navbar */
+      height: calc(100vh - 100px); /* Trừ navbar và sub-header */
       border: none;
     }
 
-    .hidden-header #page-header {
-      display: none;
+    .hidden { display: none !important; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.4s ease-out forwards;
     }
   </style>
 </head>
@@ -57,7 +63,7 @@
   <div class="flex flex-1 overflow-hidden">
     
     <!-- Sidebar / Mục lục -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-20 w-72 bg-white border-r border-slate-200 transform -translate-x-full md:translate-x-0 md:static md:inset-0 transition-transform duration-300 ease-in-out flex flex-col shrink-0">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 transform -translate-x-full md:translate-x-0 md:static md:inset-0 transition-transform duration-300 ease-in-out flex flex-col shrink-0">
       <div class="p-6 border-b border-slate-100">
         <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Danh mục kiến thức</h2>
       </div>
@@ -72,7 +78,7 @@
           </button>
           <div id="pointer-list" class="pl-6 space-y-1">
             <button onclick="loadExternalContent('https://raymondtruongdev.github.io/raymond_doc/cpp/pointer/pointer_01.html', 'Pointer Basics')" class="w-full text-left p-2 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition">Pointer Basics</button>
-            <button onclick="loadPage('Dangling Pointer', 'Con trỏ lơ lửng...')" class="w-full text-left p-2 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition">Dangling Pointer</button>
+            <button onclick="loadExternalContent('https://raymondtruongdev.github.io/raymond_doc/cpp/pointer/C++ Shared & Weak Pointers.html', 'Shared & Weak Pointers')" class="w-full text-left p-2 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition">Shared & Weak Pointers</button>
           </div>
         </div>
 
@@ -96,9 +102,9 @@
 
     <!-- Content Area -->
     <main id="content-container" class="flex-1 overflow-y-auto bg-white relative">
-      <div id="overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-slate-900/40 z-10 md:hidden"></div>
+      <div id="overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-slate-900/40 z-30 md:hidden"></div>
 
-      <!-- Welcome Header -->
+      <!-- Welcome Header (Mặc định) -->
       <header id="page-header" class="bg-slate-900 text-white py-20 px-8 transition-all duration-300">
         <div class="max-w-4xl mx-auto text-center">
           <h1 class="text-4xl md:text-6xl font-bold mb-6">📚 C++ Knowledge Base</h1>
@@ -110,18 +116,51 @@
 
       <!-- Main Content Slot -->
       <div id="main-content" class="w-full h-full">
-         <!-- Mặc định khi chưa chọn gì -->
+         <!-- Placeholder UI -->
          <div id="placeholder-ui" class="flex flex-col items-center justify-center py-20 text-slate-300">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
             <p class="text-xl italic">Vui lòng chọn bài học từ danh mục bên trái.</p>
           </div>
+
+          <!-- Iframe Viewer (Ẩn lúc đầu) -->
+          <div id="iframe-viewer" class="hidden w-full h-full flex flex-col">
+            <div class="bg-slate-100 px-6 py-2 border-b flex justify-between items-center text-xs text-slate-500">
+              <span>Đang xem: <strong id="current-doc-title">...</strong></span>
+              <a id="external-link" href="#" target="_blank" class="text-blue-600 hover:underline">Mở trong tab mới ↗</a>
+            </div>
+            <div class="flex-1 relative">
+                <!-- Loading indicator -->
+                <div id="iframe-loader" class="absolute inset-0 flex items-center justify-center bg-white z-10">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+                <iframe id="content-frame" src="" class="w-full h-full" onload="hideLoader()"></iframe>
+            </div>
+          </div>
+
+          <!-- Static Page Viewer (Ẩn lúc đầu) -->
+          <div id="static-viewer" class="hidden animate-fadeIn max-w-4xl mx-auto px-8 py-12">
+            <h2 id="static-title" class="text-3xl font-bold mb-4">Title</h2>
+            <p id="static-desc" class="text-slate-600 mb-8">Description</p>
+            <div class="p-10 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400">
+              Nội dung này hiện chưa được liên kết với trang GitHub Pages.
+            </div>
+          </div>
       </div>
     </main>
   </div>
 
   <script>
+    const pageHeader = document.getElementById('page-header');
+    const placeholderUi = document.getElementById('placeholder-ui');
+    const iframeViewer = document.getElementById('iframe-viewer');
+    const staticViewer = document.getElementById('static-viewer');
+    const contentFrame = document.getElementById('content-frame');
+    const currentDocTitle = document.getElementById('current-doc-title');
+    const externalLink = document.getElementById('external-link');
+    const iframeLoader = document.getElementById('iframe-loader');
+
     function toggleFolder(id) {
       const el = document.getElementById(id);
       const icon = document.getElementById('icon-' + id);
@@ -129,46 +168,47 @@
       icon.classList.toggle('rotate-180');
     }
 
-    // Hàm nhúng nội dung từ URL bên ngoài
+    function showLoader() {
+      iframeLoader.classList.remove('hidden');
+    }
+
+    function hideLoader() {
+      iframeLoader.classList.add('hidden');
+    }
+
     function loadExternalContent(url, title) {
-      const container = document.getElementById('main-content');
-      const header = document.getElementById('page-header');
+      // 1. Ẩn tất cả các UI khác
+      pageHeader.classList.add('hidden');
+      placeholderUi.classList.add('hidden');
+      staticViewer.classList.add('hidden');
+
+      // 2. Hiển thị khu vực iframe
+      iframeViewer.classList.remove('hidden');
       
-      // Ẩn Header chào mừng để nhường chỗ cho iframe toàn màn hình
-      header.classList.add('hidden');
-      document.getElementById('placeholder-ui').classList.add('hidden');
+      // 3. Cập nhật thông tin
+      currentDocTitle.innerText = title;
+      externalLink.href = url;
 
-      // Nhúng iframe
-      container.innerHTML = `
-        <div class="w-full h-full animate-fadeIn">
-          <div class="bg-slate-100 px-6 py-2 border-b flex justify-between items-center text-xs text-slate-500">
-            <span>Đang xem: <strong>${title}</strong></span>
-            <a href="${url}" target="_blank" class="text-blue-600 hover:underline">Mở trong tab mới ↗</a>
-          </div>
-          <iframe id="content-frame" src="${url}" class="w-full h-full"></iframe>
-        </div>
-      `;
+      // 4. Load URL vào iframe (Quan trọng: reset src để buộc trình duyệt tải lại)
+      showLoader();
+      contentFrame.src = url;
 
+      // Đóng sidebar trên mobile
       if (window.innerWidth < 768) toggleSidebar();
     }
 
-    // Hàm load placeholder cho các bài chưa có link
     function loadPage(title, description) {
-      const header = document.getElementById('page-header');
-      const container = document.getElementById('main-content');
+      // Ẩn tất cả
+      iframeViewer.classList.add('hidden');
+      placeholderUi.classList.add('hidden');
       
-      header.classList.remove('hidden');
-      document.getElementById('placeholder-ui').classList.add('hidden');
+      // Hiển thị Header và Static content
+      pageHeader.classList.remove('hidden');
+      staticViewer.classList.remove('hidden');
       
-      container.innerHTML = `
-        <div class="animate-fadeIn max-w-4xl mx-auto px-8 py-12">
-          <h2 class="text-3xl font-bold mb-4">${title}</h2>
-          <p class="text-slate-600 mb-8">${description}</p>
-          <div class="p-10 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400">
-            Nội dung này hiện chưa được liên kết với trang GitHub Pages.
-          </div>
-        </div>
-      `;
+      document.getElementById('static-title').innerText = title;
+      document.getElementById('static-desc').innerText = description;
+
       if (window.innerWidth < 768) toggleSidebar();
     }
 
@@ -177,16 +217,5 @@
       document.getElementById('overlay').classList.toggle('hidden');
     }
   </script>
-
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .animate-fadeIn {
-      animation: fadeIn 0.5s ease-in forwards;
-    }
-    .hidden { display: none !important; }
-  </style>
 </body>
 </html>
