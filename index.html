@@ -1,345 +1,423 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAYMOND | Portfolio & Knowledge Base</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RAYMOND | Portfolio & Knowledge Base</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-  <style type="text/tailwindcss">
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    @layer base {
-      body {
-        font-family: 'Inter', sans-serif;
+      @layer base {
+        body {
+          font-family: "Inter", sans-serif;
+        }
       }
-    }
 
-    @layer components {
-      .nav-button-primary {
-        @apply w-full flex items-center justify-between px-3 py-2 
+      @layer components {
+        .nav-button-primary {
+          @apply w-full flex items-center justify-between px-3 py-2 
                text-gray-700 uppercase tracking-[0.12em] text-[14px] font-bold
                bg-indigo-50 hover:bg-indigo-100 
                rounded-lg transition-all duration-200 
                hover:text-indigo-700 mb-2 shadow-sm;
-      }
+        }
 
-      .sidebar-scroll::-webkit-scrollbar {
-        width: 4px;
-      }
+        .sidebar-scroll::-webkit-scrollbar {
+          width: 4px;
+        }
 
-      .sidebar-scroll::-webkit-scrollbar-thumb {
-        background: #e2e8f0;
-        border-radius: 10px;
-      }
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+          background: #e2e8f0;
+          border-radius: 10px;
+        }
 
-      .menu-item-active {
-        background-color: #2563eb !important;
-        color: white !important;
-        box-shadow: 0 4px 6px -1px rgba(191, 219, 254, 1) !important;
-      }
-      
-      .menu-item-active:hover {
-        background-color: #1d4ed8 !important;
-        color: white !important;
-      }
+        .menu-item-active {
+          background-color: #2563eb !important;
+          color: white !important;
+          box-shadow: 0 4px 6px -1px rgba(191, 219, 254, 1) !important;
+        }
 
-      .sub-menu-item {
-        @apply w-full text-left px-3 py-1.5 text-[14px] text-[#475569] 
+        .menu-item-active:hover {
+          background-color: #1d4ed8 !important;
+          color: white !important;
+        }
+
+        .sub-menu-item {
+          @apply w-full text-left px-3 py-1.5 text-[14px] text-[#475569] 
                hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium;
+        }
       }
-    }
 
-    #content-frame {
-      width: 100%;
-      height: calc(100vh - 100px);
-      border: none;
-    }
+      #content-frame {
+        width: 100%;
+        height: calc(100vh - 100px);
+        border: none;
+      }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    .animate-fadeIn {
-      animation: fadeIn 0.4s ease-out forwards;
-    }
-  </style>
-</head>
+      .animate-fadeIn {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+    </style>
+  </head>
 
-<body class="bg-[#F8FAFC] text-slate-900 h-screen flex flex-col overflow-hidden">
-
-  <!-- Top Navbar -->
-  <nav class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-30 shadow-sm shrink-0">
-    <div class="flex items-center gap-3 cursor-pointer" onclick="loadIntroduction()">
-      <div class="bg-blue-600 p-2 rounded-lg text-white shadow-blue-200 shadow-lg">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-        </svg>
+  <body class="bg-[#F8FAFC] text-slate-900 h-screen flex flex-col overflow-hidden">
+    <!-- Top Navbar -->
+    <nav class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-30 shadow-sm shrink-0">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="loadIntroduction()">
+        <div class="bg-blue-600 p-2 rounded-lg text-white shadow-blue-200 shadow-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+          </svg>
+        </div>
+        <span class="text-xl font-black tracking-tighter text-slate-800 uppercase">Raymond</span>
       </div>
-      <span class="text-xl font-black tracking-tighter text-slate-800 uppercase">Raymond</span>
-    </div>
 
-    <div class="hidden md:flex gap-6 text-sm font-medium text-slate-500">
-      <button onclick="loadIntroduction()" class="hover:text-blue-600 transition">Giới thiệu</button>
-      <!-- CẬP NHẬT Ở ĐÂY: Gọi hàm xử lý kép -->
-      <button onclick="navToProject()" class="hover:text-blue-600 transition">Dự án</button>
-      <a href="mailto:contact@example.com" class="hover:text-blue-600 transition">Liên hệ</a>
-    </div>
+      <div class="hidden md:flex gap-6 text-sm font-medium text-slate-500">
+        <button onclick="loadIntroduction()" class="hover:text-blue-600 transition">Giới thiệu</button>
+        <!-- CẬP NHẬT Ở ĐÂY: Gọi hàm xử lý kép -->
+        <button onclick="navToProject()" class="hover:text-blue-600 transition">Dự án</button>
+        <a href="mailto:contact@example.com" class="hover:text-blue-600 transition">Liên hệ</a>
+      </div>
 
-    <button class="md:hidden p-2 text-slate-600" onclick="toggleSidebar()">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-      </svg>
-    </button>
-  </nav>
+      <button class="md:hidden p-2 text-slate-600" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+    </nav>
 
-  <div class="flex flex-1 overflow-hidden">
-
-    <!-- Sidebar -->
-    <aside id="sidebar"
-      class="fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 transform -translate-x-full md:translate-x-0 md:static md:inset-0 transition-transform duration-300 ease-in-out flex flex-col shrink-0">
-
-      <nav class="flex-1 overflow-y-auto sidebar-scroll p-4 space-y-6">
-
-        <!-- Cấp 1: Profile -->
-        <div>
-          <button id="btn-intro" onclick="loadIntroduction(this)" class="nav-button-primary menu-btn">
-            <span class="flex items-center">
-              <span class="mr-2 text-lg">👤</span> Giới thiệu bản thân
-            </span>
-            <svg class="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M9 5l7 7-7 7"></path>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Cấp 1: Projects -->
-        <div>
-          <button onclick="toggleFolder('project-list')" class="nav-button-primary">
-            <span class="flex items-center">
-              <span class="mr-2 text-lg">🚀</span> Dự án cá nhân
-            </span>
-            <svg id="icon-project-list" class="w-4 h-4 transition-transform rotate-180" fill="none"
-              stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-
-          <div id="project-list" class="space-y-1 pl-4 border-l-2 border-indigo-50 ml-4 mb-4">
-            <!-- Thêm ID để dễ dàng trigger từ Navbar -->
-            <button id="btn-ai-vision" onclick="loadProject('Dự án AI Vision', 'Hệ thống nhận diện khuôn mặt thời gian thực.', this)"
-              class="menu-btn sub-menu-item">AI Vision System</button>
-            <button onclick="loadProject('E-Commerce App', 'Nền tảng bán hàng tích hợp thanh toán.', this)"
-              class="menu-btn sub-menu-item">Robot arm</button>
-            <button onclick="loadExternalContent('', 'Voice Recognition', this)" class="menu-btn sub-menu-item">Voice Recognition</button>
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Sidebar -->
+      <aside
+        id="sidebar"
+        class="fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200 transform -translate-x-full md:translate-x-0 md:static md:inset-0 transition-transform duration-300 ease-in-out flex flex-col shrink-0"
+      >
+        <nav class="flex-1 overflow-y-auto sidebar-scroll p-4 space-y-6">
+          <!-- Cấp 1: Profile -->
+          <div>
+            <button id="btn-intro" onclick="loadIntroduction(this)" class="nav-button-primary menu-btn">
+              <span class="flex items-center"> <span class="mr-2 text-lg">👤</span> Giới thiệu bản thân </span>
+              <svg class="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
           </div>
-        </div>
 
-        <!-- Thư viện kiến thức -->
-        <div class="space-y-4">
-          <h2 class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-2">Thư viện kiến thức</h2>
-
-          <div class="space-y-1">
-            <button onclick="toggleFolder('cpp-list')" class="nav-button-primary">
-              <span class="flex items-center">
-                <span class="mr-3 group-hover:scale-110 transition-transform">💻</span> C++ Programming
-              </span>
-              <svg id="icon-cpp-list" class="w-4 h-4 transition-transform rotate-180" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
+          <!-- Cấp 1: Projects -->
+          <div>
+            <button onclick="toggleFolder('project-list')" class="nav-button-primary">
+              <span class="flex items-center"> <span class="mr-2 text-lg">🚀</span> Dự án cá nhân </span>
+              <svg
+                id="icon-project-list"
+                class="w-4 h-4 transition-transform rotate-180"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path d="M19 9l-7 7-7-7"></path>
               </svg>
             </button>
 
-            <div id="cpp-list" class="pl-4 space-y-4 mt-1 border-l-2 border-slate-100 ml-4 mb-4">
-              <div>
-                <button onclick="toggleFolder('pointer-list')"
-                  class="w-full flex items-center justify-between px-2 py-1 text-blue-600 hover:text-blue-800 transition">
-                  <span class="text-[11px] font-black uppercase tracking-widest italic">Pointer</span>
-                </button>
-                <div id="pointer-list" class="space-y-1 mt-1">
+            <div id="project-list" class="space-y-1 pl-4 border-l-2 border-indigo-50 ml-4 mb-4">
+              <!-- Thêm ID để dễ dàng trigger từ Navbar -->
+              <button
+                id="btn-ai-vision"
+                onclick="loadProject('Dự án AI Vision', 'Hệ thống nhận diện khuôn mặt thời gian thực.', this)"
+                class="menu-btn sub-menu-item"
+              >
+                AI Vision System
+              </button>
+              <button
+                onclick="loadProject('E-Commerce App', 'Nền tảng bán hàng tích hợp thanh toán.', this)"
+                class="menu-btn sub-menu-item"
+              >
+                Robot arm
+              </button>
+              <button onclick="loadExternalContent('', 'Voice Recognition', this)" class="menu-btn sub-menu-item">
+                Voice Recognition
+              </button>
+            </div>
+          </div>
+
+          <!-- Thư viện kiến thức -->
+          <div class="space-y-4">
+            <h2 class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-2">
+              Thư viện kiến thức
+            </h2>
+
+            <div class="space-y-1">
+              <button onclick="toggleFolder('cpp-list')" class="nav-button-primary">
+                <span class="flex items-center">
+                  <span class="mr-3 group-hover:scale-110 transition-transform">💻</span> C++ Programming
+                </span>
+                <svg
+                  id="icon-cpp-list"
+                  class="w-4 h-4 transition-transform rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+
+              <div id="cpp-list" class="pl-4 space-y-4 mt-1 border-l-2 border-slate-100 ml-4 mb-4">
+                <div>
                   <button
-                    onclick="loadExternalContent('https://raymondtruongdev.github.io/raymond_doc/cpp/pointer/pointer_01.html', 'Pointer Basics', this)"
-                    class="menu-btn sub-menu-item">Cơ bản về Pointer</button>
-                  <button
-                    onclick="loadExternalContent('https://raymondtruongdev.github.io/raymond_doc/cpp/pointer/C++ Shared & Weak Pointers.html', 'Shared & Weak Pointers', this)"
-                    class="menu-btn sub-menu-item">Shared & Weak Pointers</button>
+                    onclick="toggleFolder('pointer-list')"
+                    class="w-full flex items-center justify-between px-2 py-1 text-blue-600 hover:text-blue-800 transition"
+                  >
+                    <span class="text-[11px] font-black uppercase tracking-widest italic">Pointer</span>
+                  </button>
+                  <div id="pointer-list" class="space-y-1 mt-1">
+                    <button
+                      onclick="loadExternalContent('./cpp/pointer/pointer_01.html', 'Pointer Basics', this)"
+                      class="menu-btn sub-menu-item"
+                    >
+                      Cơ bản về Pointer
+                    </button>
+                    <button
+                      onclick="
+                        loadExternalContent(
+                          './cpp/pointer/C++ Shared & Weak Pointers.html',
+                          'Shared & Weak Pointers',
+                          this,
+                        )
+                      "
+                      class="menu-btn sub-menu-item"
+                    >
+                      Shared & Weak Pointers
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <button onclick="toggleFolder('ml-list')" class="nav-button-primary">
+                <span class="flex items-center">
+                  <span class="mr-3 group-hover:scale-110 transition-transform">🤖</span> Machine learning
+                </span>
+                <svg
+                  id="icon-ml-list"
+                  class="w-4 h-4 transition-transform rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+              <div id="ml-list" class="pl-4 space-y-4 mt-1 border-l-2 border-slate-100 ml-4 mb-4">
+                <div class="space-y-1 mt-1">
+                  <button onclick="loadExternalContent('', 'Computer Vision', this)" class="menu-btn sub-menu-item">
+                    Computer Vision
+                  </button>
+                  <button onclick="loadExternalContent('', 'Machine Learning', this)" class="menu-btn sub-menu-item">
+                    Machine Learning
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-          
-          <div class="space-y-1">
-            <button onclick="toggleFolder('ml-list')" class="nav-button-primary">
-              <span class="flex items-center">
-                <span class="mr-3 group-hover:scale-110 transition-transform">🤖</span> Machine learning
+        </nav>
+
+        <div
+          class="p-6 border-t border-slate-100 text-[10px] text-slate-400 text-center uppercase tracking-[0.25em] font-bold"
+        >
+          Raymond © 2026
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <main id="content-container" class="flex-1 overflow-y-auto bg-white relative">
+        <div id="overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-slate-900/40 z-30 md:hidden"></div>
+
+        <div id="main-content" class="w-full h-full">
+          <!-- Project Detail View -->
+          <div id="project-viewer" class="hidden animate-fadeIn max-w-4xl mx-auto px-8 py-12">
+            <h2 id="project-title" class="text-4xl font-black mb-4 tracking-tight text-slate-800 uppercase">
+              Project Title
+            </h2>
+            <div class="bg-indigo-500 h-1.5 w-24 mb-8 rounded-full"></div>
+            <p id="project-desc" class="text-slate-600 mb-10 text-lg leading-relaxed font-medium">
+              Mô tả dự án sẽ hiển thị tại đây.
+            </p>
+            <div
+              class="p-20 border-2 border-dashed border-slate-200 rounded-[2rem] text-center text-slate-400 bg-slate-50/50"
+            >
+              <p class="text-sm font-bold uppercase tracking-widest">Nội dung chi tiết đang được cập nhật</p>
+            </div>
+          </div>
+
+          <!-- Iframe Viewer -->
+          <div id="iframe-viewer" class="w-full h-full flex flex-col">
+            <div
+              id="iframe-header"
+              class="bg-white px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0"
+            >
+              <span class="flex items-center text-[10px] text-slate-400 font-bold tracking-[0.2em]">
+                <span
+                  id="status-dot"
+                  class="w-2.5 h-2.5 bg-green-500 rounded-full mr-3 shadow-[0_0_12px_rgba(34,197,94,0.5)]"
+                ></span>
+                ĐANG XEM: <strong id="current-doc-title" class="ml-1.5 text-slate-900">...</strong>
               </span>
-              <svg id="icon-ml-list" class="w-4 h-4 transition-transform rotate-180" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-            <div id="ml-list" class="pl-4 space-y-4 mt-1 border-l-2 border-slate-100 ml-4 mb-4">
-              <div class="space-y-1 mt-1">
-                <button onclick="loadExternalContent('', 'Computer Vision', this)" class="menu-btn sub-menu-item">Computer Vision</button>
-                <button onclick="loadExternalContent('', 'Machine Learning', this)" class="menu-btn sub-menu-item">Machine Learning</button>
+              <a
+                id="external-link"
+                href="#"
+                target="_blank"
+                class="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition font-bold text-[10px] shadow-indigo-100 shadow-lg flex items-center gap-2 tracking-widest uppercase"
+              >
+                Mở tab mới
+              </a>
+            </div>
+
+            <div class="flex-1 relative bg-white">
+              <div id="iframe-loader" class="absolute inset-0 flex items-center justify-center bg-white z-10 hidden">
+                <div class="flex flex-col items-center gap-4">
+                  <div class="w-12 h-12 border-4 border-indigo-50 border-t-indigo-600 rounded-full animate-spin"></div>
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]"
+                    >Đang đồng bộ dữ liệu</span
+                  >
+                </div>
               </div>
+              <iframe id="content-frame" src="" class="w-full h-full" onload="hideLoader()"></iframe>
             </div>
           </div>
         </div>
-      </nav>
+      </main>
+    </div>
 
-      <div class="p-6 border-t border-slate-100 text-[10px] text-slate-400 text-center uppercase tracking-[0.25em] font-bold">
-        Raymond © 2026
-      </div>
-    </aside>
+    <script>
+      const projectViewer = document.getElementById("project-viewer");
+      const iframeViewer = document.getElementById("iframe-viewer");
+      const contentFrame = document.getElementById("content-frame");
+      const currentDocTitle = document.getElementById("current-doc-title");
+      const externalLink = document.getElementById("external-link");
+      const iframeLoader = document.getElementById("iframe-loader");
+      const statusDot = document.getElementById("status-dot");
 
-    <!-- Content Area -->
-    <main id="content-container" class="flex-1 overflow-y-auto bg-white relative">
-      <div id="overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-slate-900/40 z-30 md:hidden"></div>
+      const UPDATE_SOON_URL = "../utils/updatesoon.html";
 
-      <div id="main-content" class="w-full h-full">
-        <!-- Project Detail View -->
-        <div id="project-viewer" class="hidden animate-fadeIn max-w-4xl mx-auto px-8 py-12">
-          <h2 id="project-title" class="text-4xl font-black mb-4 tracking-tight text-slate-800 uppercase">Project Title</h2>
-          <div class="bg-indigo-500 h-1.5 w-24 mb-8 rounded-full"></div>
-          <p id="project-desc" class="text-slate-600 mb-10 text-lg leading-relaxed font-medium">Mô tả dự án sẽ hiển thị tại đây.</p>
-          <div class="p-20 border-2 border-dashed border-slate-200 rounded-[2rem] text-center text-slate-400 bg-slate-50/50">
-            <p class="text-sm font-bold uppercase tracking-widest">Nội dung chi tiết đang được cập nhật</p>
-          </div>
-        </div>
+      // Hàm điều hướng đặc biệt từ Navbar
+      function navToProject() {
+        // 1. Mở folder project-list nếu đang đóng
+        const folder = document.getElementById("project-list");
+        if (folder && folder.classList.contains("hidden")) {
+          toggleFolder("project-list");
+        }
 
-        <!-- Iframe Viewer -->
-        <div id="iframe-viewer" class="w-full h-full flex flex-col">
-          <div id="iframe-header" class="bg-white px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0">
-            <span class="flex items-center text-[10px] text-slate-400 font-bold tracking-[0.2em]">
-              <span id="status-dot" class="w-2.5 h-2.5 bg-green-500 rounded-full mr-3 shadow-[0_0_12px_rgba(34,197,94,0.5)]"></span>
-              ĐANG XEM: <strong id="current-doc-title" class="ml-1.5 text-slate-900">...</strong>
-            </span>
-            <a id="external-link" href="#" target="_blank" class="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition font-bold text-[10px] shadow-indigo-100 shadow-lg flex items-center gap-2 tracking-widest uppercase">
-              Mở tab mới
-            </a>
-          </div>
-
-          <div class="flex-1 relative bg-white">
-            <div id="iframe-loader" class="absolute inset-0 flex items-center justify-center bg-white z-10 hidden">
-              <div class="flex flex-col items-center gap-4">
-                <div class="w-12 h-12 border-4 border-indigo-50 border-t-indigo-600 rounded-full animate-spin"></div>
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Đang đồng bộ dữ liệu</span>
-              </div>
-            </div>
-            <iframe id="content-frame" src="" class="w-full h-full" onload="hideLoader()"></iframe>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <script>
-    const projectViewer = document.getElementById('project-viewer');
-    const iframeViewer = document.getElementById('iframe-viewer');
-    const contentFrame = document.getElementById('content-frame');
-    const currentDocTitle = document.getElementById('current-doc-title');
-    const externalLink = document.getElementById('external-link');
-    const iframeLoader = document.getElementById('iframe-loader');
-    const statusDot = document.getElementById('status-dot');
-
-    const UPDATE_SOON_URL = 'https://raymondtruongdev.github.io/raymond_doc/utils/updatesoon.html';
-
-    // Hàm điều hướng đặc biệt từ Navbar
-    function navToProject() {
-      // 1. Mở folder project-list nếu đang đóng
-      const folder = document.getElementById('project-list');
-      if (folder && folder.classList.contains('hidden')) {
-        toggleFolder('project-list');
-      }
-      
-      // 2. Load dự án đầu tiên (AI Vision) và highlight nó
-      const firstProjectBtn = document.getElementById('btn-ai-vision');
-      loadProject('Dự án AI Vision', 'Hệ thống nhận diện khuôn mặt thời gian thực.', firstProjectBtn);
-    }
-
-    function highlightMenuItem(element) {
-      if (!element) return;
-      const allButtons = document.querySelectorAll('.menu-btn');
-      allButtons.forEach(btn => btn.classList.remove('menu-item-active'));
-      element.classList.add('menu-item-active');
-    }
-
-    function toggleFolder(id) {
-      const el = document.getElementById(id);
-      const icon = document.getElementById('icon-' + id);
-      if (el) el.classList.toggle('hidden');
-      if (icon) icon.classList.toggle('rotate-180');
-    }
-
-    function showLoader() { iframeLoader.classList.remove('hidden'); }
-    function hideLoader() { iframeLoader.classList.add('hidden'); }
-
-    function hideAllViewers() {
-      projectViewer.classList.add('hidden');
-      iframeViewer.classList.add('hidden');
-      statusDot.className = 'w-2.5 h-2.5 rounded-full mr-3 bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.5)]';
-    }
-
-    function loadIntroduction(element) {
-      const targetEl = element || document.getElementById('btn-intro');
-      loadExternalContent('https://raymondtruongdev.github.io/raymond_doc/intro/introduction.html', 'GIỚI THIỆU BẢN THÂN', targetEl);
-    }
-
-    function loadProject(title, description, element) {
-      hideAllViewers();
-      projectViewer.classList.remove('hidden');
-      document.getElementById('project-title').innerText = title;
-      document.getElementById('project-desc').innerText = description;
-      highlightMenuItem(element);
-      
-      // Tự động cuộn sidebar đến vị trí nút nếu nó bị khuất
-      if(element) element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      
-      if (window.innerWidth < 768) {
-        // Đóng sidebar trên mobile sau khi chọn
-        const sidebar = document.getElementById('sidebar');
-        if(!sidebar.classList.contains('-translate-x-full')) toggleSidebar();
-      }
-    }
-
-    function loadExternalContent(url, title, element) {
-      hideAllViewers();
-      iframeViewer.classList.remove('hidden');
-      currentDocTitle.innerText = title.toUpperCase();
-      highlightMenuItem(element);
-
-      if (!url || url === '#' || url === '') {
-        externalLink.classList.add('invisible');
-        statusDot.className = 'w-2.5 h-2.5 rounded-full mr-3 bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]';
-        contentFrame.src = UPDATE_SOON_URL;
-      } else {
-        externalLink.classList.remove('invisible');
-        externalLink.href = url;
-        showLoader();
-        contentFrame.src = url;
+        // 2. Load dự án đầu tiên (AI Vision) và highlight nó
+        const firstProjectBtn = document.getElementById("btn-ai-vision");
+        loadProject("Dự án AI Vision", "Hệ thống nhận diện khuôn mặt thời gian thực.", firstProjectBtn);
       }
 
-      if (window.innerWidth < 768) {
-        const sidebar = document.getElementById('sidebar');
-        if(!sidebar.classList.contains('-translate-x-full')) toggleSidebar();
+      function highlightMenuItem(element) {
+        if (!element) return;
+        const allButtons = document.querySelectorAll(".menu-btn");
+        allButtons.forEach((btn) => btn.classList.remove("menu-item-active"));
+        element.classList.add("menu-item-active");
       }
-    }
 
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('-translate-x-full');
-      document.getElementById('overlay').classList.toggle('hidden');
-    }
+      function toggleFolder(id) {
+        const el = document.getElementById(id);
+        const icon = document.getElementById("icon-" + id);
+        if (el) el.classList.toggle("hidden");
+        if (icon) icon.classList.toggle("rotate-180");
+      }
 
-    window.onload = function () {
-      const btnIntro = document.getElementById('btn-intro');
-      loadIntroduction(btnIntro);
-    };
-  </script>
-</body>
+      function showLoader() {
+        iframeLoader.classList.remove("hidden");
+      }
+      function hideLoader() {
+        iframeLoader.classList.add("hidden");
+      }
 
+      function hideAllViewers() {
+        projectViewer.classList.add("hidden");
+        iframeViewer.classList.add("hidden");
+        statusDot.className = "w-2.5 h-2.5 rounded-full mr-3 bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.5)]";
+      }
+
+      function loadIntroduction(element) {
+        const targetEl = element || document.getElementById("btn-intro");
+        loadExternalContent("./intro/introduction.html", "GIỚI THIỆU BẢN THÂN", targetEl);
+      }
+
+      function loadProject(title, description, element) {
+        hideAllViewers();
+        projectViewer.classList.remove("hidden");
+        document.getElementById("project-title").innerText = title;
+        document.getElementById("project-desc").innerText = description;
+        highlightMenuItem(element);
+
+        // Tự động cuộn sidebar đến vị trí nút nếu nó bị khuất
+        if (element) element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+        if (window.innerWidth < 768) {
+          // Đóng sidebar trên mobile sau khi chọn
+          const sidebar = document.getElementById("sidebar");
+          if (!sidebar.classList.contains("-translate-x-full")) toggleSidebar();
+        }
+      }
+
+      function loadExternalContent(url, title, element) {
+        hideAllViewers();
+        iframeViewer.classList.remove("hidden");
+        currentDocTitle.innerText = title.toUpperCase();
+        highlightMenuItem(element);
+
+        if (!url || url === "#" || url === "") {
+          externalLink.classList.add("invisible");
+          statusDot.className = "w-2.5 h-2.5 rounded-full mr-3 bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]";
+          contentFrame.src = UPDATE_SOON_URL;
+        } else {
+          externalLink.classList.remove("invisible");
+          externalLink.href = url;
+          showLoader();
+          contentFrame.src = url;
+        }
+
+        if (window.innerWidth < 768) {
+          const sidebar = document.getElementById("sidebar");
+          if (!sidebar.classList.contains("-translate-x-full")) toggleSidebar();
+        }
+      }
+
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("-translate-x-full");
+        document.getElementById("overlay").classList.toggle("hidden");
+      }
+
+      window.onload = function () {
+        const btnIntro = document.getElementById("btn-intro");
+        loadIntroduction(btnIntro);
+      };
+    </script>
+  </body>
 </html>

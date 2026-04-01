@@ -1,0 +1,78 @@
+<style id="shared-tailwind-styles" type="text/tailwindcss">
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap");
+
+  @layer components {
+    .title-text {
+      @apply text-3xl md:text-4xl font-extrabold mb-2 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400;
+    }
+    .title-box {
+      @apply color-title-bg py-5 px-2 text-center;
+    }
+
+    /* Lớp cho toàn bộ vùng footer */
+    .footer-box {
+      @apply color-title-bg text-slate-500 py-5 text-center text-sm border-t border-slate-800 mx-auto px-6;
+    }
+
+    .code-block {
+      @apply rounded-2xl overflow-hidden shadow-lg border border-slate-800 bg-[#282c34];
+    }
+    .icon-badge {
+      @apply text-white p-4 rounded-2xl mr-5 shadow-xl group-hover:scale-110 transition-transform;
+    }
+    .icon-badge-primary {
+      @apply icon-badge bg-emerald-600 shadow-xl shadow-emerald-200 w-12 h-12 flex items-center;
+    }
+    .card-info {
+      @apply bg-white p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center transition-all duration-300 hover:shadow-md;
+    }
+    .card-info-title {
+      @apply font-bold text-slate-500 uppercase text-xs tracking-wider mb-4;
+    }
+    .list-item {
+      @apply flex items-start text-lg space-x-3;
+    }
+    .step-badge {
+      @apply w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 shadow-sm;
+    }
+    .step-badge-emerald {
+      @apply bg-emerald-600 text-white;
+    }
+    .heading-3 {
+      @apply font-bold text-xl text-purple-700;
+    }
+    .sub-heading {
+      @apply font-bold text-slate-400 uppercase text-xs tracking-[0.2em] mb-6;
+    }
+    .border-l-prime-blue {
+      border-left: 4px solid #3b82f6;
+    }
+    .border-l-prime-emerald {
+      border-left: 4px solid #10b981;
+    }
+    .border-l-prime-amber {
+      border-left: 4px solid #f59e0b;
+    }
+    .border-l-prime-purple {
+      border-left: 4px solid #8b5cf6;
+    }
+    .color-title-bg {
+      background-color: #0f172a;
+    }
+  }
+
+  body {
+    font-family: "Inter", sans-serif;
+  }
+
+  pre {
+    margin: 0 !important;
+    font-size: 0.95rem;
+  }
+
+  h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #04966a;
+  }
+</style>
