@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAYMOND | Portfolio</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+
+    <!-- Load style from external file  -->
+    <link rel="prefetch" id="style-template" href="../global-styles.html" />
+    <link rel="prefetch" id="footer-template" href="../utils/footer.html" />
+    <script type="module" src="../utils/components/initComponents.js"></script>
+    <script>
+      // Hàm dùng chung để fetch và inject nội dung từ file external
+      async function injectExternalHTML(templateId, placeholderId, isStyle = false) {
+        try {
+          const linkTag = document.getElementById(templateId);
+          if (!linkTag) return;
+
+          const path = linkTag.getAttribute("href");
+          const response = await fetch(path);
+          const htmlText = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(htmlText, "text/html");
+
+          if (isStyle) {
+            const styleContent = doc.getElementById("shared-tailwind-styles");
+            if (styleContent) document.head.appendChild(styleContent);
+          } else {
+            const content = doc.getElementById("shared-footer-content");
+            const placeholder = document.getElementById(placeholderId);
+            if (content && placeholder) placeholder.appendChild(content);
+          }
+        } catch (e) {
+          console.error(`Lỗi khi load tài nguyên từ ${templateId}:`, e);
+        }
+      }
+
+      // Khởi chạy khi DOM đã sẵn sàng
+      document.addEventListener("DOMContentLoaded", async () => {
+        // 1. Load Styles và Footer song song
+        await Promise.all([
+          injectExternalHTML("style-template", null, true),
+          injectExternalHTML("footer-template", "footer-placeholder", false),
+        ]);
+
+        // 2. Kích hoạt Highlight.js sau khi nội dung đã load xong
+        hljs.highlightAll();
+      });
+    </script>
+  </head>
+
+  <body class="bg-slate-50 text-slate-900 p-4">
+    <header class="title-box">
+      <h1 class="title-text">Main title: Building Static HTML Pages with Reusable JavaScript Components</h1>
+      <p>Xây dựng trang HTML tĩnh với các component tái sử dụng bằng JavaScript</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-6">
+      <section class="mb-16">
+        <section-header number="1"> Introduction </section-header>
+        <p>
+          Các website hiện đại không phải lúc nào cũng cần đến framework phức tạp. Bằng cách kết hợp HTML tĩnh với các
+          component JavaScript có thể tái sử dụng, bạn có thể xây dựng những trang web nhẹ, dễ bảo trì và có khả năng mở
+          rộng tốt. Cách tiếp cận này giúp tổ chức giao diện thành các phần nhỏ như card, code block hay section nội
+          dung, từ đó làm code rõ ràng và dễ phát triển hơn. Đặc biệt phù hợp với trang tài liệu, blog cá nhân hoặc
+          knowledge base. Trong bài viết này, chúng ta sẽ tìm hiểu cách xây dựng và tái sử dụng component bằng
+          JavaScript thuần.
+        </p>
+
+        <p>
+          <strong class="text-slate-900 font-semibold">
+            Hãy add file
+            <span class="text-blue-600 font-medium">initComponents.js</span>
+            vào trong project:
+          </strong>
+        </p>
+
+        <code-block language="html">
+          <pre>
+&lt;script type="module" src="../../utils/components/initComponents.js"&gt;&lt;/script&gt;
+
+          </pre>
+        </code-block>
+      </section>
+
+      <section class="mb-16">
+        <section-header number="2"> Demo </section-header>
+        <p>
+          Sau đây là các ví dụ về cách sử dụng các component đã được định nghĩa trong file
+          <code>initComponents.js</code>. Bạn có thể copy và paste trực tiếp vào trong file HTML của mình để sử dụng.
+        </p>
+
+        <!-- component TextIconItem -->
+        <section>
+          <h3>2.1 Section Header</h3>
+
+          <p>
+            <strong>Section Header:</strong> được sử dụng để hiển thị tiêu đề cho từng section nội dung, giúp phân chia
+            rõ ràng các phần trong trang.
+          </p>
+
+          <code-block language="html">
+            <pre>
+&lt;section-header number="0"&gt; This is a section header &lt;/section-header&gt;
+  </pre
+            >
+          </code-block>
+          <div class="h-4"></div>
+          <div class="w-full flex justify-center">
+            <section-header number="0"> This is a section header </section-header>
+          </div>
+        </section>
+
+        <!-- component TextIconItem -->
+        <section>
+          <h3>2.2 Text Icon Item</h3>
+
+          <p><strong>TextIconItem:</strong> được sử dụng để hiển thị một dòng văn bản kèm theo icon.</p>
+
+          <code-block language="html">
+            <pre>
+&lt;text-icon-item icon="→" iconColor="text-blue-600"&gt;
+  &lt;strong&gt;Ví dụ:&lt;/strong&gt;  Minh họa sử dụng  &lt;code&gt;text-icon-item&lt;/code&gt; gồm icon mũi tên + text nằm trên 1 dòng.
+&lt;/text-icon-item&gt;
+  </pre
+            >
+          </code-block>
+          <div class="h-4"></div>
+          <div class="w-full flex justify-center py-2">
+            <text-icon-item icon="→" iconColor="text-blue-600">
+              <strong>Ví dụ:</strong> Minh họa sử dụng <code>text-icon-item</code> gồm icon mũi tên + text nằm trên 1
+              dòng.
+            </text-icon-item>
+          </div>
+        </section>
+
+        <!-- component AlertBox -->
+        <section>
+          <h3>2.3 Alert Box</h3>
+
+          <p><strong>AlertBox:</strong> được sử dụng để hiển thị một thông báo quan trọng.</p>
+
+          <code-block language="html">
+            <pre>
+&lt;alert-box title="Chú ý"&gt;
+  bạn có thể chạy trực tiếp trang web này trên các host như Github Pages mà không cần backend phức tạp. Chỉ cần
+  đảm bảo rằng các file HTML, CSS và JavaScript được tổ chức hợp lý trong repository của bạn.
+&lt;/alert-box&gt;
+  </pre
+            >
+          </code-block>
+
+          <div class="h-4"></div>
+
+          <div class="w-full flex justify-center py-2">
+            <alert-box title="Chú ý">
+              bạn có thể chạy trực tiếp trang web này trên các host như Github Pages mà không cần backend phức tạp. Chỉ
+              cần đảm bảo rằng các file HTML, CSS và JavaScript được tổ chức hợp lý trong repository của bạn.
+            </alert-box>
+          </div>
+        </section>
+
+        <!-- component CardInfo -->
+        <section>
+          <h3>2.4 Card Info</h3>
+
+          <p><strong>CardInfo:</strong> được sử dụng để hiển thị thông tin dưới dạng card.</p>
+
+          <div class="h-4"></div>
+
+          <article class="grid lg:grid-cols-2 gap-4 mb-6 items-stretch mb-3 mt-3">
+            <card-info
+              title="CardInfo title"
+              items='[
+    {
+      "icon": "→",
+      "iconColor": "text-blue-600",
+      "content": "<strong> Step 1:</strong>  mô tả bước khởi tạo"
+    },
+    {
+      "icon": "→",
+      "iconColor": "text-blue-600",
+      "content": "<strong> Step 2:</strong> mô tả bước sử dụng"
+    }
+  ]'
+            ></card-info>
+
+            <code-block language="html">
+              <pre>
+&lt;card-info
+  title="CardInfo title"
+  items='[
+    {
+      "icon": "→",
+      "iconColor": "text-blue-600",
+      "content": "&lt;strong&gt; Step 1:&lt;/strong&gt;  mô tả bước khởi tạo"
+    },
+    {
+      "icon": "→",
+      "iconColor": "text-blue-600",
+      "content": "&lt;strong&gt; Step 2:&lt;/strong&gt; mô tả bước sử dụng"
+    }
+  ]'
+&gt;
+&lt;/card-info&gt;
+  </pre
+              >
+            </code-block>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+  </body>
+</html>
