@@ -53,9 +53,30 @@
 
     .path-edge {
       stroke: #2563eb !important;
-      stroke-width: 4px;
+      stroke-width: 2px;
       stroke-dasharray: none;
       opacity: 1 !important;
+    }
+
+    /* ĐƯỜNG ĐÃ/ĐANG XÉT - GIỮ MÀU CAM */
+    .checking-edge {
+      stroke: #f97316 !important;
+      stroke-width: 2px;
+      opacity: 1 !important;
+      stroke-dasharray: none;
+    }
+
+    /* ĐIỂM ĐẦU VÀ CUỐI ĐẶC BIỆT */
+    .start-node-init {
+      fill: #1e40af !important;
+      stroke: #1e3a8a;
+      stroke-width: 3px;
+    }
+
+    .end-node-init {
+      fill: #db2777 !important;
+      stroke: #9d174d !important;
+      stroke-width: 3px;
     }
 
     .edge-label-bg {
@@ -178,6 +199,9 @@
               </marker>
               <marker id="arrowhead-path" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
                 <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb" />
+              </marker>
+              <marker id="arrowhead-checking" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#f97316" />
               </marker>
             </defs>
             <g id="edges-layer"></g>
@@ -442,11 +466,8 @@
 
       for (let i = 0; i < numNodes; i++) {
         const cell = cellIndices[i];
-        const jitterX = (rng.next() - 0.5) * (cellW * 0.6);
-        const jitterY = (rng.next() - 0.5) * (cellH * 0.6);
-        const x = padding + (cell.c + 0.5) * cellW + jitterX;
-        const y = padding + (cell.r + 0.5) * cellH + jitterY;
-
+        const x = padding + (cell.c + 0.5) * cellW + (rng.next() - 0.5) * (cellW * 0.6);
+        const y = padding + (cell.r + 0.5) * cellH + (rng.next() - 0.5) * (cellH * 0.6);
         nodes.push({ id: i, name: CITY_NAMES[i], x, y });
         adj[i] = [];
       }
@@ -485,7 +506,7 @@
 
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", `M${startX},${startY} Q${midX},${midY} ${endX},${endY}`);
-        path.setAttribute("class", "edge stroke-slate-300 fill-none opacity-30");
+        path.setAttribute("class", "edge stroke-slate-400 fill-none opacity-80");
         path.setAttribute("stroke-width", "1.5");
         path.setAttribute("marker-end", "url(#arrowhead)");
         path.id = `edge-${edge.from}-${edge.to}`;
@@ -536,13 +557,22 @@
         unvisited.push(n.id);
         const c = document.getElementById(`node-circle-${n.id}`);
         const t = document.getElementById(`node-text-${n.id}`);
-        if (c) { c.className.baseVal = "node"; c.setAttribute('fill', 'white'); c.setAttribute('r', '15'); }
+        if (c) {
+          c.className.baseVal = "node";
+          c.setAttribute('fill', 'white');
+          c.setAttribute('r', '15');
+          if (n.id === startNodeId) c.classList.add('start-node-init');
+          if (n.id === endNodeId) c.classList.add('end-node-init');
+        }
         if (t) t.className.baseVal = "text-[10px] font-bold fill-slate-800";
       });
 
       edges.forEach(e => {
         const el = document.getElementById(`edge-${e.from}-${e.to}`);
-        if (el) { el.classList.remove('path-edge'); el.classList.add('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead)"); }
+        if (el) {
+          el.className.baseVal = "edge stroke-slate-400 fill-none opacity-80";
+          el.setAttribute("marker-end", "url(#arrowhead)");
+        }
       });
 
       gScore[startNodeId] = 0;
@@ -567,8 +597,9 @@
       openSet.sort((a, b) => fScore[a] - fScore[b]);
       const u = openSet[0];
 
-      const cur = document.getElementById(`node-circle-${u}`);
+      // Đánh dấu nút hiện tại đang xét
       nodes.forEach(n => document.getElementById(`node-circle-${n.id}`).classList.remove('current-node'));
+      const cur = document.getElementById(`node-circle-${u}`);
       cur.classList.add('current-node');
 
       log(`🔍 Xét ${CITY_NAMES[u]}: g=${gScore[u]}, h=${hScore[u]} ➔ f=${fScore[u]}`, 'process');
@@ -588,6 +619,13 @@
             previous[v] = u;
             gScore[v] = tentativeG;
             fScore[v] = f;
+
+            // TÔ MÀU CAM VÀ GIỮ LẠI CHO ĐƯỜNG NÀY
+            const edgeEl = document.getElementById(`edge-${u}-${v}`);
+            if (edgeEl) {
+              edgeEl.classList.add('checking-edge');
+              edgeEl.setAttribute("marker-end", "url(#arrowhead-checking)");
+            }
           } else {
             log(`   - ${CITY_NAMES[v]}: f=${tentativeG + hScore[v]} >= ${fScore[v]} (Không tốt hơn)`, 'muted');
           }
@@ -597,7 +635,10 @@
       visited.add(u);
 
       setTimeout(() => {
-        cur.classList.remove('current-node'); cur.classList.add('visited-node');
+        cur.classList.remove('current-node');
+        if (u !== startNodeId && u !== endNodeId) {
+          cur.classList.add('visited-node');
+        }
         document.getElementById(`node-text-${u}`).classList.add('visited-node-text');
 
         if (u === endNodeId) {
@@ -625,7 +666,10 @@
       while (previous[c] !== null) {
         const p = previous[c];
         const el = document.getElementById(`edge-${p}-${c}`);
-        if (el) { el.classList.add('path-edge'); el.classList.remove('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead-path)"); }
+        if (el) {
+          el.className.baseVal = "edge path-edge fill-none";
+          el.setAttribute("marker-end", "url(#arrowhead-path)");
+        }
         document.getElementById(`node-circle-${c}`).classList.add('path-node');
         c = p;
       }

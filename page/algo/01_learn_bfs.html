@@ -66,8 +66,9 @@
       r: 18;
     }
 
+    /* Đổi màu đường đi ngắn nhất cuối cùng thành màu vàng */
     .path-edge {
-      stroke: #2563eb !important;
+      stroke: #eab308 !important;
       stroke-width: 4px;
       stroke-dasharray: none;
       opacity: 1 !important;
@@ -112,6 +113,37 @@
       border-radius: 0.75rem;
       margin: 1rem 0;
       font-size: 0.85rem;
+    }
+
+    /* THÊM MỚI CSS: Màu sắc đặc biệt cho điểm đầu và điểm cuối gốc */
+    .start-node-init {
+      fill: #a855f7 !important;
+      /* Màu tím quý phái */
+      stroke: #7e22ce !important;
+      stroke-width: 3px !important;
+    }
+
+    .start-node-init-text {
+      fill: white !important;
+    }
+
+    .end-node-init {
+      fill: #f97316 !important;
+      /* Màu cam nổi bật */
+      stroke: #ea580c !important;
+      stroke-width: 3px !important;
+    }
+
+    .end-node-init-text {
+      fill: white !important;
+    }
+
+    /* Lớp CSS làm nổi bật các cạnh nối giữa các đỉnh đang xét duyệt bằng màu vàng nhạt */
+    .evaluated-edge {
+      stroke: #f59e0b !important;
+      stroke-width: 2.5px !important;
+      opacity: 0.8 !important;
+      stroke-dasharray: none !important;
     }
   </style>
 </head>
@@ -207,7 +239,7 @@
                 <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
               </marker>
               <marker id="arrowhead-path" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-                <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb" />
+                <polygon points="0 0, 10 3.5, 0 7" fill="#eab308" />
               </marker>
             </defs>
             <g id="edges-layer"></g>
@@ -404,7 +436,7 @@ graph = {
 }
 
 # Chạy giải thuật
-result = bfs(graph, 'A')</code></pre>
+result = bytes = bfs(graph, 'A')</code></pre>
             </div>
           </div>
         </div>
@@ -484,7 +516,7 @@ result = bfs(graph, 'A')</code></pre>
         const endX = to.x - ux * 23, endY = to.y - uy * 23;
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", `M${startX},${startY} L${endX},${endY}`);
-        path.setAttribute("class", "edge stroke-slate-300 fill-none opacity-30");
+        path.setAttribute("class", "edge stroke-slate-400 fill-none opacity-90");
         path.setAttribute("stroke-width", "1.5");
         path.setAttribute("marker-end", "url(#arrowhead)");
         path.id = `edge-${edge.from}-${edge.to}`;
@@ -504,6 +536,22 @@ result = bfs(graph, 'A')</code></pre>
         text.id = `node-text-${node.id}`; text.textContent = node.name;
         g.appendChild(circle); g.appendChild(text); nl.appendChild(g);
       });
+
+      // CHỈNH SỬA: Đánh dấu màu ban đầu cho đỉnh xuất phát và kết thúc ngay khi tạo đồ thị
+      applyInitialColors();
+    }
+
+    // HÀM MỚI: Tô màu phân biệt điểm đầu (Tím) và điểm cuối (Cam) ngay từ đầu
+    function applyInitialColors() {
+      const startCircle = document.getElementById(`node-circle-${startNodeId}`);
+      const startText = document.getElementById(`node-text-${startNodeId}`);
+      const endCircle = document.getElementById(`node-circle-${endNodeId}`);
+      const endText = document.getElementById(`node-text-${endNodeId}`);
+
+      if (startCircle) startCircle.classList.add('start-node-init');
+      if (startText) startText.classList.add('start-node-init-text');
+      if (endCircle) endCircle.classList.add('end-node-init');
+      if (endText) endText.classList.add('end-node-init-text');
     }
 
     function resetAlgo() {
@@ -518,7 +566,10 @@ result = bfs(graph, 'A')</code></pre>
       });
       edges.forEach(e => {
         const el = document.getElementById(`edge-${e.from}-${e.to}`);
-        if (el) { el.classList.remove('path-edge'); el.classList.add('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead)"); }
+        if (el) {
+          el.className.baseVal = "edge stroke-slate-400 fill-none opacity-90"; // Reset sạch class
+          el.setAttribute("marker-end", "url(#arrowhead)");
+        }
       });
 
       levels[startNodeId] = 0;
@@ -526,6 +577,9 @@ result = bfs(graph, 'A')</code></pre>
       queue.push(startNodeId);
 
       log(`📍 BẮT ĐẦU BFS từ đỉnh ${CITY_NAMES[startNodeId]}`, 'init');
+
+      // Áp dụng lại màu sắc phân biệt sau khi reset trạng thái giải thuật
+      applyInitialColors();
       updateTables();
     }
 
@@ -540,8 +594,11 @@ result = bfs(graph, 'A')</code></pre>
 
       const u = queue.shift();
       const cur = document.getElementById(`node-circle-${u}`);
-      nodes.forEach(n => document.getElementById(`node-circle-${n.id}`).classList.remove('current-node'));
-      cur.classList.add('current-node');
+      nodes.forEach(n => {
+        const circle = document.getElementById(`node-circle-${n.id}`);
+        if (circle) circle.classList.remove('current-node');
+      });
+      if (cur) cur.classList.add('current-node');
 
       log(`🔍 Đang xét đỉnh ${CITY_NAMES[u]} (Tầng ${levels[u]})`, 'process');
 
@@ -562,15 +619,33 @@ result = bfs(graph, 'A')</code></pre>
           queue.push(v);
           log(`   + Phát hiện ${CITY_NAMES[v]} (Tầng ${levels[v]}) - Thêm vào Queue`, 'success');
 
+          // CHỈNH SỬA: Tô màu vàng cho đường đi giữa đỉnh đang xét u và đỉnh kề v vừa tìm thấy
+          const edgeElement = document.getElementById(`edge-${u}-${v}`);
+          if (edgeElement) {
+            edgeElement.classList.add('evaluated-edge');
+          }
+
           const vCircle = document.getElementById(`node-circle-${v}`);
-          vCircle.setAttribute('stroke', '#3b82f6');
+          // Giữ nguyên logic gốc nhưng bổ sung nếu không phải điểm cuối thì đổi stroke nhẹ
+          if (vCircle && v !== endNodeId) {
+            vCircle.setAttribute('stroke', '#3b82f6');
+          }
         }
       });
 
       setTimeout(() => {
-        cur.classList.remove('current-node');
-        cur.classList.add('visited-node');
-        document.getElementById(`node-text-${u}`).classList.add('visited-node-text');
+        if (cur) {
+          cur.classList.remove('current-node');
+          // Nếu không phải điểm đầu/cuối gốc thì mới ghi đè hoàn toàn class visited gốc
+          if (u !== startNodeId && u !== endNodeId) {
+            cur.classList.add('visited-node');
+            const txt = document.getElementById(`node-text-${u}`);
+            if (txt) txt.classList.add('visited-node-text');
+          } else {
+            // Nếu là điểm đầu/cuối, giữ lại màu nền cũ nhưng cập nhật hiệu ứng đường viền visited nếu cần
+            cur.style.strokeWidth = "4px";
+          }
+        }
         updateTables();
       }, 200);
     }
@@ -593,11 +668,24 @@ result = bfs(graph, 'A')</code></pre>
       while (previous[c] !== null) {
         const p = previous[c];
         const el = document.getElementById(`edge-${p}-${c}`);
-        if (el) { el.classList.add('path-edge'); el.classList.remove('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead-path)"); }
-        document.getElementById(`node-circle-${c}`).classList.add('path-node');
+        if (el) {
+          el.className.baseVal = "edge"; // Xóa class cũ
+          el.classList.add('path-edge');
+          el.setAttribute("marker-end", "url(#arrowhead-path)");
+        }
+
+        // Chỉ đổi class sang màu path-node cho các node trung gian (không làm mất màu điểm đầu/cuối đặc biệt)
+        if (c !== startNodeId && c !== endNodeId) {
+          const cCircle = document.getElementById(`node-circle-${c}`);
+          if (cCircle) cCircle.classList.add('path-node');
+        }
         c = p;
       }
-      document.getElementById(`node-circle-${startNodeId}`).classList.add('path-node');
+      // Áp dụng viền dày lên cho điểm đầu/cuối khi tìm xong đường đi
+      const sCircle = document.getElementById(`node-circle-${startNodeId}`);
+      const eCircle = document.getElementById(`node-circle-${endNodeId}`);
+      if (sCircle) sCircle.style.stroke = "#2563eb";
+      if (eCircle) eCircle.style.stroke = "#2563eb";
     }
 
     function updateTables() {

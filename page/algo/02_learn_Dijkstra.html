@@ -57,16 +57,37 @@
     }
 
     .path-node {
-      fill: #2563eb !important;
-      stroke: #1e40af !important;
+      fill: #36ecec !important;
+      stroke: #198383 !important;
       r: 18;
+    }
+
+    /* Điểm đầu và cuối đặc biệt */
+    .start-node {
+      fill: #4f46e5 !important;
+      stroke: #3730a3 !important;
+      stroke-width: 4px !important;
+    }
+
+    .end-node {
+      fill: #db2777 !important;
+      stroke: #9d174d !important;
+      stroke-width: 4px !important;
     }
 
     .path-edge {
       stroke: #2563eb !important;
-      stroke-width: 4px;
+      stroke-width: 2px;
       stroke-dasharray: none;
       opacity: 1 !important;
+    }
+
+    /* Màu vàng cho các con đường đã được xét qua */
+    .considered-edge {
+      stroke: #f59e0b !important;
+      stroke-width: 1.5px;
+      opacity: 0.8 !important;
+      stroke-dasharray: none;
     }
 
     .edge-label-bg {
@@ -152,12 +173,12 @@
           <div class="space-y-3">
             <div class="grid grid-cols-1 gap-2">
               <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-1">Điểm đi</label>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-1">Điểm đi (S)</label>
                 <select id="startSelect"
                   class="w-full p-2 text-sm border border-slate-200 rounded-lg bg-slate-50 outline-none"></select>
               </div>
               <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-1">Điểm đến</label>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-1">Điểm đến (E)</label>
                 <select id="endSelect"
                   class="w-full p-2 text-sm border border-slate-200 rounded-lg bg-slate-50 outline-none"></select>
               </div>
@@ -197,6 +218,10 @@
               </marker>
               <marker id="arrowhead-path" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
                 <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb" />
+              </marker>
+              <!-- Marker cho đường đã xét (vàng) -->
+              <marker id="arrowhead-considered" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b" />
               </marker>
             </defs>
             <g id="edges-layer"></g>
@@ -450,7 +475,14 @@
           text.setAttribute("x", node.x); text.setAttribute("y", node.y + 4); text.setAttribute("text-anchor", "middle");
           text.setAttribute("class", "text-[10px] font-bold fill-slate-800");
           text.id = `node-text-${node.id}`; text.textContent = node.name;
-          g.appendChild(circle); g.appendChild(text); nl.appendChild(g);
+
+          // Nhãn phụ S/E
+          const subText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          subText.setAttribute("x", node.x); subText.setAttribute("y", node.y - 20); subText.setAttribute("text-anchor", "middle");
+          subText.setAttribute("class", "text-[10px] font-extrabold opacity-0 transition-opacity");
+          subText.id = `node-sub-${node.id}`;
+
+          g.appendChild(circle); g.appendChild(text); g.appendChild(subText); nl.appendChild(g);
         });
       }
 
@@ -461,12 +493,24 @@
           distances[n.id] = Infinity; previous[n.id] = null; unvisited.push(n.id);
           const c = document.getElementById(`node-circle-${n.id}`);
           const t = document.getElementById(`node-text-${n.id}`);
-          if (c) { c.className.baseVal = "node"; c.setAttribute('fill', 'white'); c.setAttribute('r', '15'); }
+          const s = document.getElementById(`node-sub-${n.id}`);
+          if (c) {
+            c.className.baseVal = "node";
+            c.setAttribute('fill', 'white');
+            c.setAttribute('r', '15');
+            // Áp dụng màu điểm đầu/cuối ngay khi reset
+            if (n.id === startNodeId) { c.classList.add('start-node'); if (s) { s.textContent = "START"; s.classList.replace('opacity-0', 'opacity-100'); s.setAttribute('fill', '#4f46e5'); } }
+            else if (n.id === endNodeId) { c.classList.add('end-node'); if (s) { s.textContent = "END"; s.classList.replace('opacity-0', 'opacity-100'); s.setAttribute('fill', '#db2777'); } }
+            else if (s) { s.classList.replace('opacity-100', 'opacity-0'); }
+          }
           if (t) t.className.baseVal = "text-[10px] font-bold fill-slate-800";
         });
         edges.forEach(e => {
           const el = document.getElementById(`edge-${e.from}-${e.to}`);
-          if (el) { el.classList.remove('path-edge'); el.classList.add('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead)"); }
+          if (el) {
+            el.className.baseVal = "edge stroke-slate-300 fill-none opacity-30";
+            el.setAttribute("marker-end", "url(#arrowhead)");
+          }
         });
         distances[startNodeId] = 0;
         log(`📍 BẮT ĐẦU: ${CITY_NAMES[startNodeId]} ➔ ${CITY_NAMES[endNodeId]}`, 'init');
@@ -489,6 +533,14 @@
         adj[u].forEach(edge => {
           const v = edge.to;
           const newDist = distances[u] + edge.cost;
+
+          // Tô màu vàng cho cạnh đang được xét qua
+          const edgeEl = document.getElementById(`edge-${u}-${v}`);
+          if (edgeEl && !edgeEl.classList.contains('path-edge')) {
+            edgeEl.classList.add('considered-edge');
+            edgeEl.setAttribute("marker-end", "url(#arrowhead-considered)");
+          }
+
           if (!visited.has(v)) {
             if (newDist < distances[v]) {
               log(`   + ${CITY_NAMES[v]}: ${distances[v]} -> ${newDist}`, 'success');
@@ -499,8 +551,11 @@
 
         visited.add(u);
         setTimeout(() => {
-          cur.classList.remove('current-node'); cur.classList.add('visited-node');
-          document.getElementById(`node-text-${u}`).classList.add('visited-node-text');
+          cur.classList.remove('current-node');
+          if (u !== startNodeId && u !== endNodeId) {
+            cur.classList.add('visited-node');
+            document.getElementById(`node-text-${u}`).classList.add('visited-node-text');
+          }
           if (u === endNodeId) { isDone = true; highlightPath(); log(`🏆 Đã tìm thấy: ${distances[u]}`, 'finish'); }
           updateTables();
         }, 200);
@@ -521,11 +576,18 @@
         while (previous[c] !== null) {
           const p = previous[c];
           const el = document.getElementById(`edge-${p}-${c}`);
-          if (el) { el.classList.add('path-edge'); el.classList.remove('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead-path)"); }
-          document.getElementById(`node-circle-${c}`).classList.add('path-node');
+          if (el) {
+            el.classList.remove('considered-edge');
+            el.classList.add('path-edge');
+            el.classList.remove('opacity-30');
+            el.setAttribute("marker-end", "url(#arrowhead-path)");
+          }
+          if (c !== startNodeId && c !== endNodeId) document.getElementById(`node-circle-${c}`).classList.add('path-node');
           c = p;
         }
-        document.getElementById(`node-circle-${startNodeId}`).classList.add('path-node');
+        if (startNodeId !== endNodeId) {
+          document.getElementById(`node-circle-${startNodeId}`).classList.add('start-node');
+        }
       }
 
       function updateTables() {
