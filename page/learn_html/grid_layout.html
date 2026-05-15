@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài học: Grid Layout với Tailwind</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .code-block {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      border: 1px solid #1e293b;
+      white-space: pre;
+    }
+
+    .code-keyword {
+      color: #f472b6;
+    }
+
+    .code-attr {
+      color: #fbbf24;
+    }
+
+    .code-val {
+      color: #34d399;
+    }
+
+    .code-comment {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 0.9em;
+      margin: 0 0.2rem;
+      line-height: 1;
+    }
+
+    .fraction .top {
+      border-bottom: 1px solid currentColor;
+      padding: 0 2px;
+    }
+
+    .fraction .bottom {
+      padding: 0 2px;
+    }
+
+    .layout-bar {
+      height: 32px;
+      border-radius: 6px;
+      transition: all 0.5s ease;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: white;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 antialiased flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+      <h1 class="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Grid Layout với Tailwind</h1>
+      <p class="text-slate-600 italic">Hướng dẫn cấu trúc Grid</p>
+    </div>
+  </header>
+
+  <!-- Nội dung chính -->
+  <main class="flex-grow max-w-5xl mx-auto px-4 py-12 w-full">
+
+    <!-- Mục 1: Grid System -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center">
+        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">1</span>
+        Tư duy Hệ thống Lưới (Column Grid)
+      </h2>
+
+      <div class="bg-blue-50 border border-blue-100 rounded-xl p-6 mb-8">
+        <p class="text-slate-800 leading-relaxed">
+          <strong>Khái niệm:</strong> Hãy tưởng tượng chiều rộng màn hình được chia thành 12 phần bằng nhau.
+          Khi ta nói một phần tử chiếm <code>col-span-4</code>,
+          nghĩa là nó lấy đi <span class="fraction"><span class="top">4</span><span class="bottom">12</span></span>
+          diện tích hàng ngang.
+        </p>
+      </div>
+
+      <!-- Trực quan hóa tỷ lệ Layout -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 mb-10 shadow-sm">
+        <h3 class="text-sm font-bold text-slate-500 uppercase mb-6 tracking-widest text-center">So sánh trực quan tỷ lệ
+          Layout</h3>
+
+        <div class="space-y-8">
+          <!-- Tỷ lệ cũ -->
+          <div>
+            <div class="flex justify-between mb-2 text-xs font-bold text-slate-400 uppercase">
+              <span>Cấu trúc cũ (3 : 9)</span>
+              <span>Tổng 12 cột</span>
+            </div>
+            <div class="flex w-full bg-slate-100 rounded-lg overflow-hidden h-8 border border-slate-200">
+              <div
+                class="w-3/12 bg-blue-400 flex items-center justify-center text-white text-[10px] font-bold border-r border-white/20">
+                25% (COL-3)
+              </div>
+              <div class="w-9/12 bg-slate-300 flex items-center justify-center text-slate-500 text-[10px]">
+                75% (Bản đồ)
+              </div>
+            </div>
+          </div>
+
+          <!-- Tỷ lệ mới -->
+          <div>
+            <div class="flex justify-between mb-2 text-xs font-bold text-green-600 uppercase">
+              <span>Cấu trúc tối ưu (4 : 8)</span>
+              <span>+8.3% không gian nhật ký</span>
+            </div>
+            <div
+              class="flex w-full bg-slate-100 rounded-lg overflow-hidden h-8 border border-green-200 ring-2 ring-green-500/10">
+              <div
+                class="w-4/12 bg-green-500 flex items-center justify-center text-white text-[10px] font-bold border-r border-white/20">
+                33.3% (COL-4)
+              </div>
+              <div class="w-8/12 bg-slate-300 flex items-center justify-center text-slate-500 text-[10px]">
+                66.7% (Bản đồ)
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mt-4 text-xs text-slate-500 italic text-center text-balance">
+          * Việc tăng từ 3 lên 4 cột giúp không gian "Nhật ký" rộng thêm đáng kể, giúp các dòng Log không bị quá hẹp.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div>
+          <h3 class="text-sm font-bold text-slate-400 uppercase mb-3 tracking-wider">Mã nguồn cũ (3/12)</h3>
+          <div class="code-block shadow-sm text-[13px]">
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"grid
+              grid-cols-12"</span>&gt;
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+              class="code-val">"lg:col-span-3"</span>&gt;
+            Nhật ký
+            &lt;/<span class="code-keyword">div</span>&gt;
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+              class="code-val">"lg:col-span-9"</span>&gt;
+            Bản đồ
+            &lt;/<span class="code-keyword">div</span>&gt;
+            &lt;/<span class="code-keyword">div</span>&gt;</div>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-green-600 uppercase mb-3 tracking-wider">Mã nguồn mới (4/12)</h3>
+          <div class="code-block border-green-500/20 shadow-sm text-[13px]">
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"grid
+              grid-cols-12"</span>&gt;
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+              class="code-val">"lg:col-span-4"</span>&gt;
+            Nhật ký
+            &lt;/<span class="code-keyword">div</span>&gt;
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+              class="code-val">"lg:col-span-8"</span>&gt;
+            Bản đồ
+            &lt;/<span class="code-keyword">div</span>&gt;
+            &lt;/<span class="code-keyword">div</span>&gt;</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mục 2: Sticky Footer -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center">
+        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">2</span>
+        Cấu trúc trang (Header - Main - Footer)
+      </h2>
+      <div class="bg-amber-50 border-l-4 border-amber-400 p-6 mb-8 rounded-r-xl shadow-sm">
+        <p class="text-amber-900 mb-4 font-semibold text-lg">Cách đẩy Footer xuống đáy trang:</p>
+        <ul class="list-disc list-inside space-y-2 text-amber-800 text-sm">
+          <li>Bao ngoài: <code class="bg-amber-100 px-1 rounded">flex flex-col min-h-screen</code>.</li>
+          <li>Nội dung (main): <code class="bg-amber-100 px-1 rounded">flex-grow</code>.</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"flex
+          flex-col min-h-screen"</span>&gt;
+        &lt;<span class="code-keyword">header</span>&gt;...&lt;/<span class="code-keyword">header</span>&gt;
+        &lt;<span class="code-keyword">main</span> <span class="code-attr">class</span>=<span
+          class="code-val">"flex-grow"</span>&gt;...&lt;/<span class="code-keyword">main</span>&gt;
+        &lt;<span class="code-keyword">footer</span>&gt;...&lt;/<span class="code-keyword">footer</span>&gt;
+        &lt;/<span class="code-keyword">div</span>&gt;</div>
+    </section>
+
+    <!-- Mục 3: Log Flow -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center">
+        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">3</span>
+        Kỹ thuật Xử lý Log Flow (Văn bản dài)
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Nội dung bài học lý thuyết -->
+        <div class="space-y-4 text-slate-700 leading-relaxed">
+          <p>Khi hiển thị dữ liệu Log, thách thức lớn nhất là xử lý các chuỗi văn bản dài không có khoảng trắng hoặc các
+            câu thông báo phức tạp.</p>
+
+          <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+            <h4 class="font-bold text-slate-900 mb-3 border-b pb-2">So sánh Whitespace & Wrapping:</h4>
+            <div class="space-y-4 text-sm">
+              <div class="flex gap-3">
+                <span class="text-blue-600 font-bold min-w-[140px]">whitespace-normal</span>
+                <p>Cho phép văn bản xuống dòng tại các khoảng trắng tự nhiên. Đây là hành vi mặc định của thẻ
+                  <code>p</code>.
+                </p>
+              </div>
+              <div class="flex gap-3">
+                <span class="text-green-600 font-bold min-w-[140px]">break-words</span>
+                <p><strong>Wrap Text thông minh:</strong> Chỉ ngắt dòng tại các điểm ngắt từ hợp lệ. Nếu một từ quá dài,
+                  nó mới ngắt từ đó.</p>
+              </div>
+              <div class="flex gap-3">
+                <span class="text-red-600 font-bold min-w-[140px]">break-all</span>
+                <p><strong>Wrap Text cưỡng bức:</strong> Ngắt dòng tại bất kỳ ký tự nào để đảm bảo không bị tràn, bất
+                  chấp việc ngắt giữa chừng một từ.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Demo so sánh thực tế -->
+        <div class="space-y-4">
+          <!-- Case 1: Normal -->
+          <div class="p-4 bg-white rounded-xl border border-slate-200">
+            <p class="font-bold text-blue-600 mb-2 text-[10px] uppercase">1. Chỉ dùng whitespace-normal</p>
+            <div class="bg-slate-900 text-red-600 p-3 rounded font-mono text-[10px] whitespace-normal">
+              Kết_nối_đến_máy_chủ_với_địa_chỉ_IP_rất_dài_192.168.1.100:8080/v1/api/auth/callback_success
+            </div>
+            <p class="text-[10px] text-red-400 mt-1 italic">* Gặp từ dài (không khoảng trắng) sẽ gây tràn ngang nếu
+              container nhỏ.</p>
+          </div>
+
+          <!-- Case 2: Wrap Words -->
+          <div class="p-4 bg-white rounded-xl border-2 border-green-500/10">
+            <p class="font-bold text-green-600 mb-2 text-[10px] uppercase">2. whitespace-normal + break-words</p>
+            <div
+              class="bg-slate-900 text-green-400 p-3 rounded font-mono text-[10px] whitespace-normal break-words leading-relaxed">
+              Kết_nối_đến_máy_chủ_với_địa_chỉ_IP_rất_dài_192.168.1.100:8080/v1/api/auth/callback_success
+            </div>
+            <p class="text-[10px] text-green-600 mt-1 italic">* Tối ưu nhất: Xuống dòng đẹp và chỉ ngắt từ khi thực sự
+              cần thiết.</p>
+          </div>
+
+          <!-- Case 3: Truncate (Cắt bỏ) -->
+          <div class="p-4 bg-white rounded-xl border border-slate-200">
+            <p class="font-bold text-slate-900 mb-2 text-[10px] uppercase">3. Truncate (Cắt ngang)</p>
+            <div class="bg-slate-900 text-slate-200 p-3 rounded font-mono text-[10px] truncate">
+              Kết_nối_đến_máy_chủ_với_địa_chỉ_IP_rất_dài_192.168.1.100:8080/v1/api/auth/callback_success
+            </div>
+            <p class="text-[10px] text-slate-600 mt-1 italic">* Mất thông tin Log, không khuyến khích cho Dashboard giám
+              sát.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <span class="code-comment">&lt;!-- "Combo vàng" cho hiển thị Nhật ký/Log --&gt;</span>
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+          class="code-val">"whitespace-normal break-words overflow-y-auto"</span>&gt;
+        <span class="code-comment">&lt;!-- Nội dung Log dài sẽ luôn nằm gọn trong khung --&gt;</span>
+        &lt;/<span class="code-keyword">div</span>&gt;
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-12 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-sm tracking-wide">&copy; 2026 - Raymond Trương</p>
+    </div>
+  </footer>
+
+</body>
+
+</html>

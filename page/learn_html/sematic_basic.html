@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bài học Semantic HTML cho người mới</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      line-height: 1.8;
+    }
+
+    pre {
+      overflow-x: auto;
+    }
+
+    code {
+      font-family: Consolas, monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Semantic HTML</h1>
+        <p class="text-slate-300 text-sm">Bài học chi tiết cho người mới học HTML</p>
+      </div>
+
+      <nav class="hidden md:flex gap-5 text-sm font-medium">
+        <a href="#gioi-thieu" class="hover:text-cyan-300 transition">Giới thiệu</a>
+        <a href="#semantic" class="hover:text-cyan-300 transition">Semantic</a>
+        <a href="#the-tags" class="hover:text-cyan-300 transition">Các thẻ</a>
+        <a href="#cau-truc" class="hover:text-cyan-300 transition">Cấu trúc</a>
+        <a href="#loi-thuong-gap" class="hover:text-cyan-300 transition">Sai lầm</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-10">
+
+    <section id="gioi-thieu" class="bg-white rounded-3xl shadow-lg p-8 mb-10 border border-slate-200">
+      <h2 class="text-4xl font-bold mb-6 text-slate-800">1. HTML có các thẻ bọc khối để làm gì?</h2>
+
+      <p class="mb-5 text-lg text-slate-700">
+        Khi mới học HTML, nhiều người thường thấy các thẻ như:
+      </p>
+
+      <div class="bg-slate-100 rounded-2xl p-5 mb-6">
+        <code class="text-blue-700 font-bold text-lg">
+          body, main, section, div, article, header, footer, aside, nav...
+        </code>
+      </div>
+
+      <p class="mb-5">
+        Các thẻ này chủ yếu dùng để:
+      </p>
+
+      <ul class="list-disc pl-8 space-y-3 text-slate-700">
+        <li>Chia bố cục website thành từng khu vực rõ ràng</li>
+        <li>Giúp code dễ đọc và dễ bảo trì</li>
+        <li>Giúp Google hiểu nội dung trang web tốt hơn (SEO)</li>
+        <li>Giúp trình đọc màn hình hỗ trợ người khiếm thị</li>
+        <li>Giúp developer khác dễ hiểu cấu trúc dự án</li>
+      </ul>
+
+      <div class="mt-8 bg-blue-50 border border-blue-200 rounded-2xl p-6">
+        <h3 class="font-bold text-blue-800 text-xl mb-3">Ví dụ dễ hiểu</h3>
+
+        <p>
+          Hãy tưởng tượng website giống như một ngôi nhà:
+        </p>
+
+        <ul class="list-disc pl-8 mt-4 space-y-2">
+          <li><strong>header</strong> → bảng tên trước nhà</li>
+          <li><strong>nav</strong> → lối đi giữa các phòng</li>
+          <li><strong>main</strong> → khu vực chính</li>
+          <li><strong>section</strong> → từng phòng</li>
+          <li><strong>article</strong> → một nội dung độc lập</li>
+          <li><strong>aside</strong> → phần bên cạnh</li>
+          <li><strong>footer</strong> → phần cuối trang</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <section id="semantic" class="bg-white rounded-3xl shadow-lg p-8 mb-10 border border-slate-200">
+      <h2 class="text-4xl font-bold mb-6 text-slate-800">2. Semantic HTML là gì?</h2>
+
+      <p class="mb-5">
+        <strong>Semantic</strong> nghĩa là “mang ý nghĩa”.
+      </p>
+
+      <p class="mb-5">
+        Semantic HTML là cách dùng các thẻ HTML có ý nghĩa rõ ràng thay vì dùng toàn bộ là div.
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-6 mt-8">
+
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-6">
+          <h3 class="text-red-700 font-bold text-xl mb-4">❌ Không semantic</h3>
+
+          <pre class="bg-slate-900 text-green-300 p-4 rounded-xl text-sm"><code>&lt;div class="header"&gt;&lt;/div&gt;
+&lt;div class="menu"&gt;&lt;/div&gt;
+&lt;div class="content"&gt;&lt;/div&gt;
+&lt;div class="footer"&gt;&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
+          <h3 class="text-green-700 font-bold text-xl mb-4">✅ Semantic HTML</h3>
+
+          <pre class="bg-slate-900 text-green-300 p-4 rounded-xl text-sm"><code>&lt;header&gt;&lt;/header&gt;
+&lt;nav&gt;&lt;/nav&gt;
+&lt;main&gt;&lt;/main&gt;
+&lt;footer&gt;&lt;/footer&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-6">
+        <h3 class="font-bold text-amber-800 text-xl mb-3">Lợi ích lớn nhất</h3>
+
+        <ul class="list-disc pl-8 space-y-2">
+          <li>Code nhìn chuyên nghiệp hơn</li>
+          <li>Dễ scale project lớn</li>
+          <li>SEO tốt hơn</li>
+          <li>Dễ debug</li>
+          <li>Dễ làm việc nhóm</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <section id="the-tags" class="mb-10">
+      <h2 class="text-4xl font-bold mb-8 text-slate-800">3. Vai trò từng thẻ Semantic HTML</h2>
+
+      <div class="space-y-8">
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-blue-700">body</h3>
+
+          <p class="mb-4">
+            Đây là phần chứa toàn bộ nội dung hiển thị trên trình duyệt.
+          </p>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;body&gt;
+    Nội dung website nằm ở đây
+&lt;/body&gt;</code></pre>
+
+          <div class="mt-5 bg-blue-50 rounded-xl p-5 border border-blue-100">
+            <strong>Lưu ý:</strong>
+            Mỗi trang HTML chỉ có duy nhất 1 thẻ body.
+          </div>
+        </article>
+
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-cyan-700">header</h3>
+
+          <p class="mb-4">
+            Dùng cho phần đầu trang hoặc đầu một khu vực.
+          </p>
+
+          <ul class="list-disc pl-8 space-y-2 mb-5">
+            <li>Logo</li>
+            <li>Tên website</li>
+            <li>Menu</li>
+            <li>Search box</li>
+          </ul>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;header&gt;
+    &lt;h1&gt;My Website&lt;/h1&gt;
+&lt;/header&gt;</code></pre>
+        </article>
+
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-indigo-700">nav</h3>
+
+          <p class="mb-4">
+            Chứa menu điều hướng.
+          </p>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;nav&gt;
+    &lt;a href="/"&gt;Home&lt;/a&gt;
+    &lt;a href="/about"&gt;About&lt;/a&gt;
+&lt;/nav&gt;</code></pre>
+
+          <div class="mt-5 bg-indigo-50 rounded-xl p-5 border border-indigo-100">
+            <strong>Không phải mọi link đều cần nav.</strong>
+            Chỉ dùng nav cho nhóm link điều hướng chính.
+          </div>
+        </article>
+
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-emerald-700">main</h3>
+
+          <p class="mb-4">
+            Chứa nội dung chính của trang.
+          </p>
+
+          <ul class="list-disc pl-8 space-y-2 mb-5">
+            <li>Mỗi trang chỉ nên có 1 main</li>
+            <li>Không đặt main bên trong footer/header/nav</li>
+            <li>Main là khu vực quan trọng nhất</li>
+          </ul>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;main&gt;
+    Nội dung chính
+&lt;/main&gt;</code></pre>
+        </article>
+
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-pink-700">section</h3>
+
+          <p class="mb-4">
+            Chia nội dung thành từng phần theo chủ đề.
+          </p>
+
+          <p class="mb-5">
+            Ví dụ một website bán hàng có thể có:
+          </p>
+
+          <ul class="list-disc pl-8 space-y-2 mb-5">
+            <li>Section sản phẩm nổi bật</li>
+            <li>Section đánh giá</li>
+            <li>Section tin tức</li>
+          </ul>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;section&gt;
+    &lt;h2&gt;Sản phẩm nổi bật&lt;/h2&gt;
+&lt;/section&gt;</code></pre>
+
+          <div class="mt-5 bg-pink-50 rounded-xl p-5 border border-pink-100">
+            Section thường nên có heading như h2, h3.
+          </div>
+        </article>
+
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-orange-700">article</h3>
+
+          <p class="mb-4">
+            Dùng cho nội dung độc lập, có thể tách riêng.
+          </p>
+
+          <p class="mb-5">Ví dụ:</p>
+
+          <ul class="list-disc pl-8 space-y-2 mb-5">
+            <li>Bài blog</li>
+            <li>Post Facebook</li>
+            <li>Bài báo</li>
+            <li>Comment</li>
+          </ul>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;article&gt;
+    &lt;h2&gt;Học HTML cơ bản&lt;/h2&gt;
+    &lt;p&gt;Nội dung bài viết...&lt;/p&gt;
+&lt;/article&gt;</code></pre>
+        </article>
+
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-violet-700">aside</h3>
+
+          <p class="mb-4">
+            Nội dung phụ bên cạnh nội dung chính.
+          </p>
+
+          <p class="mb-5">Ví dụ:</p>
+
+          <ul class="list-disc pl-8 space-y-2 mb-5">
+            <li>Sidebar</li>
+            <li>Quảng cáo</li>
+            <li>Related posts</li>
+            <li>Thông tin tác giả</li>
+          </ul>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;aside&gt;
+    Bài viết liên quan
+&lt;/aside&gt;</code></pre>
+        </article>
+
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-red-700">footer</h3>
+
+          <p class="mb-4">
+            Phần cuối trang web.
+          </p>
+
+          <p class="mb-5">Thường chứa:</p>
+
+          <ul class="list-disc pl-8 space-y-2 mb-5">
+            <li>Copyright</li>
+            <li>Thông tin công ty</li>
+            <li>Liên hệ</li>
+            <li>Social links</li>
+          </ul>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;footer&gt;
+    Copyright 2026
+&lt;/footer&gt;</code></pre>
+        </article>
+
+
+        <article class="bg-white rounded-3xl shadow-lg p-8 border border-slate-200">
+          <h3 class="text-3xl font-bold mb-4 text-slate-700">div</h3>
+
+          <p class="mb-4">
+            div là thẻ container chung chung, không có ý nghĩa semantic.
+          </p>
+
+          <p class="mb-5">
+            div chủ yếu dùng để:
+          </p>
+
+          <ul class="list-disc pl-8 space-y-2 mb-5">
+            <li>Layout</li>
+            <li>Flexbox</li>
+            <li>Grid</li>
+            <li>CSS styling</li>
+            <li>Grouping elements</li>
+          </ul>
+
+          <pre class="bg-slate-900 text-green-300 p-5 rounded-xl text-sm"><code>&lt;div class="card"&gt;
+    Nội dung card
+&lt;/div&gt;</code></pre>
+
+          <div class="mt-5 bg-yellow-50 rounded-xl p-5 border border-yellow-100">
+            <strong>Nguyên tắc quan trọng:</strong>
+            Nếu có semantic tag phù hợp → ưu tiên semantic tag.
+            Chỉ dùng div khi không có semantic phù hợp.
+          </div>
+        </article>
+      </div>
+    </section>
+
+
+    <section id="cau-truc" class="bg-white rounded-3xl shadow-lg p-8 mb-10 border border-slate-200">
+      <h2 class="text-4xl font-bold mb-6 text-slate-800">4. Cấu trúc HTML tối ưu cho website</h2>
+
+      <p class="mb-6 text-lg">
+        Đây là cấu trúc semantic HTML phổ biến và tối ưu cho hầu hết website hiện đại.
+      </p>
+
+      <pre class="bg-slate-900 text-green-300 p-6 rounded-2xl text-sm leading-7"><code>&lt;body&gt;
+
+    &lt;header&gt;
+        &lt;nav&gt;
+            Menu
+        &lt;/nav&gt;
+    &lt;/header&gt;
+
+    &lt;main&gt;
+
+        &lt;section&gt;
+            &lt;h2&gt;Hero Section&lt;/h2&gt;
+        &lt;/section&gt;
+
+        &lt;section&gt;
+            &lt;article&gt;
+                Bài viết 1
+            &lt;/article&gt;
+
+            &lt;article&gt;
+                Bài viết 2
+            &lt;/article&gt;
+        &lt;/section&gt;
+
+        &lt;aside&gt;
+            Sidebar
+        &lt;/aside&gt;
+
+    &lt;/main&gt;
+
+    &lt;footer&gt;
+        Footer
+    &lt;/footer&gt;
+
+&lt;/body&gt;</code></pre>
+
+      <div class="grid md:grid-cols-2 gap-6 mt-8">
+
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
+          <h3 class="font-bold text-green-700 text-xl mb-4">✅ Ưu điểm</h3>
+
+          <ul class="list-disc pl-8 space-y-2">
+            <li>Dễ đọc</li>
+            <li>Dễ SEO</li>
+            <li>Dễ mở rộng</li>
+            <li>Dễ maintain</li>
+            <li>Semantic rõ ràng</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-6">
+          <h3 class="font-bold text-red-700 text-xl mb-4">❌ Sai lầm phổ biến</h3>
+
+          <ul class="list-disc pl-8 space-y-2">
+            <li>Lạm dụng div</li>
+            <li>Không dùng main</li>
+            <li>Section không có heading</li>
+            <li>Nhồi nhiều semantic sai mục đích</li>
+            <li>Nested quá sâu</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="bg-white rounded-3xl shadow-lg p-8 mb-10 border border-slate-200">
+      <h2 class="text-4xl font-bold mb-6 text-slate-800">5. Khi nào dùng div thay vì semantic tag?</h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse overflow-hidden rounded-2xl">
+          <thead>
+            <tr class="bg-slate-800 text-white text-left">
+              <th class="p-4">Tình huống</th>
+              <th class="p-4">Nên dùng</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr class="bg-white border-b">
+              <td class="p-4">Menu điều hướng</td>
+              <td class="p-4 font-bold text-blue-700">nav</td>
+            </tr>
+
+            <tr class="bg-slate-50 border-b">
+              <td class="p-4">Bài viết độc lập</td>
+              <td class="p-4 font-bold text-blue-700">article</td>
+            </tr>
+
+            <tr class="bg-white border-b">
+              <td class="p-4">Chia khu vực theo chủ đề</td>
+              <td class="p-4 font-bold text-blue-700">section</td>
+            </tr>
+
+            <tr class="bg-slate-50 border-b">
+              <td class="p-4">Container layout</td>
+              <td class="p-4 font-bold text-blue-700">div</td>
+            </tr>
+
+            <tr class="bg-white border-b">
+              <td class="p-4">Sidebar</td>
+              <td class="p-4 font-bold text-blue-700">aside</td>
+            </tr>
+
+            <tr class="bg-slate-50 border-b">
+              <td class="p-4">Nội dung chính</td>
+              <td class="p-4 font-bold text-blue-700">main</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <section id="loi-thuong-gap" class="bg-white rounded-3xl shadow-lg p-8 mb-10 border border-slate-200">
+      <h2 class="text-4xl font-bold mb-6 text-slate-800">6. Các lỗi người mới thường gặp</h2>
+
+      <div class="space-y-6">
+
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-6">
+          <h3 class="font-bold text-red-700 text-xl mb-3">❌ Dùng div cho mọi thứ</h3>
+
+          <pre class="bg-slate-900 text-green-300 p-4 rounded-xl text-sm"><code>&lt;div class="header"&gt;&lt;/div&gt;
+&lt;div class="footer"&gt;&lt;/div&gt;</code></pre>
+        </div>
+
+
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
+          <h3 class="font-bold text-green-700 text-xl mb-3">✅ Hãy dùng semantic tag</h3>
+
+          <pre class="bg-slate-900 text-green-300 p-4 rounded-xl text-sm"><code>&lt;header&gt;&lt;/header&gt;
+&lt;footer&gt;&lt;/footer&gt;</code></pre>
+        </div>
+
+
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-6">
+          <h3 class="font-bold text-red-700 text-xl mb-3">❌ Nested quá sâu</h3>
+
+          <pre class="bg-slate-900 text-green-300 p-4 rounded-xl text-sm"><code>&lt;div&gt;
+    &lt;div&gt;
+        &lt;div&gt;
+            &lt;div&gt;
+            ...
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+
+
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+          <h3 class="font-bold text-blue-700 text-xl mb-3">✅ Hãy giữ cấu trúc đơn giản</h3>
+
+          <ul class="list-disc pl-8 space-y-2">
+            <li>Code càng đơn giản càng tốt</li>
+            <li>Semantic rõ ràng</li>
+            <li>Ít div vô nghĩa</li>
+            <li>Dễ debug</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="bg-gradient-to-r from-slate-900 to-blue-900 text-white rounded-3xl shadow-xl p-10">
+      <h2 class="text-4xl font-bold mb-6">7. Kết luận quan trọng</h2>
+
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <div>
+          <h3 class="text-2xl font-bold mb-4 text-cyan-300">Hãy nhớ:</h3>
+
+          <ul class="list-disc pl-8 space-y-3 text-slate-100">
+            <li>Semantic HTML giúp code chuyên nghiệp hơn</li>
+            <li>Không dùng div cho mọi thứ</li>
+            <li>Mỗi thẻ có ý nghĩa riêng</li>
+            <li>main chỉ nên có 1</li>
+            <li>section nên có heading</li>
+            <li>article là nội dung độc lập</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-2xl font-bold mb-4 text-cyan-300">Thứ tự tư duy tốt nhất:</h3>
+
+          <ol class="list-decimal pl-8 space-y-3 text-slate-100">
+            <li>Xác định khu vực chức năng</li>
+            <li>Chọn semantic tag phù hợp</li>
+            <li>Chỉ dùng div cho layout</li>
+            <li>Giữ cấu trúc rõ ràng</li>
+            <li>Tránh nested sâu</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mt-10 bg-white/10 border border-white/20 rounded-2xl p-6 backdrop-blur">
+        <p class="text-lg leading-8 text-slate-100">
+          Một frontend developer giỏi không phải là người dùng nhiều framework,
+          mà là người tạo được cấu trúc HTML rõ ràng, semantic, dễ maintain và dễ scale.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+
+  <footer class="bg-slate-950 text-slate-400 py-8 mt-10 text-center border-t border-slate-800">
+    <p class="text-lg">Bài học Semantic HTML cho người mới học</p>
+    <p class="mt-2 text-sm">HTML Structure • Semantic Tags • Best Practices</p>
+  </footer>
+
+</body>
+
+</html>

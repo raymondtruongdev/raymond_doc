@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài học: Phân biệt Flexbox và Grid trong Tailwind CSS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .code-block {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      border: 1px solid #1e293b;
+      margin-bottom: 1.5rem;
+      white-space: pre;
+    }
+
+    .code-keyword {
+      color: #f472b6;
+    }
+
+    .code-attr {
+      color: #fbbf24;
+    }
+
+    .code-val {
+      color: #34d399;
+    }
+
+    .code-comment {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: #f8fafc;
+      text-align: left;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      font-weight: 700;
+    }
+
+    td {
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fcfcfc;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 antialiased flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+      <h1 class="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Flexbox vs Grid: Khi nào dùng cái nào?</h1>
+      <p class="text-slate-600 italic">Trong CSS và Tailwind CSS, mục đích thiết kế của chúng hoàn toàn khác nhau.</p>
+    </div>
+  </header>
+
+  <!-- Nội dung chính -->
+  <main class="flex-grow max-w-5xl mx-auto px-4 py-12 w-full">
+
+    <!-- Giới thiệu -->
+    <section class="mb-12 bg-blue-600 text-white p-6 rounded-2xl shadow-lg">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-center gap-4">
+          <div class="bg-white/20 p-3 rounded-lg text-2xl font-bold">Flex</div>
+          <p class="text-lg">Bố trí theo <strong>1 chiều</strong> (hàng hoặc cột)</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="bg-white/20 p-3 rounded-lg text-2xl font-bold">Grid</div>
+          <p class="text-lg">Bố trí theo <strong>2 chiều</strong> (hàng và cột cùng lúc)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Flexbox -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-4 text-blue-700 flex items-center">
+        <span class="mr-2">1.</span> Flexbox là gì?
+      </h2>
+      <p class="mb-4 text-slate-700 font-semibold">Flexbox phù hợp khi:</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">🎯 Căn giữa</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">↔️ Sắp xếp theo hàng/cột</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">📱 Navbar</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">🔘 Button group</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">📄 Card list đơn giản</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">✨ Layout theo nội dung</div>
+      </div>
+
+      <div class="code-block">
+        <span class="code-comment">&lt;!-- Ví dụ Tailwind --&gt;</span>
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"flex
+          gap-4"</span>&gt;
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+          class="code-val">"bg-blue-200 p-4"</span>&gt;Item 1&lt;/<span class="code-keyword">div</span>&gt;
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+          class="code-val">"bg-blue-200 p-4"</span>&gt;Item 2&lt;/<span class="code-keyword">div</span>&gt;
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+          class="code-val">"bg-blue-200 p-4"</span>&gt;Item 3&lt;/<span class="code-keyword">div</span>&gt;
+        &lt;/<span class="code-keyword">div</span>&gt;
+      </div>
+      <div class="p-4 bg-slate-100 rounded-lg text-sm font-mono border-dashed border-2 border-slate-300 text-center">
+        [ Item1 ] [ Item2 ] [ Item3 ]
+      </div>
+    </section>
+
+    <!-- 2. Grid -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-4 text-green-700 flex items-center">
+        <span class="mr-2">2.</span> Grid là gì?
+      </h2>
+      <p class="mb-4 text-slate-700 font-semibold">Grid phù hợp khi:</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">📊 Dashboard</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">🖼️ Gallery</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">🌐 Layout web</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">📏 Chia cột rõ ràng</div>
+        <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm shadow-sm">🗂️ Kiểm soát hàng + cột</div>
+      </div>
+
+      <div class="code-block">
+        <span class="code-comment">&lt;!-- Ví dụ Tailwind --&gt;</span>
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"grid
+          grid-cols-3 gap-4"</span>&gt;
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+          class="code-val">"bg-green-200 p-4"</span>&gt;1&lt;/<span class="code-keyword">div</span>&gt;
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+          class="code-val">"bg-green-200 p-4"</span>&gt;2&lt;/<span class="code-keyword">div</span>&gt;
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+          class="code-val">"bg-green-200 p-4"</span>&gt;3&lt;/<span class="code-keyword">div</span>&gt;
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+          class="code-val">"bg-green-200 p-4"</span>&gt;4&lt;/<span class="code-keyword">div</span>&gt;
+        &lt;/<span class="code-keyword">div</span>&gt;
+      </div>
+      <div
+        class="p-4 bg-slate-100 rounded-lg text-sm font-mono border-dashed border-2 border-slate-300 text-center leading-relaxed">
+        [ 1 ] [ 2 ] [ 3 ] <br> [ 4 ]
+      </div>
+    </section>
+
+    <!-- Tư duy hệ thống lưới 12 cột -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-4 flex items-center">
+        <span class="mr-2">💡</span> Tư duy Hệ thống Lưới (12-Column Grid)
+      </h2>
+      <div class="bg-blue-50 border-l-4 border-blue-500 p-5 rounded-r-xl mb-6">
+        <p class="text-slate-800">
+          <strong>Khái niệm:</strong> Hãy tưởng tượng chiều rộng màn hình được chia thành <strong>12 phần bằng
+            nhau</strong>. Khi ta nói một phần tử chiếm <code>col-span-4</code>, nghĩa là nó đang lấy đi 4/12 (tương
+          đương 1/3 hay 33.3%) diện tích hàng ngang.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <p class="text-xs font-bold text-slate-400 mb-2 uppercase">Cấu trúc TRƯỚC (3/12)</p>
+          <div class="code-block text-[12px]">
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"grid
+              grid-cols-12"</span>&gt;
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+              class="code-val">"lg:col-span-3"</span>&gt;
+            Nhật ký
+            &lt;/<span class="code-keyword">div</span>&gt;
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+              class="code-val">"lg:col-span-9"</span>&gt;
+            Bản đồ
+            &lt;/<span class="code-keyword">div</span>&gt;
+            &lt;/<span class="code-keyword">div</span>&gt;</div>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-green-600 mb-2 uppercase">Cấu trúc SAU (4/12)</p>
+          <div class="code-block border-green-500/30 text-[12px]">
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"grid
+              grid-cols-12"</span>&gt;
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+              class="code-val">"lg:col-span-4"</span>&gt;
+            Nhật ký
+            &lt;/<span class="code-keyword">div</span>&gt;
+            &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span
+              class="code-val">"lg:col-span-8"</span>&gt;
+            Bản đồ
+            &lt;/<span class="code-keyword">div</span>&gt;
+            &lt;/<span class="code-keyword">div</span>&gt;</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sticky Footer -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-4 flex items-center">
+        <span class="mr-2">⚓</span> Cấu trúc "Sticky Footer"
+      </h2>
+      <div class="code-block">
+        <span class="code-comment">&lt;!-- Thẻ bao ngoài cùng --&gt;</span>
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"flex
+          flex-col min-h-screen"</span>&gt;
+        &lt;<span class="code-keyword">header</span>&gt;...&lt;/<span class="code-keyword">header</span>&gt;
+
+        <span class="code-comment">&lt;!-- Main sẽ tự "nở" ra để chiếm chỗ trống --&gt;</span>
+        &lt;<span class="code-keyword">main</span> <span class="code-attr">class</span>=<span
+          class="code-val">"flex-grow"</span>&gt;
+        Nội dung Grid nằm ở đây
+        &lt;/<span class="code-keyword">main</span>&gt;
+
+        &lt;<span class="code-keyword">footer</span>&gt;...&lt;/<span class="code-keyword">footer</span>&gt;
+        &lt;/<span class="code-keyword">div</span>&gt;
+      </div>
+    </section>
+
+    <!-- Phụ lục Tailwind -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-4">7. Tailwind class phổ biến</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <table>
+          <thead>
+            <tr>
+              <th colspan="2" class="text-blue-600">Flex</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>flex</td>
+              <td>Bật flexbox</td>
+            </tr>
+            <tr>
+              <td>flex-col</td>
+              <td>Chuyển thành cột</td>
+            </tr>
+            <tr>
+              <td>justify-center</td>
+              <td>Căn ngang</td>
+            </tr>
+            <tr>
+              <td>items-center</td>
+              <td>Căn dọc</td>
+            </tr>
+            <tr>
+              <td>gap-4</td>
+              <td>Khoảng cách</td>
+            </tr>
+            <tr>
+              <td>flex-wrap</td>
+              <td>Xuống dòng</td>
+            </tr>
+          </tbody>
+        </table>
+        <table>
+          <thead>
+            <tr>
+              <th colspan="2" class="text-green-600">Grid</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>grid</td>
+              <td>Bật grid</td>
+            </tr>
+            <tr>
+              <td>grid-cols-3</td>
+              <td>3 cột</td>
+            </tr>
+            <tr>
+              <td>grid-rows-2</td>
+              <td>2 hàng</td>
+            </tr>
+            <tr>
+              <td>col-span-2</td>
+              <td>Chiếm 2 cột</td>
+            </tr>
+            <tr>
+              <td>row-span-2</td>
+              <td>Chiếm 2 hàng</td>
+            </tr>
+            <tr>
+              <td>gap-4</td>
+              <td>Khoảng cách</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Ví dụ thực tế -->
+    <section class="mb-16 bg-slate-900 text-white p-8 rounded-2xl">
+      <h2 class="text-2xl font-bold mb-6">Ví dụ hiện đại phổ biến</h2>
+      <p class="text-slate-400 mb-4 font-mono text-sm">Responsive card layout:</p>
+      <div class="code-block border-none m-0 p-0 mb-6 bg-transparent">
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"grid
+          grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"</span>&gt;
+        <span class="code-comment">&lt;!-- Nội dung các Card --&gt;</span>
+        &lt;/<span class="code-keyword">div</span>&gt;
+      </div>
+
+      <p class="text-slate-400 mb-4 font-mono text-sm">Bên trong mỗi Card (Flexbox):</p>
+      <div class="code-block border-none m-0 p-0 bg-transparent">
+        &lt;<span class="code-keyword">div</span> <span class="code-attr">class</span>=<span class="code-val">"flex
+          items-center gap-3"</span>&gt;
+        &lt;<span class="code-keyword">img</span> <span class="code-attr">src</span>=<span class="code-val">"..."</span>
+        /&gt;
+        &lt;<span class="code-keyword">span</span>&gt;Avatar&lt;/<span class="code-keyword">span</span>&gt;
+        &lt;/<span class="code-keyword">div</span>&gt;</div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-12 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-sm tracking-wide">&copy; 2026 - Raymond Trương</p>
+    </div>
+  </footer>
+
+</body>
+
+</html>
