@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A* Search Visualizer - Optimized Layout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+    }
+
+    .node {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .edge {
+      transition: all 0.3s ease;
+      stroke-dasharray: 4;
+      animation: dash 30s linear infinite;
+    }
+
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -1000;
+      }
+    }
+
+    .current-node {
+      fill: #ef4444 !important;
+      stroke: #b91c1c;
+      r: 20;
+    }
+
+    .visited-node {
+      fill: #10b981 !important;
+      stroke: #059669;
+    }
+
+    .visited-node-text {
+      fill: white !important;
+    }
+
+    .path-node {
+      fill: #2563eb !important;
+      stroke: #1e40af !important;
+      r: 18;
+    }
+
+    .path-edge {
+      stroke: #2563eb !important;
+      stroke-width: 4px;
+      stroke-dasharray: none;
+      opacity: 1 !important;
+    }
+
+    .edge-label-bg {
+      fill: white;
+      fill-opacity: 0.9;
+      stroke: #cbd5e1;
+      stroke-width: 1px;
+      rx: 4;
+      ry: 4;
+    }
+
+    .log-line {
+      white-space: normal;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      border-bottom: 1px solid #1e293b;
+      padding: 4px 4px;
+      display: block;
+      width: 100%;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body class="p-4">
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">A* Visualizer</h1>
+        <p class="text-slate-500 text-sm">Thuật toán tìm đường thông minh dựa trên Heuristic</p>
+      </div>
+      <div class="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex gap-3">
+          <div class="flex flex-col">
+            <span class="text-[9px] font-bold text-slate-400 uppercase ml-1">Số thành phố</span>
+            <input type="number" id="nodeCountInput" value="12" min="2" max="20"
+              class="w-14 px-1 py-0.5 border-b border-slate-100 font-mono font-bold text-emerald-600 outline-none">
+          </div>
+          <div class="flex flex-col border-l border-slate-100 pl-3">
+            <span class="text-[9px] font-bold text-slate-400 uppercase ml-1">Mã bản đồ (Seed)</span>
+            <div class="flex items-center">
+              <input type="number" id="seedInput" value="1"
+                class="w-16 px-1 py-0.5 border-b border-slate-100 font-mono font-bold text-blue-600 outline-none">
+              <button id="randomSeedBtn" title="Ngẫu nhiên hóa"
+                class="ml-1 p-1 hover:bg-slate-100 rounded transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="text-slate-400 hover:text-blue-500">
+                  <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"></path>
+                  <path d="m18 2 4 4-4 4"></path>
+                  <path d="M2 6h1.9c1.6 0 3.1.9 3.9 2.3l3.5 6"></path>
+                  <path d="m18 14 4 4-4 4"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button id="generateBtn"
+          class="px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-bold hover:bg-slate-900 transition-all">Tạo
+          bản đồ</button>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div class="lg:col-span-3 space-y-4">
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Điều khiển A*</h2>
+          <div class="space-y-3">
+            <div class="grid grid-cols-1 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-1">Điểm đi</label>
+                <select id="startSelect"
+                  class="w-full p-2 text-sm border border-slate-200 rounded-lg bg-slate-50 outline-none"></select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-1">Điểm đến</label>
+                <select id="endSelect"
+                  class="w-full p-2 text-sm border border-slate-200 rounded-lg bg-slate-50 outline-none"></select>
+              </div>
+            </div>
+            <div class="pt-1 flex flex-col gap-2">
+              <button id="stepBtn"
+                class="w-full py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all">Bước
+                tiếp theo</button>
+              <button id="runBtn"
+                class="w-full py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition-all">Chạy
+                tự động</button>
+              <button id="resetBtn"
+                class="w-full py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition-all">Đặt
+                lại</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#0f172a] rounded-xl shadow-lg overflow-hidden border border-slate-800">
+          <div class="p-2 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+            <span class="text-[9px] font-bold text-slate-400 uppercase">Nhật ký A* (g + h = f)</span>
+            <span id="active-seed-display" class="text-[9px] text-blue-400 font-mono">Seed: 1</span>
+          </div>
+          <div id="log-panel"
+            class="p-1 text-[10px] font-mono h-[220px] overflow-y-auto leading-tight overflow-x-hidden text-slate-300">
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-9 space-y-4">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden h-[540px]">
+          <svg id="svg" class="w-full h-full bg-slate-50">
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+              </marker>
+              <marker id="arrowhead-path" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb" />
+              </marker>
+            </defs>
+            <g id="edges-layer"></g>
+            <g id="nodes-layer"></g>
+          </svg>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div
+              class="p-2 bg-amber-50/50 border-b border-amber-100 font-bold text-[9px] text-amber-800 uppercase text-center">
+              Hàng đợi ưu tiên (Sắp xếp theo f)</div>
+            <div class="max-h-[140px] overflow-y-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 text-[10px] text-slate-400">
+                  <tr>
+                    <th class="p-2 font-semibold">Đỉnh</th>
+                    <th class="p-2 font-semibold text-right">Chi phí f (g+h)</th>
+                  </tr>
+                </thead>
+                <tbody id="queueTable"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div
+              class="p-2 bg-blue-50/50 border-b border-blue-100 font-bold text-[9px] text-blue-800 uppercase text-center">
+              Bảng trạng thái A*</div>
+            <div class="max-h-[140px] overflow-y-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 text-[10px] text-slate-400">
+                  <tr>
+                    <th class="p-2 font-semibold">Đỉnh</th>
+                    <th class="p-2 font-semibold text-center">g</th>
+                    <th class="p-2 font-semibold text-center">h</th>
+                    <th class="p-2 font-semibold text-right">f</th>
+                  </tr>
+                </thead>
+                <tbody id="distanceTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHẦN KIẾN THỨC ĐÃ CHỈNH SỬA KÝ HIỆU RÕ RÀNG HƠN -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-xl font-bold text-slate-800 mb-6 border-b pb-3 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="text-blue-600">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+            Kiến thức chuyên sâu về Thuật toán A*
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm text-slate-600 leading-relaxed">
+            <!-- Cột 1: Công thức và Thành phần -->
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-bold text-slate-800 text-base mb-2">1. Công thức Đánh giá</h3>
+                <p class="mb-3">A* chọn nút tiếp theo dựa trên giá trị nhỏ nhất của hàm:</p>
+                <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 text-center mb-3">
+                  <span class="text-2xl font-bold text-emerald-400 font-mono">f(n) = g(n) + h(n)</span>
+                </div>
+                <ul class="space-y-3">
+                  <li class="flex gap-2">
+                    <span class="font-bold text-blue-600 font-mono">g(n):</span>
+                    <span>Chi phí thực tế để đi từ điểm bắt đầu đến nút <strong>n</strong> hiện tại. (Quá khứ)</span>
+                  </li>
+                  <li class="flex gap-2">
+                    <span class="font-bold text-orange-600 font-mono">h(n):</span>
+                    <span>Chi phí ước lượng từ nút <strong>n</strong> đến đích. Đây gọi là hàm
+                      <strong>Heuristic</strong>. (Tương lai)</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 class="font-bold text-slate-800 text-base mb-2">2. Tính chấp nhận được (Admissibility)</h3>
+                <p>Để A* luôn tìm thấy đường đi ngắn nhất, hàm Heuristic <strong>h(n)</strong> phải thỏa mãn:</p>
+                <div class="mt-2 p-3 bg-amber-50 border-l-4 border-amber-400 font-medium">
+                  <span class="font-mono text-amber-900">h(n) ≤ h*(n)</span>
+                  <p class="mt-1 text-xs italic text-amber-700">Trong đó h*(n) là chi phí thực tế thấp nhất. Heuristic
+                    không bao giờ được "phóng đại" chi phí thực tế.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cột 2: So sánh và Ứng dụng -->
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-bold text-slate-800 text-base mb-2">3. So sánh A* và Dijkstra</h3>
+                <div class="overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+                  <table class="w-full text-xs">
+                    <thead class="bg-slate-100 font-bold text-slate-600">
+                      <tr>
+                        <th class="p-2 text-left border-b">Đặc điểm</th>
+                        <th class="p-2 text-left border-b">Dijkstra</th>
+                        <th class="p-2 text-left border-b">A*</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      <tr>
+                        <td class="p-2 font-medium bg-slate-50">Chiến lược</td>
+                        <td class="p-2 italic">Tìm kiếm mù</td>
+                        <td class="p-2 font-semibold text-blue-600">Tìm kiếm có hướng</td>
+                      </tr>
+                      <tr>
+                        <td class="p-2 font-medium bg-slate-50">Hàm đánh giá</td>
+                        <td class="p-2 font-mono">f(n) = g(n)</td>
+                        <td class="p-2 font-mono text-emerald-600">f(n) = g(n) + h(n)</td>
+                      </tr>
+                      <tr>
+                        <td class="p-2 font-medium bg-slate-50">Tính ưu việt</td>
+                        <td class="p-2">Xét mọi hướng</td>
+                        <td class="p-2">Tối ưu vùng khảo sát</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="font-bold text-slate-800 text-base mb-2">4. Ứng dụng thực tế</h3>
+                <p>Nhờ tính hiệu quả, A* xuất hiện trong hầu hết các hệ thống tìm đường:</p>
+                <ul class="grid grid-cols-2 gap-2 mt-2">
+                  <li class="bg-slate-50 p-2 rounded border border-slate-100">🤖 Robot tự hành</li>
+                  <li class="bg-slate-50 p-2 rounded border border-slate-100">🎮 AI trong Game</li>
+                  <li class="bg-slate-50 p-2 rounded border border-slate-100">🗺️ Bản đồ số (GPS)</li>
+                  <li class="bg-slate-50 p-2 rounded border border-slate-100">🧩 Giải đố logic</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN KIẾN THỨC -->
+          <div class="mt-8 rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 p-5 shadow-sm">
+            <div class="flex items-start gap-4">
+
+              <!-- Icon -->
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+              </div>
+
+              <!-- Content -->
+              <div class="flex-1">
+                <h3 class="text-sm font-bold text-blue-900">
+                  Ghi chú về Heuristic trong A*
+                </h3>
+
+                <div class="mt-3 space-y-3 text-[13px] leading-6 text-slate-700">
+
+                  <p>
+                    Trong trình giả lập này, thuật toán
+                    <span class="font-semibold text-blue-700">A*</span>
+                    sử dụng
+                    <span class="font-semibold text-blue-700">
+                      khoảng cách Euclidean
+                    </span>
+                    làm Heuristic để ước lượng chi phí từ nút hiện tại đến đích.
+                  </p>
+
+                  <div class="rounded-xl bg-white/70 border border-blue-100 p-3">
+                    <p class="font-medium text-slate-800">
+                      Nếu Heuristic = 0 cho mọi nút:
+                    </p>
+                    <p class="mt-1 text-slate-600">
+                      Thuật toán A* sẽ hoạt động tương tự
+                      <span class="font-semibold text-blue-700">
+                        Dijkstra
+                      </span>,
+                      vì khi đó thuật toán chỉ dựa trên chi phí thực tế đã đi.
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="font-medium text-slate-800 mb-2">
+                      Ví dụ về khoảng cách Euclidean:
+                    </p>
+
+                    <ul class="space-y-2 text-slate-600">
+                      <li class="flex items-start gap-2">
+                        <span class="mt-1 h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                        Khoảng cách giữa hai điểm trên màn hình (tọa độ pixel).
+                      </li>
+
+                      <li class="flex items-start gap-2">
+                        <span class="mt-1 h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                        Khoảng cách giữa hai vị trí GPS
+                        (latitude, longitude).
+                      </li>
+
+                      <li class="flex items-start gap-2">
+                        <span class="mt-1 h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                        Khoảng cách giữa các ô tọa độ (x, y)
+                        trong ma trận hoặc game board.
+                      </li>
+                    </ul>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class SeededRandom {
+      constructor(seed) { this.seed = seed; }
+      next() {
+        this.seed = (this.seed * 1664525 + 1013904223) % 4294967296;
+        return this.seed / 4294967296;
+      }
+      nextInt(min, max) { return Math.floor(this.next() * (max - min + 1)) + min; }
+    }
+
+    const CITY_NAMES = "ABCDEFGHIJKLMNOPQRST".split("");
+    let nodes = [], edges = [], adj = {}, startNodeId = 0, endNodeId = 0;
+    let gScore = {}, fScore = {}, hScore = {}, previous = {}, visited = new Set(), unvisited = [];
+    let isDone = false, isAutoRunning = false, rng = new SeededRandom(1);
+
+    function heuristic(uId, vId) {
+      const u = nodes[uId];
+      const v = nodes[vId];
+      return Math.round(Math.hypot(u.x - v.x, u.y - v.y) / 10);
+    }
+
+    function initGraph() {
+      const seedVal = parseInt(document.getElementById('seedInput').value) || 1;
+      const numNodes = Math.min(20, Math.max(2, parseInt(document.getElementById('nodeCountInput').value) || 12));
+
+      rng = new SeededRandom(seedVal);
+      document.getElementById('active-seed-display').textContent = `Seed: ${seedVal}`;
+
+      const svg = document.getElementById('svg');
+      const width = svg.clientWidth || 800;
+      const height = svg.clientHeight || 540;
+      const padding = 50;
+
+      nodes = []; edges = []; adj = {};
+
+      const cols = Math.ceil(Math.sqrt(numNodes * (width / height)));
+      const rows = Math.ceil(numNodes / cols);
+      const cellW = (width - 2 * padding) / cols;
+      const cellH = (height - 2 * padding) / rows;
+
+      let cellIndices = [];
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) cellIndices.push({ r, c });
+      for (let i = cellIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(rng.next() * (i + 1));
+        [cellIndices[i], cellIndices[j]] = [cellIndices[j], cellIndices[i]];
+      }
+
+      for (let i = 0; i < numNodes; i++) {
+        const cell = cellIndices[i];
+        const jitterX = (rng.next() - 0.5) * (cellW * 0.6);
+        const jitterY = (rng.next() - 0.5) * (cellH * 0.6);
+        const x = padding + (cell.c + 0.5) * cellW + jitterX;
+        const y = padding + (cell.r + 0.5) * cellH + jitterY;
+
+        nodes.push({ id: i, name: CITY_NAMES[i], x, y });
+        adj[i] = [];
+      }
+
+      nodes.forEach(u => {
+        const neighbors = [...nodes]
+          .filter(v => v.id !== u.id)
+          .sort((a, b) => Math.hypot(u.x - a.x, u.y - a.y) - Math.hypot(u.x - b.x, u.y - b.y));
+
+        neighbors.slice(0, rng.nextInt(2, 3)).forEach(v => {
+          const cost = rng.nextInt(5, 50);
+          edges.push({ from: u.id, to: v.id, cost });
+          adj[u.id].push({ to: v.id, cost });
+        });
+      });
+
+      renderGraph();
+      updateSelectors(numNodes);
+      resetAlgo();
+    }
+
+    function renderGraph() {
+      const nl = document.getElementById('nodes-layer');
+      const el = document.getElementById('edges-layer');
+      nl.innerHTML = ''; el.innerHTML = '';
+
+      edges.forEach((edge) => {
+        const from = nodes[edge.from], to = nodes[edge.to];
+        const dx = to.x - from.x, dy = to.y - from.y, dist = Math.hypot(dx, dy);
+        const ux = dx / dist, uy = dy / dist;
+        const startX = from.x + ux * 18, startY = from.y + uy * 18;
+        const endX = to.x - ux * 23, endY = to.y - uy * 23;
+
+        const bend = 15;
+        const midX = (startX + endX) / 2 + (-uy * bend), midY = (startY + endY) / 2 + (ux * bend);
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M${startX},${startY} Q${midX},${midY} ${endX},${endY}`);
+        path.setAttribute("class", "edge stroke-slate-300 fill-none opacity-30");
+        path.setAttribute("stroke-width", "1.5");
+        path.setAttribute("marker-end", "url(#arrowhead)");
+        path.id = `edge-${edge.from}-${edge.to}`;
+        el.appendChild(path);
+
+        const t = 0.5;
+        const lx = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * midX + t * t * endX;
+        const ly = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * midY + t * t * endY;
+        const labelG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        bg.setAttribute("x", lx - 9); bg.setAttribute("y", ly - 7);
+        bg.setAttribute("width", "18"); bg.setAttribute("height", "14");
+        bg.setAttribute("class", "edge-label-bg");
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", lx); text.setAttribute("y", ly + 3.5);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("class", "text-[9px] font-bold fill-slate-600");
+        text.textContent = edge.cost;
+        labelG.appendChild(bg); labelG.appendChild(text); el.appendChild(labelG);
+      });
+
+      nodes.forEach(node => {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "node");
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", "15");
+        circle.setAttribute("fill", "white"); circle.setAttribute("stroke", "#cbd5e1");
+        circle.setAttribute("stroke-width", "2"); circle.id = `node-circle-${node.id}`;
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", node.x); text.setAttribute("y", node.y + 4);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("class", "text-[10px] font-bold fill-slate-800");
+        text.id = `node-text-${node.id}`; text.textContent = node.name;
+        g.appendChild(circle); g.appendChild(text); nl.appendChild(g);
+      });
+    }
+
+    function resetAlgo() {
+      isDone = false; visited.clear();
+      gScore = {}; fScore = {}; hScore = {}; previous = {}; unvisited = [];
+      document.getElementById('log-panel').innerHTML = '';
+
+      nodes.forEach(n => {
+        gScore[n.id] = Infinity;
+        hScore[n.id] = heuristic(n.id, endNodeId);
+        fScore[n.id] = Infinity;
+        previous[n.id] = null;
+        unvisited.push(n.id);
+        const c = document.getElementById(`node-circle-${n.id}`);
+        const t = document.getElementById(`node-text-${n.id}`);
+        if (c) { c.className.baseVal = "node"; c.setAttribute('fill', 'white'); c.setAttribute('r', '15'); }
+        if (t) t.className.baseVal = "text-[10px] font-bold fill-slate-800";
+      });
+
+      edges.forEach(e => {
+        const el = document.getElementById(`edge-${e.from}-${e.to}`);
+        if (el) { el.classList.remove('path-edge'); el.classList.add('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead)"); }
+      });
+
+      gScore[startNodeId] = 0;
+      fScore[startNodeId] = hScore[startNodeId];
+
+      log(`📍 KHỞI TẠO A*: Từ ${CITY_NAMES[startNodeId]} đến ${CITY_NAMES[endNodeId]}`, 'init');
+      log(`💡 Heuristic h(n) được tính bằng khoảng cách chim bay.`, 'muted');
+      updateTables();
+    }
+
+    function step() {
+      if (isDone) return;
+
+      let openSet = unvisited.filter(id => !visited.has(id) && fScore[id] !== Infinity);
+
+      if (openSet.length === 0) {
+        isDone = true;
+        log(`❌ Không tìm thấy đường đi khả thi.`, 'error');
+        return;
+      }
+
+      openSet.sort((a, b) => fScore[a] - fScore[b]);
+      const u = openSet[0];
+
+      const cur = document.getElementById(`node-circle-${u}`);
+      nodes.forEach(n => document.getElementById(`node-circle-${n.id}`).classList.remove('current-node'));
+      cur.classList.add('current-node');
+
+      log(`🔍 Xét ${CITY_NAMES[u]}: g=${gScore[u]}, h=${hScore[u]} ➔ f=${fScore[u]}`, 'process');
+
+      adj[u].forEach(edge => {
+        const v = edge.to;
+        const weight = edge.cost;
+        const tentativeG = gScore[u] + weight;
+
+        if (visited.has(v)) {
+          log(`   - ${CITY_NAMES[v]}: Đã đóng (Bỏ qua)`, 'muted');
+        } else {
+          if (tentativeG < gScore[v]) {
+            const h = hScore[v];
+            const f = tentativeG + h;
+            log(`   + ${CITY_NAMES[v]}: g=${tentativeG}, h=${h} ➔ f=${f} (Tốt hơn!)`, 'success');
+            previous[v] = u;
+            gScore[v] = tentativeG;
+            fScore[v] = f;
+          } else {
+            log(`   - ${CITY_NAMES[v]}: f=${tentativeG + hScore[v]} >= ${fScore[v]} (Không tốt hơn)`, 'muted');
+          }
+        }
+      });
+
+      visited.add(u);
+
+      setTimeout(() => {
+        cur.classList.remove('current-node'); cur.classList.add('visited-node');
+        document.getElementById(`node-text-${u}`).classList.add('visited-node-text');
+
+        if (u === endNodeId) {
+          isDone = true;
+          highlightPath();
+          log(`🏆 THÀNH CÔNG: Chi phí đường đi = ${gScore[u]}`, 'finish');
+        }
+        updateTables();
+      }, 200);
+      updateTables();
+    }
+
+    async function runAuto() {
+      if (isAutoRunning || isDone) return;
+      isAutoRunning = true;
+      const ids = ['runBtn', 'stepBtn', 'generateBtn', 'randomSeedBtn'];
+      ids.forEach(id => document.getElementById(id).disabled = true);
+      while (!isDone && visited.size < nodes.length) { step(); await new Promise(r => setTimeout(r, 600)); }
+      isAutoRunning = false;
+      ids.forEach(id => document.getElementById(id).disabled = false);
+    }
+
+    function highlightPath() {
+      let c = endNodeId;
+      while (previous[c] !== null) {
+        const p = previous[c];
+        const el = document.getElementById(`edge-${p}-${c}`);
+        if (el) { el.classList.add('path-edge'); el.classList.remove('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead-path)"); }
+        document.getElementById(`node-circle-${c}`).classList.add('path-node');
+        c = p;
+      }
+      document.getElementById(`node-circle-${startNodeId}`).classList.add('path-node');
+    }
+
+    function updateTables() {
+      const q = document.getElementById('queueTable');
+      const qData = unvisited.filter(id => !visited.has(id) && fScore[id] !== Infinity).sort((a, b) => fScore[a] - fScore[b]);
+      q.innerHTML = qData.map(id => `
+        <tr class="border-b hover:bg-amber-50">
+          <td class="p-2 font-bold">${CITY_NAMES[id]}</td>
+          <td class="p-2 text-right font-mono text-amber-600">${fScore[id]}</td>
+        </tr>`).join('');
+
+      document.getElementById('distanceTable').innerHTML = nodes.map(n => {
+        return `
+          <tr class="border-b hover:bg-blue-50">
+            <td class="p-2 font-bold">${n.name}</td>
+            <td class="p-2 text-center font-mono text-slate-400">${gScore[n.id] === Infinity ? '∞' : gScore[n.id]}</td>
+            <td class="p-2 text-center font-mono text-slate-400">${hScore[n.id]}</td>
+            <td class="p-2 text-right font-mono ${fScore[n.id] === Infinity ? 'text-slate-300' : 'text-blue-600 font-bold'}">
+              ${fScore[n.id] === Infinity ? '∞' : fScore[n.id]}
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    function updateSelectors(numNodes) {
+      const s = document.getElementById('startSelect'), e = document.getElementById('endSelect');
+      const opts = nodes.map(n => `<option value="${n.id}">${n.name}</option>`).join('');
+      s.innerHTML = opts; e.innerHTML = opts;
+      s.value = 0; e.value = numNodes - 1;
+      startNodeId = 0; endNodeId = numNodes - 1;
+    }
+
+    function log(m, type) {
+      const p = document.getElementById('log-panel');
+      const d = document.createElement('div');
+      d.className = "log-line";
+      let style = "text-slate-400";
+      switch (type) {
+        case 'init': style = "text-blue-400 font-bold"; break;
+        case 'process': style = "text-white font-bold bg-slate-800"; break;
+        case 'success': style = "text-emerald-400 ml-2"; break;
+        case 'muted': style = "text-slate-500 ml-2 italic"; break;
+        case 'error': style = "text-red-400"; break;
+        case 'finish': style = "text-yellow-400 font-bold"; break;
+      }
+      d.innerHTML = `<span class="${style}">${m}</span>`;
+      p.appendChild(d); p.scrollTop = p.scrollHeight;
+    }
+
+    document.getElementById('generateBtn').onclick = initGraph;
+    document.getElementById('randomSeedBtn').onclick = () => {
+      document.getElementById('seedInput').value = Math.floor(Math.random() * 9999);
+      initGraph();
+    };
+    document.getElementById('resetBtn').onclick = resetAlgo;
+    document.getElementById('stepBtn').onclick = step;
+    document.getElementById('runBtn').onclick = runAuto;
+
+    document.getElementById('startSelect').onchange = (e) => {
+      startNodeId = parseInt(e.target.value);
+      resetAlgo();
+    };
+    document.getElementById('endSelect').onchange = (e) => {
+      endNodeId = parseInt(e.target.value);
+      resetAlgo();
+    };
+
+    window.onload = () => setTimeout(initGraph, 100);
+  </script>
+</body>
+
+</html>
