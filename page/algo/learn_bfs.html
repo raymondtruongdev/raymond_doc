@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BFS Visualizer - Tìm kiếm theo chiều rộng</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Prism CSS cho Code Snippet -->
+  <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+    }
+
+    .node {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .edge {
+      transition: all 0.3s ease;
+      stroke-dasharray: 4;
+      animation: dash 30s linear infinite;
+    }
+
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -1000;
+      }
+    }
+
+    .current-node {
+      fill: #ef4444 !important;
+      stroke: #b91c1c;
+      r: 20;
+    }
+
+    .visited-node {
+      fill: #10b981 !important;
+      stroke: #059669;
+    }
+
+    .visited-node-text {
+      fill: white !important;
+    }
+
+    .path-node {
+      fill: #2563eb !important;
+      stroke: #1e40af !important;
+      r: 18;
+    }
+
+    .path-edge {
+      stroke: #2563eb !important;
+      stroke-width: 4px;
+      stroke-dasharray: none;
+      opacity: 1 !important;
+    }
+
+    .edge-label-bg {
+      fill: white;
+      fill-opacity: 0.9;
+      stroke: #cbd5e1;
+      stroke-width: 1px;
+      rx: 4;
+      ry: 4;
+    }
+
+    .log-line {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-bottom: 1px solid #1e293b;
+      padding: 4px 4px;
+      display: block;
+      width: 100%;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 10px;
+    }
+
+    mjx-container {
+      display: inline-block !important;
+      margin: 0 2px !important;
+      vertical-align: middle;
+    }
+
+    /* Custom Prism Style */
+    pre[class*="language-"] {
+      border-radius: 0.75rem;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body class="p-4">
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">BFS Visualizer</h1>
+        <p class="text-slate-500 text-sm">Trực quan hóa thuật toán Tìm kiếm theo chiều rộng (Breadth-First Search)</p>
+      </div>
+      <div class="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex gap-3">
+          <div class="flex flex-col">
+            <span class="text-[9px] font-bold text-slate-400 uppercase ml-1">Số đỉnh</span>
+            <input type="number" id="nodeCountInput" value="12" min="2" max="20"
+              class="w-14 px-1 py-0.5 border-b border-slate-100 font-mono font-bold text-emerald-600 outline-none">
+          </div>
+          <div class="flex flex-col border-l border-slate-100 pl-3">
+            <span class="text-[9px] font-bold text-slate-400 uppercase ml-1">Mã bản đồ (Seed)</span>
+            <div class="flex items-center">
+              <input type="number" id="seedInput" value="1"
+                class="w-16 px-1 py-0.5 border-b border-slate-100 font-mono font-bold text-blue-600 outline-none">
+              <button id="randomSeedBtn" title="Ngẫu nhiên hóa"
+                class="ml-1 p-1 hover:bg-slate-100 rounded transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="text-slate-400 hover:text-blue-500">
+                  <path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"></path>
+                  <path d="m18 2 4 4-4 4"></path>
+                  <path d="M2 6h1.9c1.6 0 3.1.9 3.9 2.3l3.5 6"></path>
+                  <path d="m18 14 4 4-4 4"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button id="generateBtn"
+          class="px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-bold hover:bg-slate-900 transition-all">Tạo
+          đồ thị</button>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <!-- Sidebar Điều khiển -->
+      <div class="lg:col-span-3 space-y-4">
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Điều khiển</h2>
+          <div class="space-y-3">
+            <div class="grid grid-cols-1 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-1">Đỉnh bắt đầu</label>
+                <select id="startSelect"
+                  class="w-full p-2 text-sm border border-slate-200 rounded-lg bg-slate-50 outline-none"></select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1 ml-1">Đỉnh kết thúc</label>
+                <select id="endSelect"
+                  class="w-full p-2 text-sm border border-slate-200 rounded-lg bg-slate-50 outline-none"></select>
+              </div>
+            </div>
+            <div class="pt-1 flex flex-col gap-2">
+              <button id="stepBtn"
+                class="w-full py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all">Bước
+                tiếp theo</button>
+              <button id="runBtn"
+                class="w-full py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition-all">Chạy
+                tự động</button>
+              <button id="resetBtn"
+                class="w-full py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition-all">Đặt
+                lại</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log Panel -->
+        <div class="bg-[#0f172a] rounded-xl shadow-lg overflow-hidden border border-slate-800">
+          <div class="p-2 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+            <span class="text-[9px] font-bold text-slate-400 uppercase">Tiến trình BFS</span>
+            <span id="active-seed-display" class="text-[9px] text-blue-400 font-mono">Seed: 1</span>
+          </div>
+          <div id="log-panel" class="p-1 text-[10px] font-mono h-[220px] overflow-y-auto leading-tight text-slate-300">
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Visualizer -->
+      <div class="lg:col-span-9 space-y-4">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden h-[540px]">
+          <svg id="svg" class="w-full h-full bg-slate-50">
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+              </marker>
+              <marker id="arrowhead-path" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb" />
+              </marker>
+            </defs>
+            <g id="edges-layer"></g>
+            <g id="nodes-layer"></g>
+          </svg>
+        </div>
+
+        <!-- Tables -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div
+              class="p-2 bg-indigo-50/50 border-b border-indigo-100 font-bold text-[9px] text-indigo-800 uppercase text-center">
+              Hàng đợi (Queue - FIFO)</div>
+            <div class="max-h-[140px] overflow-y-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 text-[10px] text-slate-400">
+                  <tr>
+                    <th class="p-2 font-semibold">Vị trí</th>
+                    <th class="p-2 font-semibold">Đỉnh trong hàng</th>
+                    <th class="p-2 font-semibold text-right">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody id="queueTable"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div
+              class="p-2 bg-blue-50/50 border-b border-blue-100 font-bold text-[9px] text-blue-800 uppercase text-center">
+              Bảng trạng thái đỉnh</div>
+            <div class="max-h-[140px] overflow-y-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 text-[10px] text-slate-400">
+                  <tr>
+                    <th class="p-2 font-semibold">Đỉnh</th>
+                    <th class="p-2 font-semibold text-center">Cha (Parent)</th>
+                    <th class="p-2 font-semibold text-right">Mức (Level)</th>
+                  </tr>
+                </thead>
+                <tbody id="distanceTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHẦN LÝ THUYẾT & SO SÁNH -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-8">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 border-b pb-3 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="text-blue-500">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+                <path d="M8 7h6"></path>
+                <path d="M8 11h8"></path>
+              </svg>
+              Lý thuyết giải thuật BFS (Tìm kiếm theo chiều rộng)
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6 text-sm text-slate-600 leading-relaxed">
+              <div class="space-y-4">
+                <div>
+                  <h3 class="font-bold text-slate-700 uppercase text-xs tracking-wider mb-2 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 1. Ý tưởng cốt lõi
+                  </h3>
+                  <p>
+                    BFS là thuật toán duyệt đồ thị theo từng **tầng (layer)**. Từ đỉnh xuất phát, nó thăm tất cả các
+                    đỉnh kề trước, sau đó mới di chuyển đến các đỉnh ở xa hơn.
+                  </p>
+                  <p class="mt-2">
+                    Thuật toán sử dụng cấu trúc dữ liệu **Hàng đợi (Queue)** theo nguyên tắc **Vào trước - Ra trước
+                    (FIFO)**.
+                  </p>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <h3 class="font-bold text-slate-700 uppercase text-xs tracking-wider mb-2 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> 2. Quy trình xử lý
+                </h3>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <ul class="space-y-2 text-xs">
+                    <li><span class="font-bold text-blue-600">Bước 1:</span> Đưa đỉnh nguồn vào Queue, đánh dấu "Đã
+                      thăm".</li>
+                    <li><span class="font-bold text-blue-600">Bước 2:</span> Lấy một đỉnh $u$ ra khỏi đầu Queue.</li>
+                    <li><span class="font-bold text-blue-600">Bước 3:</span> Xét tất cả đỉnh kề $v$ chưa thăm của $u$:
+                      Đánh dấu $v$ đã thăm, đặt $parent[v] = u$ và đưa $v$ vào cuối Queue.</li>
+                    <li><span class="font-bold text-blue-600">Bước 4:</span> Lặp lại cho đến khi Queue rỗng.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SO SÁNH BFS VÀ DIJKSTRA -->
+          <div class="border-t pt-8">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="text-amber-500">
+                <path d="M16 3h5v5"></path>
+                <path d="M8 3H3v5"></path>
+                <path d="M21 16v5h-5"></path>
+                <path d="M3 16v5h5"></path>
+                <path d="m15 9-6 6"></path>
+                <path d="m9 9 6 6"></path>
+              </svg>
+              So sánh BFS và Dijkstra
+            </h3>
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-sm text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-700">
+                    <th class="p-3 border-b border-r">Đặc điểm</th>
+                    <th class="p-3 border-b border-r bg-blue-50 text-blue-900 font-bold text-center">BFS</th>
+                    <th class="p-3 border-b bg-slate-50 text-slate-900 font-bold text-center">Dijkstra</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 border-b border-r font-semibold text-slate-600 bg-slate-50/50">Trọng số cạnh</td>
+                    <td class="p-3 border-b border-r text-center">Chỉ dùng cho đồ thị không trọng số</td>
+                    <td class="p-3 border-b text-center">Dùng cho đồ thị có trọng số ($\ge 0$)</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 border-b border-r font-semibold text-slate-600 bg-slate-50/50">Cấu trúc dữ liệu</td>
+                    <td class="p-3 border-b border-r text-center">Hàng đợi (Queue - FIFO)</td>
+                    <td class="p-3 border-b text-center">Hàng đợi ưu tiên (Priority Queue)</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 border-b border-r font-semibold text-slate-600 bg-slate-50/50">Đường đi ngắn nhất
+                    </td>
+                    <td class="p-3 border-b border-r text-center">Ngắn nhất về số lượng cạnh</td>
+                    <td class="p-3 border-b text-center">Ngắn nhất về tổng trọng số</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3 border-r font-semibold text-slate-600 bg-slate-50/50">Độ phức tạp</td>
+                    <td class="p-3 border-r text-center">$O(V + E)$</td>
+                    <td class="p-3 text-center">$O((E + V) \log V)$</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PYTHON DEMO SECTION -->
+          <div class="border-t pt-8">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="text-emerald-500">
+                <path d="M12 2H2v10h10V2zM22 12H12v10h10V12zM12 12H2v10h10V12zM22 2H12v10h10V2z" />
+              </svg>
+              Triển khai BFS với Python
+            </h3>
+            <p class="text-sm text-slate-600 mb-4">Dưới đây là mã nguồn Python sử dụng thư viện `collections.deque` để
+              triển khai hàng đợi tối ưu cho BFS:</p>
+            <div class="relative group">
+              <pre><code class="language-python">from collections import deque
+
+def bfs(graph, start_node):
+    # Khởi tạo tập hợp đã thăm và hàng đợi
+    visited = {start_node}
+    queue = deque([start_node])
+    
+    # Lưu vết đường đi (parent)
+    parent = {start_node: None}
+    
+    print(f"Bắt đầu duyệt từ đỉnh: {start_node}")
+    
+    while queue:
+        # Lấy đỉnh ở đầu hàng đợi (FIFO)
+        u = queue.popleft()
+        print(f"Đang thăm đỉnh: {u}")
+        
+        # Duyệt qua các đỉnh kề v của u
+        for v in graph[u]:
+            if v not in visited:
+                visited.add(v)
+                parent[v] = u
+                queue.append(v)
+                print(f"  -> Tìm thấy đỉnh kề chưa thăm: {v}")
+                
+    return parent
+
+# Khai báo đồ thị dưới dạng danh sách kề
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+# Chạy giải thuật
+result = bfs(graph, 'A')</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prism.js Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  <script>
+    class SeededRandom {
+      constructor(seed) { this.seed = seed; }
+      next() { this.seed = (this.seed * 1664525 + 1013904223) % 4294967296; return this.seed / 4294967296; }
+      nextInt(min, max) { return Math.floor(this.next() * (max - min + 1)) + min; }
+    }
+
+    const CITY_NAMES = "ABCDEFGHIJKLMNOPQRST".split("");
+    let nodes = [], edges = [], adj = {}, startNodeId = 0, endNodeId = 0;
+    let levels = {}, previous = {}, visited = new Set(), queue = [];
+    let isDone = false, isAutoRunning = false, rng = new SeededRandom(1);
+
+    function initGraph() {
+      const seedVal = parseInt(document.getElementById('seedInput').value) || 1;
+      const numNodes = Math.min(20, Math.max(2, parseInt(document.getElementById('nodeCountInput').value) || 12));
+      rng = new SeededRandom(seedVal);
+      document.getElementById('active-seed-display').textContent = `Seed: ${seedVal}`;
+      const svg = document.getElementById('svg');
+      const width = svg.clientWidth || 800;
+      const height = svg.clientHeight || 540;
+      const padding = 50;
+
+      nodes = []; edges = []; adj = {};
+      const cols = Math.ceil(Math.sqrt(numNodes * (width / height)));
+      const rows = Math.ceil(numNodes / cols);
+      const cellW = (width - 2 * padding) / cols;
+      const cellH = (height - 2 * padding) / rows;
+      let cellIndices = [];
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) cellIndices.push({ r, c });
+      for (let i = cellIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(rng.next() * (i + 1));
+        [cellIndices[i], cellIndices[j]] = [cellIndices[j], cellIndices[i]];
+      }
+
+      for (let i = 0; i < numNodes; i++) {
+        const cell = cellIndices[i];
+        const x = padding + (cell.c + 0.5) * cellW + (rng.next() - 0.5) * (cellW * 0.6);
+        const y = padding + (cell.r + 0.5) * cellH + (rng.next() - 0.5) * (cellH * 0.6);
+        nodes.push({ id: i, name: CITY_NAMES[i], x, y });
+        adj[i] = [];
+      }
+
+      nodes.forEach(u => {
+        const neighbors = [...nodes].filter(v => v.id !== u.id).sort((a, b) => Math.hypot(u.x - a.x, u.y - a.y) - Math.hypot(u.x - b.x, u.y - b.y));
+        neighbors.slice(0, rng.nextInt(1, 2)).forEach(v => {
+          if (!adj[u.id].some(e => e.to === v.id)) {
+            edges.push({ from: u.id, to: v.id, cost: 1 });
+            adj[u.id].push({ to: v.id });
+          }
+        });
+      });
+      renderGraph();
+      updateSelectors(numNodes);
+      resetAlgo();
+    }
+
+    function renderGraph() {
+      const nl = document.getElementById('nodes-layer');
+      const el = document.getElementById('edges-layer');
+      nl.innerHTML = ''; el.innerHTML = '';
+      edges.forEach((edge) => {
+        const from = nodes[edge.from], to = nodes[edge.to];
+        const dx = to.x - from.x, dy = to.y - from.y, dist = Math.hypot(dx, dy);
+        const ux = dx / dist, uy = dy / dist;
+        const startX = from.x + ux * 18, startY = from.y + uy * 18;
+        const endX = to.x - ux * 23, endY = to.y - uy * 23;
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M${startX},${startY} L${endX},${endY}`);
+        path.setAttribute("class", "edge stroke-slate-300 fill-none opacity-30");
+        path.setAttribute("stroke-width", "1.5");
+        path.setAttribute("marker-end", "url(#arrowhead)");
+        path.id = `edge-${edge.from}-${edge.to}`;
+        el.appendChild(path);
+      });
+
+      nodes.forEach(node => {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "node");
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y); circle.setAttribute("r", "15");
+        circle.setAttribute("fill", "white"); circle.setAttribute("stroke", "#cbd5e1"); circle.setAttribute("stroke-width", "2");
+        circle.id = `node-circle-${node.id}`;
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", node.x); text.setAttribute("y", node.y + 4); text.setAttribute("text-anchor", "middle");
+        text.setAttribute("class", "text-[10px] font-bold fill-slate-800");
+        text.id = `node-text-${node.id}`; text.textContent = node.name;
+        g.appendChild(circle); g.appendChild(text); nl.appendChild(g);
+      });
+    }
+
+    function resetAlgo() {
+      isDone = false; visited.clear(); levels = {}; previous = {}; queue = [];
+      document.getElementById('log-panel').innerHTML = '';
+      nodes.forEach(n => {
+        levels[n.id] = Infinity; previous[n.id] = null;
+        const c = document.getElementById(`node-circle-${n.id}`);
+        const t = document.getElementById(`node-text-${n.id}`);
+        if (c) { c.className.baseVal = "node"; c.setAttribute('fill', 'white'); c.setAttribute('r', '15'); }
+        if (t) t.className.baseVal = "text-[10px] font-bold fill-slate-800";
+      });
+      edges.forEach(e => {
+        const el = document.getElementById(`edge-${e.from}-${e.to}`);
+        if (el) { el.classList.remove('path-edge'); el.classList.add('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead)"); }
+      });
+
+      levels[startNodeId] = 0;
+      visited.add(startNodeId);
+      queue.push(startNodeId);
+
+      log(`📍 BẮT ĐẦU BFS từ đỉnh ${CITY_NAMES[startNodeId]}`, 'init');
+      updateTables();
+    }
+
+    function step() {
+      if (isDone || queue.length === 0) {
+        if (queue.length === 0 && !isDone) {
+          isDone = true;
+          log(`❌ Kết thúc: Không tìm thấy đường đi đến ${CITY_NAMES[endNodeId]}`, 'error');
+        }
+        return;
+      }
+
+      const u = queue.shift();
+      const cur = document.getElementById(`node-circle-${u}`);
+      nodes.forEach(n => document.getElementById(`node-circle-${n.id}`).classList.remove('current-node'));
+      cur.classList.add('current-node');
+
+      log(`🔍 Đang xét đỉnh ${CITY_NAMES[u]} (Tầng ${levels[u]})`, 'process');
+
+      if (u === endNodeId) {
+        isDone = true;
+        highlightPath();
+        log(`🏆 Đã tìm thấy đích ${CITY_NAMES[endNodeId]} tại tầng ${levels[u]}!`, 'finish');
+        updateTables();
+        return;
+      }
+
+      adj[u].forEach(edge => {
+        const v = edge.to;
+        if (!visited.has(v)) {
+          visited.add(v);
+          levels[v] = levels[u] + 1;
+          previous[v] = u;
+          queue.push(v);
+          log(`   + Phát hiện ${CITY_NAMES[v]} (Tầng ${levels[v]}) - Thêm vào Queue`, 'success');
+
+          const vCircle = document.getElementById(`node-circle-${v}`);
+          vCircle.setAttribute('stroke', '#3b82f6');
+        }
+      });
+
+      setTimeout(() => {
+        cur.classList.remove('current-node');
+        cur.classList.add('visited-node');
+        document.getElementById(`node-text-${u}`).classList.add('visited-node-text');
+        updateTables();
+      }, 200);
+    }
+
+    async function runAuto() {
+      if (isAutoRunning || isDone) return;
+      isAutoRunning = true;
+      const ids = ['runBtn', 'stepBtn', 'generateBtn', 'randomSeedBtn'];
+      ids.forEach(id => document.getElementById(id).disabled = true);
+      while (!isDone && queue.length > 0) {
+        step();
+        await new Promise(r => setTimeout(r, 800));
+      }
+      isAutoRunning = false;
+      ids.forEach(id => document.getElementById(id).disabled = false);
+    }
+
+    function highlightPath() {
+      let c = endNodeId;
+      while (previous[c] !== null) {
+        const p = previous[c];
+        const el = document.getElementById(`edge-${p}-${c}`);
+        if (el) { el.classList.add('path-edge'); el.classList.remove('opacity-30'); el.setAttribute("marker-end", "url(#arrowhead-path)"); }
+        document.getElementById(`node-circle-${c}`).classList.add('path-node');
+        c = p;
+      }
+      document.getElementById(`node-circle-${startNodeId}`).classList.add('path-node');
+    }
+
+    function updateTables() {
+      const qTable = document.getElementById('queueTable');
+      qTable.innerHTML = queue.map((id, index) => `
+        <tr class="border-b">
+          <td class="p-2 font-mono text-slate-400">#${index + 1}</td>
+          <td class="p-2 font-bold">${CITY_NAMES[id]}</td>
+          <td class="p-2 text-right"><span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px]">Đang đợi</span></td>
+        </tr>
+      `).join('') || '<tr><td colspan="3" class="p-4 text-center text-slate-400">Hàng đợi rỗng</td></tr>';
+
+      document.getElementById('distanceTable').innerHTML = nodes.map(n => `
+        <tr class="border-b">
+          <td class="p-2 font-bold">${n.name}</td>
+          <td class="p-2 text-center font-mono text-slate-400">${previous[n.id] !== null ? CITY_NAMES[previous[n.id]] : "-"}</td>
+          <td class="p-2 text-right font-mono ${levels[n.id] === Infinity ? 'text-slate-300' : 'text-blue-600 font-bold'}">
+            ${levels[n.id] === Infinity ? '∞' : levels[n.id]}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateSelectors(numNodes) {
+      const s = document.getElementById('startSelect'), e = document.getElementById('endSelect');
+      const opts = nodes.map(n => `<option value="${n.id}">${n.name}</option>`).join('');
+      s.innerHTML = opts; e.innerHTML = opts;
+      s.value = 0; e.value = numNodes - 1;
+      startNodeId = 0; endNodeId = numNodes - 1;
+    }
+
+    function log(m, type) {
+      const p = document.getElementById('log-panel'), d = document.createElement('div');
+      d.className = "log-line";
+      let style = "text-slate-400";
+      switch (type) {
+        case 'init': style = "text-blue-400 font-bold"; break;
+        case 'process': style = "text-white font-bold bg-slate-800"; break;
+        case 'success': style = "text-emerald-400 ml-2"; break;
+        case 'finish': style = "text-yellow-400 font-bold"; break;
+        case 'error': style = "text-red-400 font-bold"; break;
+      }
+      d.innerHTML = `<span class="${style}">${m}</span>`;
+      p.appendChild(d); p.scrollTop = p.scrollHeight;
+    }
+
+    document.getElementById('generateBtn').onclick = initGraph;
+    document.getElementById('randomSeedBtn').onclick = () => { document.getElementById('seedInput').value = Math.floor(Math.random() * 9999); initGraph(); };
+    document.getElementById('resetBtn').onclick = resetAlgo;
+    document.getElementById('stepBtn').onclick = step;
+    document.getElementById('runBtn').onclick = runAuto;
+    document.getElementById('startSelect').onchange = (e) => { startNodeId = parseInt(e.target.value); resetAlgo(); };
+    document.getElementById('endSelect').onchange = (e) => { endNodeId = parseInt(e.target.value); resetAlgo(); };
+    window.onload = () => setTimeout(initGraph, 100);
+  </script>
+</body>
+
+</html>
