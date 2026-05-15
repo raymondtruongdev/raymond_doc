@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raymond's Contents</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    .cat-content {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease-out, opacity 0.3s;
+      opacity: 0;
+    }
+
+    .cat-content.open {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      padding-bottom: 1.25rem;
+    }
+
+    .lesson-item:hover {
+      transform: translateY(-2px);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    /* Toggle Switch Style */
+    .toggle-dot {
+      transition: all 0.3s ease-in-out;
+    }
+
+    input:checked~.toggle-dot {
+      transform: translateX(100%);
+      background-color: #3b82f6;
+    }
+
+    input:checked~.toggle-bg {
+      background-color: #dbeafe;
+      border-color: #bfdbfe;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen pb-12 text-slate-800">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b sticky top-0 z-20 shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div>
+        <h1 class="text-xl font-bold flex items-center gap-2">
+          <i data-lucide="library" class="text-blue-600"></i> RAYMOND's Library
+        </h1>
+        <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">GitHub Pages Learning Materials</p>
+      </div>
+      <div class="relative w-full md:w-72">
+        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+        <input type="text" id="searchInput" placeholder="Tìm kiếm bài học..."
+          class="w-full pl-10 pr-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm">
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 mt-8">
+    <!-- ACTIONS -->
+    <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <a href="index.html"
+          class="px-4 py-2 bg-blue-600 text-white rounded-full text-xs font-semibold hover:bg-blue-700 transition flex items-center gap-2">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i> TRANG CHỦ
+        </a>
+        <button onclick="toggleAll(true)"
+          class="px-4 py-2 bg-white border text-slate-600 rounded-full text-xs font-semibold hover:bg-slate-50 transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="folder-open" class="w-3.5 h-3.5"></i> MỞ TẤT CẢ
+        </button>
+        <button onclick="toggleAll(false)"
+          class="px-4 py-2 bg-white border text-slate-600 rounded-full text-xs font-semibold hover:bg-slate-50 transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="folder-closed" class="w-3.5 h-3.5"></i> THU GỌN
+        </button>
+      </div>
+
+      <!-- NEW TAB OPTION -->
+      <div class="flex items-center gap-3 bg-white border px-4 py-2 rounded-full shadow-sm">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-tight">Mở tab mới</span>
+        <label for="tabToggle" class="flex items-center cursor-pointer relative">
+          <input type="checkbox" id="tabToggle" class="sr-only" onchange="updateTabPreference(this.checked)" checked>
+          <div class="toggle-bg block w-10 h-6 bg-slate-100 border rounded-full transition-colors"></div>
+          <div class="toggle-dot absolute left-1 top-1 bg-slate-400 w-4 h-4 rounded-full transition-all"></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- APP RENDER -->
+    <div id="app" class="space-y-4"></div>
+
+    <!-- EMPTY STATE -->
+    <div id="empty" class="hidden text-center py-20">
+      <i data-lucide="search-x" class="w-12 h-12 mx-auto text-slate-300 mb-4"></i>
+      <h3 class="text-lg font-medium text-slate-900">Không tìm thấy bài học</h3>
+      <p class="text-slate-500 text-sm">Vui lòng thử từ khóa khác</p>
+    </div>
+  </main>
+
+  <script>
+    // --- CONFIGURATION ---
+    let openInNewTab = true;
+
+    // DATA CONFIGURATION
+    const DATA = [
+      {
+        id: 'html', title: 'Learn HTML', icon: 'layout', dotColor: 'bg-blue-400',
+        lessons: [
+          { name: 'Flexbox Layout', file: 'flex_layout.html', path: 'page/learn_html/flex_layout.html' },
+          { name: 'CSS Grid Layout', file: 'grid_layout.html', path: 'page/learn_html/grid_layout.html' }
+        ]
+      },
+      {
+        id: 'algo', title: 'Algorithms', icon: 'cpu', dotColor: 'bg-purple-400',
+        lessons: [
+          { name: 'Breadth First Search (BFS)', file: 'learn_bfs.html', path: 'page/algo/learn_bfs.html' },
+          { name: 'Dijkstra Algorithm', file: 'learn_Dijkstra.html', path: 'page/algo/learn_Dijkstra.html' }
+        ]
+      },
+      {
+        id: 'git', title: 'Git Lessons', icon: 'git-branch', dotColor: 'bg-emerald-400',
+        lessons: [
+          { name: 'Git Push Instructions', file: 'git_push.html', path: 'page/git_lesson/git_push.html' }
+        ]
+      }
+    ];
+
+    const app = document.getElementById('app');
+    const empty = document.getElementById('empty');
+    const search = document.getElementById('searchInput');
+
+    // UPDATE TAB PREFERENCE
+    function updateTabPreference(checked) {
+      openInNewTab = checked;
+      render(); // Re-render to update link behaviors
+    }
+
+    // RENDER FUNCTIONS
+    function render() {
+      const target = openInNewTab ? '_blank' : '_self';
+
+      app.innerHTML = DATA.map(cat => `
+                <section class="cat-card bg-white rounded-2xl shadow-sm border overflow-hidden transition-all" data-id="${cat.id}">
+                    <button onclick="toggleCategory('${cat.id}')" class="w-full flex items-center justify-between p-5 hover:bg-slate-50 transition">
+                        <div class="flex items-center gap-4 text-left">
+                            <div class="p-3 bg-slate-100 rounded-xl text-blue-600 group-hover:bg-blue-50 transition">
+                                <i data-lucide="${cat.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-slate-900">${cat.title}</h2>
+                                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-0.5" id="count-${cat.id}">${cat.lessons.length} Bài học</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-down" class="chevron w-5 h-5 text-slate-300 transition-transform duration-300"></i>
+                    </button>
+                    <div id="content-${cat.id}" class="cat-content open">
+                        <div class="overflow-hidden px-5 flex flex-col gap-2.5">
+                            ${cat.lessons.map(ls => `
+                                <a href="${ls.path}" 
+                                   target="${target}" 
+                                   onclick="handleLinkClick(event, '${ls.path}')"
+                                   class="lesson-item flex items-center justify-between p-3.5 bg-white border border-slate-100 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition-all group cursor-pointer">
+                                    <div class="flex items-center gap-3">
+                                        <span class="${cat.dotColor} w-2 h-2 rounded-full transition-transform group-hover:scale-150"></span>
+                                        <span class="text-sm font-medium text-slate-700 group-hover:text-blue-700">${ls.name}</span>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-slate-400 hidden sm:block">${ls.file}</span>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                </section>
+            `).join('');
+      lucide.createIcons();
+    }
+
+    function handleLinkClick(event, path) {
+      event.preventDefault();
+      if (openInNewTab) {
+        window.open(path, '_blank');
+      } else {
+        window.location.href = path;
+      }
+    }
+
+    function toggleCategory(id) {
+      const content = document.getElementById(`content-${id}`);
+      const card = content.closest('.cat-card');
+      const chevron = card.querySelector('.chevron');
+      content.classList.toggle('open');
+      chevron.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    function toggleAll(open) {
+      document.querySelectorAll('.cat-content').forEach(c => {
+        open ? c.classList.add('open') : c.classList.remove('open');
+        const chevron = c.closest('.cat-card').querySelector('.chevron');
+        chevron.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+      });
+    }
+
+    // SEARCH LOGIC
+    search.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      let totalFound = 0;
+
+      document.querySelectorAll('.cat-card').forEach(card => {
+        const id = card.dataset.id;
+        const lessons = card.querySelectorAll('.lesson-item');
+        let foundInCat = 0;
+
+        lessons.forEach(ls => {
+          const match = ls.textContent.toLowerCase().includes(term);
+          ls.classList.toggle('hidden', !match);
+          if (match) foundInCat++;
+        });
+
+        card.classList.toggle('hidden', foundInCat === 0);
+        document.getElementById(`count-${id}`).textContent = `${foundInCat} Bài học`;
+
+        if (foundInCat > 0 && term !== "") {
+          document.getElementById(`content-${id}`).classList.add('open');
+          card.querySelector('.chevron').style.transform = 'rotate(180deg)';
+        }
+        totalFound += foundInCat;
+      });
+
+      empty.classList.toggle('hidden', totalFound > 0 || term === "");
+    });
+
+    window.onload = render;
+  </script>
+</body>
+
+</html>

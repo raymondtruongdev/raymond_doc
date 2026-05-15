@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Phạt Nguội Toàn Quốc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/font-awesome.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="max-w-md w-full glass p-8 rounded-2xl shadow-2xl border border-gray-100">
+        <div class="text-center mb-8">
+            <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <i class="fas fa-car-on text-white text-2xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">Tra Cứu Phạt Nguội</h1>
+            <p class="text-gray-500 text-sm mt-2">Nhập biển số xe để kiểm tra tình hình vi phạm</p>
+        </div>
+
+        <form id="searchForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Loại xe</label>
+                <select id="loaixe" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
+                    <option value="1">Ô tô</option>
+                    <option value="2">Xe máy</option>
+                    <option value="3">Xe đạp điện</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Biển kiểm soát</label>
+                <input type="text" id="bsx" placeholder="Ví dụ: 15B03705" required
+                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all uppercase font-mono text-lg tracking-widest">
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" id="btnSubmit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
+                    <span id="btnText">Kiểm tra ngay</span>
+                    <div id="btnLoader" class="loader hidden"></div>
+                </button>
+            </div>
+        </form>
+
+        <div id="resultArea" class="mt-8 hidden">
+            <div class="border-t pt-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-clipboard-list text-blue-600"></i> Kết quả tra cứu
+                </h3>
+                <div id="resultContent" class="bg-gray-50 rounded-xl p-4 text-sm text-gray-700 min-h-[100px] overflow-auto max-h-[400px]">
+                    <!-- Kết quả trả về từ server sẽ hiển thị ở đây -->
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest">Dữ liệu nguồn: phatnguoi.com</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const bsx = document.getElementById('bsx').value.trim();
+            const loaixe = document.getElementById('loaixe').value;
+            const btnSubmit = document.getElementById('btnSubmit');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            const resultArea = document.getElementById('resultArea');
+            const resultContent = document.getElementById('resultContent');
+
+            // Hiệu ứng loading
+            btnSubmit.disabled = true;
+            btnText.textContent = "Đang xử lý...";
+            btnLoader.classList.remove('hidden');
+            resultArea.classList.remove('hidden');
+            resultContent.innerHTML = "Đang kết nối đến hệ thống máy chủ...";
+
+            // Chuẩn bị FormData giống như cURL
+            const formData = new FormData();
+            formData.append('type', '1');
+            formData.append('retry', '');
+            formData.append('loaixe', loaixe);
+            formData.append('bsx', bsx);
+            formData.append('bsxdangkiem', '');
+            formData.append('bien', 'T');
+            formData.append('tem', '');
+            // Lưu ý: Token này thường sẽ hết hạn, trong thực tế cần script lấy token mới
+            formData.append('cf-turnstile-response', '1.9aMU-QABzM_8mdpzlk_EOqjRYxiCbxrvyhMArnHGrw7tZzNb-ZHmjXmxRCRg2TP0ue-QEQ0sPAZwM6fea6BVj_ftVBA9SapKJpvLBW-B10P1lGycr5b-RRs-44TAi5vsERdNLIlqi7VTwCUl_T0g0BCoJz-sL-lKFeDgVFrawvlrFQghysMC-N8lveD6lPG7eCMmIdrdB_235dppNHFOMdS6NNQAUle0cwxtSt8P4nqRXVwwTYxE0w_K9imT6kg9hoA7eq8g2qY2sROA7-u2GT-YIzPs0LEhsn2hlygAD4MGS6LiT5lYstBsTsEGjG-c7K0KRLWLkS5KPXtRIt8ffopiPHu_zGb77p8jMGXN6_e3VYliXPymA2iO365wOjViojUChNbAnT17PephSxeEPyjjksjiA9_XojEltUZZwjBhKAT5mQdW0_p7mQAOwMNC.uNk-QDWlA0Yhhmu6c60_Pg.ce4bb096359ecfc5b98df46978e5cf618da4d93547d8667296238638ba0d26ca');
+
+            try {
+                // Thực hiện request
+                // Lưu ý: Nếu chạy trên trình duyệt thường sẽ lỗi CORS nếu trang phatnguoi.com không cho phép
+                const response = await fetch('https://phatnguoi.com/action.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': '*/*'
+                        // Các header bảo mật khác như origin/referer thường do trình duyệt tự thêm
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.text();
+                    // Hiển thị kết quả (thường là HTML hoặc JSON tùy server trả về)
+                    if (data.includes("Không tìm thấy") || data.length < 50) {
+                        resultContent.innerHTML = `<div class="text-green-600 font-semibold"><i class="fas fa-check-circle"></i> Chúc mừng! Không tìm thấy lỗi vi phạm cho biển số ${bsx}.</div>`;
+                    } else {
+                        resultContent.innerHTML = data;
+                    }
+                } else {
+                    resultContent.innerHTML = `<div class="text-red-500">Lỗi kết nối: ${response.status}. Hệ thống nguồn có thể đã chặn truy cập hoặc yêu cầu mã captcha mới.</div>`;
+                }
+            } catch (error) {
+                resultContent.innerHTML = `<div class="text-red-500">Lỗi: Không thể thực hiện yêu cầu. Điều này thường do chính sách CORS của trình duyệt. Bạn cần chạy qua một Proxy để vượt qua rào cản này.</div>`;
+                console.error('Fetch error:', error);
+            } finally {
+                btnSubmit.disabled = false;
+                btnText.textContent = "Kiểm tra ngay";
+                btnLoader.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
