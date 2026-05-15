@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cẩm nang Tương tác Git Push - ToC Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+    :root {
+      --bg-primary: #fdfbf7;
+      --text-main: #2d3436;
+      --accent-soft: #e2e8f0;
+      --brand-blue: #3b82f6;
+      --brand-amber: #f59e0b;
+      --brand-red: #ef4444;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      scroll-behavior: smooth;
+    }
+
+    .code-font {
+      font-family: 'Fira Code', monospace;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 300px;
+      max-height: 350px;
+    }
+
+    .command-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .command-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-link.active {
+      color: var(--brand-blue);
+      font-weight: 700;
+      border-left: 2px solid var(--brand-blue);
+      padding-left: 14px;
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    section {
+      scroll-margin-top: 100px;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen pb-20">
+
+  <!-- Chosen Palette: Slate & Amber Harmony (Warm neutrals for professional documentation) -->
+  <!-- Application Structure Plan: 
+        Thiết kế theo bố cục Grid (9 cột nội dung - 3 cột mục lục) trên Desktop:
+        1. Sticky Sidebar (Right): Chứa mục lục động, tự động làm nổi bật phần đang đọc.
+        2. Main Content (Left): Giữ nguyên các section từ phiên bản trước nhưng tối ưu hóa không gian.
+        3. Logic Interaction: Sử dụng IntersectionObserver để cập nhật trạng thái Sidebar.
+    -->
+  <!-- Visualization & Content Choices: 
+        - Sidebar: Điều hướng nhanh, tạo trải nghiệm như một trang documentation chuyên nghiệp.
+        - Bar Chart (Chart.js): So sánh rủi ro.
+        - Doughnut Chart (Chart.js): Minh họa trạng thái sync.
+        - NO SVG/Mermaid: Sử dụng Canvas và Tailwind utilities.
+    -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+  <!-- Navigation Header -->
+  <nav class="sticky top-0 z-50 glass-panel border-b mb-8">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold">G</div>
+        <span class="font-bold text-xl tracking-tight text-slate-800 uppercase text-sm">Git Mastery</span>
+      </div>
+      <div class="text-xs text-slate-400 font-medium hidden md:block">
+        HƯỚNG DẪN TƯƠNG TÁC CHI TIẾT
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12">
+
+    <!-- Main Content (Left) -->
+    <main class="lg:col-span-9">
+
+      <!-- Header Section -->
+      <header id="overview" class="mb-16">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+          Làm chủ kỹ thuật <span class="text-blue-600 italic">Git Push</span>
+        </h1>
+        <p class="text-lg text-slate-600 max-w-3xl mb-8 leading-relaxed">
+          Khám phá cách đồng bộ mã nguồn, thiết lập upstream và quản lý lịch sử commit an toàn. Tài liệu này giúp bạn
+          phân biệt rõ các tham số từ cơ bản đến nâng cao.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <div
+            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 flex items-center shadow-sm">
+            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span> Đẩy Commit
+          </div>
+          <div
+            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 flex items-center shadow-sm">
+            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span> Upstream
+          </div>
+          <div
+            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 flex items-center shadow-sm">
+            <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span> Force Push
+          </div>
+        </div>
+      </header>
+
+      <!-- Section 1: Git Push Overview -->
+      <section id="definition" class="mb-20">
+        <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+          <h2 class="text-2xl font-bold mb-4 flex items-center text-slate-800">
+            <span class="mr-3">🚀</span> 1. Git Push là gì?
+          </h2>
+          <div class="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <p class="text-slate-600 mb-6 leading-relaxed">
+                Trong hệ thống Git, <code>git push</code> là hành động chuyển giao các commit từ <b>local repository</b>
+                lên <b>remote repository</b>.
+              </p>
+              <div class="p-4 bg-slate-50 rounded-lg border-l-4 border-blue-500 space-y-2">
+                <code class="code-font text-blue-700 font-bold block">git push origin main</code>
+                <p class="text-xs text-slate-500 italic">Lệnh đẩy nhánh "main" lên server "origin".</p>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="pushChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Upstream Tracking -->
+      <section id="upstream" class="mb-20">
+        <h2 class="text-2xl font-bold mb-8 text-slate-800 flex items-center">
+          <span class="mr-3 p-2 bg-blue-100 rounded-lg">⚓</span> 2. Thiết lập Upstream (-u)
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+          <div
+            class="command-card p-6 bg-white rounded-xl border border-slate-200 shadow-sm border-t-4 border-t-blue-500">
+            <span
+              class="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded uppercase mb-3 inline-block">Recommended</span>
+            <h3 class="font-mono text-lg font-bold text-slate-800 mb-3">git push -u origin main</h3>
+            <p class="text-sm text-slate-600">Thiết lập mối liên kết bền vững. Git sẽ ghi nhớ nhánh remote cho các lần
+              push/pull sau.</p>
+          </div>
+          <div
+            class="command-card p-6 bg-white rounded-xl border border-slate-200 shadow-sm opacity-70 hover:opacity-100">
+            <span
+              class="px-2 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded uppercase mb-3 inline-block">Alternative</span>
+            <h3 class="font-mono text-lg font-bold text-slate-800 mb-3">git push origin main -u</h3>
+            <p class="text-sm text-slate-600">Hoạt động tương tự nhưng không phổ biến trong các tài liệu chuẩn
+              (Convention).</p>
+          </div>
+        </div>
+
+        <div class="bg-blue-600 rounded-2xl p-8 text-white shadow-lg overflow-hidden relative">
+          <div class="relative z-10">
+            <h3 class="text-xl font-bold mb-4 italic">Tại sao cần Upstream?</h3>
+            <ul class="space-y-3 text-blue-100">
+              <li class="flex items-start"><span class="mr-2">✓</span> Chỉ cần gõ <code>git push</code> (không cần tham
+                số).</li>
+              <li class="flex items-start"><span class="mr-2">✓</span> Tận dụng tính năng <code>git status</code> để
+                biết local nhanh hay chậm hơn server.</li>
+              <li class="flex items-start"><span class="mr-2">✓</span> Tự động đồng bộ khi thực hiện
+                <code>git pull</code>.</li>
+            </ul>
+          </div>
+          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500 rounded-full opacity-20"></div>
+        </div>
+      </section>
+
+      <!-- Section 3: Force Push & Risk -->
+      <section id="force" class="mb-20">
+        <h2 class="text-2xl font-bold mb-8 text-slate-800 flex items-center">
+          <span class="mr-3 p-2 bg-red-100 rounded-lg text-red-600">⚠️</span> 3. Force Push & Quản trị rủi ro
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-10">
+          <div class="space-y-6">
+            <div class="p-6 bg-white rounded-xl border border-slate-200 shadow-sm">
+              <h4 class="font-bold text-slate-800 mb-2">HEAD là gì?</h4>
+              <p class="text-sm text-slate-600">Là con trỏ vị trí hiện tại. <code>git push origin HEAD</code> giúp bạn
+                đẩy nhanh nhánh đang làm việc mà không cần nhớ tên nhánh.</p>
+            </div>
+            <div class="p-6 bg-red-50 rounded-xl border border-red-100 shadow-sm">
+              <h4 class="font-bold text-red-800 mb-2">Lưu ý cực quan trọng:</h4>
+              <p class="text-sm text-red-700 italic">Force push ghi đè lịch sử server. Chỉ dùng sau khi Rebase hoặc
+                Reset nếu bạn thực sự hiểu mình đang làm gì.</p>
+            </div>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+            <h3 class="text-center font-bold text-slate-700 text-sm mb-4">So sánh mức độ rủi ro</h3>
+            <div class="h-64">
+              <canvas id="riskChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Safe Force Table -->
+        <div class="overflow-hidden rounded-xl border border-slate-200">
+          <table class="w-full text-left bg-white text-sm">
+            <thead class="bg-slate-800 text-white font-bold">
+              <tr>
+                <th class="px-6 py-4">Option</th>
+                <th class="px-6 py-4">Cơ chế</th>
+                <th class="px-6 py-4">Ứng dụng</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="px-6 py-4 font-mono text-red-600 font-bold">--force</td>
+                <td class="px-6 py-4 text-slate-600">Ghi đè tuyệt đối, bỏ qua kiểm tra remote.</td>
+                <td class="px-6 py-4">Nhánh cá nhân, sửa lỗi gấp.</td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 font-mono text-green-600 font-bold">--force-with-lease</td>
+                <td class="px-6 py-4 text-slate-600">Chỉ ghi đè nếu remote không có commit mới.</td>
+                <td class="px-6 py-4">Làm việc nhóm (Teamwork).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 4: Workflow -->
+      <section id="workflow" class="mb-20">
+        <h2 class="text-2xl font-bold mb-8 text-slate-800 flex items-center">
+          <span class="mr-3 p-2 bg-amber-100 rounded-lg text-amber-600">🛠️</span> 4. Workflow tiêu chuẩn
+        </h2>
+        <div class="space-y-4">
+          <div class="flex gap-4 p-4 bg-white border border-slate-100 rounded-lg shadow-sm">
+            <div
+              class="w-8 h-8 flex-shrink-0 bg-slate-800 text-white rounded-full flex items-center justify-center font-bold text-sm">
+              1</div>
+            <div>
+              <p class="font-bold text-slate-800">Tạo nhánh & Làm việc</p>
+              <code class="text-xs bg-slate-100 px-2 py-1 rounded">git checkout -b task-auth</code>
+            </div>
+          </div>
+          <div class="flex gap-4 p-4 bg-white border border-slate-100 rounded-lg shadow-sm">
+            <div
+              class="w-8 h-8 flex-shrink-0 bg-slate-800 text-white rounded-full flex items-center justify-center font-bold text-sm">
+              2</div>
+            <div>
+              <p class="font-bold text-slate-800">Push lần đầu tiên (Setup Upstream)</p>
+              <code
+                class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-bold">git push -u origin task-auth</code>
+            </div>
+          </div>
+          <div class="flex gap-4 p-4 bg-white border border-slate-100 rounded-lg shadow-sm">
+            <div
+              class="w-8 h-8 flex-shrink-0 bg-slate-800 text-white rounded-full flex items-center justify-center font-bold text-sm">
+              3</div>
+            <div>
+              <p class="font-bold text-slate-800">Làm việc nhóm & Force an toàn</p>
+              <code
+                class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold">git push --force-with-lease</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Summary -->
+      <section id="summary" class="mb-20">
+        <div class="bg-slate-900 rounded-3xl p-10 text-white shadow-2xl relative overflow-hidden">
+          <div class="relative z-10">
+            <h2 class="text-3xl font-bold mb-8">Tổng kết nhanh</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="p-5 bg-white/10 rounded-xl border border-white/10">
+                <h5 class="text-amber-400 font-bold mb-2 uppercase text-[10px]">Cơ bản</h5>
+                <p class="text-sm font-mono">git push origin [nhánh]</p>
+              </div>
+              <div class="p-5 bg-white/10 rounded-xl border border-white/10">
+                <h5 class="text-blue-400 font-bold mb-2 uppercase text-[10px]">Tiện lợi</h5>
+                <p class="text-sm font-mono">git push -u origin [nhánh]</p>
+              </div>
+              <div class="p-5 bg-white/10 rounded-xl border border-white/10">
+                <h5 class="text-green-400 font-bold mb-2 uppercase text-[10px]">Chuyên nghiệp</h5>
+                <p class="text-sm font-mono">git push --force-with-lease</p>
+              </div>
+              <div class="p-5 bg-white/10 rounded-xl border border-white/10">
+                <h5 class="text-red-400 font-bold mb-2 uppercase text-[10px]">Nguy hiểm</h5>
+                <p class="text-sm font-mono">git push --force</p>
+              </div>
+            </div>
+          </div>
+          <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Right Sidebar (Table of Contents) -->
+    <aside class="hidden lg:block lg:col-span-3">
+      <div class="sticky top-24 space-y-6">
+        <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Mục lục chi tiết</h4>
+          <nav class="flex flex-col space-y-4">
+            <a href="#overview" class="toc-link text-sm text-slate-500 hover:text-blue-600 transition-all active">Tổng
+              quan</a>
+            <a href="#definition" class="toc-link text-sm text-slate-500 hover:text-blue-600 transition-all">1. Git Push
+              là gì?</a>
+            <a href="#upstream" class="toc-link text-sm text-slate-500 hover:text-blue-600 transition-all">2. Thiết lập
+              Upstream</a>
+            <a href="#force" class="toc-link text-sm text-slate-500 hover:text-blue-600 transition-all">3. Force Push &
+              Rủi ro</a>
+            <a href="#workflow" class="toc-link text-sm text-slate-500 hover:text-blue-600 transition-all">4. Quy trình
+              Workflow</a>
+            <a href="#summary" class="toc-link text-sm text-slate-500 hover:text-blue-600 transition-all">Tổng kết
+              nhanh</a>
+          </nav>
+        </div>
+
+        <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100">
+          <p class="text-[10px] font-bold text-amber-600 uppercase mb-2">Tips hữu ích</p>
+          <p class="text-xs text-amber-800 leading-relaxed">Luôn dùng <code>git status</code> trước khi push để đảm bảo
+            bạn không đẩy nhầm code chưa hoàn thiện.</p>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer class="mt-20 text-center text-slate-400 text-xs border-t pt-10 px-6">
+    <p>&copy; 2026 Raymond Trương.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Push Chart
+      const pushCtx = document.getElementById('pushChart').getContext('2d');
+      new Chart(pushCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Local Commit', 'Processing', 'Remote OK'],
+          datasets: [{
+            data: [50, 20, 30],
+            backgroundColor: ['#3b82f6', '#e2e8f0', '#10b981'],
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+          }
+        }
+      });
+
+      // Risk Chart
+      const riskCtx = document.getElementById('riskChart').getContext('2d');
+      new Chart(riskCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Push', 'Upstream', 'Lease', 'Force'],
+          datasets: [{
+            label: 'Mức độ Nguy hiểm',
+            data: [1, 1, 4, 10],
+            backgroundColor: '#f87171',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, max: 10, ticks: { font: { size: 9 } } },
+            x: { ticks: { font: { size: 9 } } }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+
+      // Scrollspy Logic
+      const sections = document.querySelectorAll('section, header');
+      const navLinks = document.querySelectorAll('.toc-link');
+
+      window.addEventListener('scroll', () => {
+        let current = "";
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          if (pageYOffset >= sectionTop - 150) {
+            current = section.getAttribute('id');
+          }
+        });
+
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href').includes(current)) {
+            link.classList.add('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
