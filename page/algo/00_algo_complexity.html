@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Guide to 11 Complexity Patterns</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; }
+        .pattern-card { @apply bg-white p-6 rounded-xl shadow-md border border-gray-100 mb-6; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+<div class="max-w-4xl mx-auto py-12 px-4">
+    <h1 class="text-3xl font-bold text-center mb-2 text-blue-900">Detailed Guide to 11 Complexity Patterns</h1>
+    <h2 class="text-xl font-bold text-center mb-10 ">Hướng dẫn chi tiết về 11 Mẫu Độ Phức Tạp thuật toán</h2>
+
+
+    <!-- Giới thiệu lý thuyết -->
+    <div class="pattern-card border-l-4 border-blue-500 pl-4">
+        <h2 class="text-2xl font-bold text-blue-800 mb-4">Tổng quan: Cách tính độ phức tạp</h2>
+            <p class="mb-4 text-gray-700">Độ phức tạp thuật toán là một khái niệm quan trọng trong khoa học máy tính, giúp chúng ta đánh giá hiệu suất của các thuật toán dựa trên số lượng phép tính hoặc bộ nhớ cần thiết khi kích thước đầu vào tăng lên.</p>
+        <p class="mb-4">Độ phức tạp thuật toán (Big O notation) dùng để đo lường mức độ tăng trưởng thời gian hoặc không gian khi đầu vào \(n\) tiến tới vô hạn. Các quy tắc tính toán bao gồm:</p>
+        <ul class="list-disc ml-6 space-y-2 text-gray-700">
+            <li><strong>Quy tắc bỏ hằng số:</strong> \(O(2n) = O(n)\), \(O(n + 100) = O(n)\).</li>
+            <li><strong>Quy tắc cộng (tuần tự):</strong> Nếu hai vòng lặp nối tiếp, ta lấy tổng: \(O(n) + O(n) = O(n)\).</li>
+            <li><strong>Quy tắc nhân (lồng nhau):</strong> Nếu vòng lặp lồng nhau, ta nhân: \(O(n) \times O(n) = O(n^2)\).</li>
+            <li><strong>Quy tắc bỏ số hạng thấp:</strong> Trong tổng, chỉ giữ lại hạng tử có tốc độ tăng nhanh nhất: \(O(n^2 + n) = O(n^2)\).</li>
+        </ul>
+    </div>
+
+<br></br>
+    <!-- 1. O(n) -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-blue-600">1. O(n) - Vòng lặp đơn</h2>
+        <p class="text-gray-600 mb-2">Số phép tính tỉ lệ thuận với số phần tử.</p>
+        <pre><code class="language-c">for (int i = 0; i &lt; n; i++) { 
+    // Các lệnh bên trong tốn O(1)
+}</code></pre>
+    </div>
+
+    <!-- 2. O(n^2) Full -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-green-600">2. O(n²) - Vòng lặp lồng</h2>
+        <p class="text-gray-600 mb-2">Với mỗi i, j chạy n lần: \(n \times n = n^2\).</p>
+        <pre><code class="language-c">for (int i = 0; i &lt; n; i++)
+    for (int j = 0; j &lt; n; j++) { }</code></pre>
+    </div>
+
+    <!-- 3. O(n^2) Triangle -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-green-600">3. O(n²) - Tam giác</h2>
+        <p class="text-gray-600 mb-2">Số phép tính: \(\sum_{i=1}^{n} i = \frac{n(n+1)}{2} \approx \frac{1}{2}n^2 \to O(n^2)\).</p>
+        <pre><code class="language-c">for (int i = 0; i &lt; n; i++)
+    for (int j = 0; j &lt; i; j++) { }</code></pre>
+    </div>
+
+    <!-- 4 & 5 O(log n) Multiply/Divide -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-purple-600">4 & 5. O(log n) - Tăng trưởng Logarit</h2>
+        <p class="text-gray-600 mb-2">Biến i thay đổi theo cấp số nhân: \(i = 2^k \implies k = \log_2 n\).</p>
+        <pre><code class="language-c">for (int i = 1; i &lt; n; i *= 2) { } // i: 1, 2, 4, 8...</code></pre>
+    </div>
+
+    <!-- 6. O(n) n/2 -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-yellow-600">6. O(n) - Tỉ lệ hằng số</h2>
+        <p class="text-gray-600 mb-2">Thực hiện \(n/2\) bước. Trong Big O, bỏ qua hằng số: \(O(n/2) = O(n)\).</p>
+        <pre><code class="language-c">for (int i = 0; i &lt; n / 2; i++) { }</code></pre>
+    </div>
+
+    <!-- 7. O(n+n) -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-pink-600">7. O(n) - Vòng lặp nối tiếp</h2>
+        <p class="text-gray-600 mb-2">Tổng số bước là \(n + n = 2n\). Bỏ qua hằng số: \(O(n)\).</p>
+        <pre><code class="language-c">for (int i = 0; i &lt; n; i++) { }
+for (int i = 0; i &lt; n; i++) { }</code></pre>
+    </div>
+
+    <!-- 8. O(log n) while -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-blue-600">8. O(log n) - While chia đôi</h2>
+        <p class="text-gray-600 mb-2">Giá trị n giảm một nửa mỗi vòng. Số vòng lặp là \(\log_2 n\).</p>
+        <pre><code class="language-c">while (n > 0) { n /= 2; }</code></pre>
+    </div>
+
+    <!-- 9. O(n) Recurrence -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-green-600">9. O(n) - Đệ quy tuyến tính</h2>
+        <p class="text-gray-600 mb-2">Phương trình đệ quy: \(T(n) = T(n-1) + C \to O(n)\).</p>
+    </div>
+
+    <!-- 10. O(n log n) Master Theorem -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-indigo-600">10. O(n log n) - Chia để trị</h2>
+        <p class="text-gray-600 mb-2">Áp dụng Master Theorem cho bài toán: \(T(n) = 2T(n/2) + n\).</p>
+    </div>
+
+    <!-- 11. O(phi^n) Fibonacci -->
+    <div class="pattern-card">
+        <h2 class="text-xl font-bold text-red-600">11. O(φⁿ) - Tỉ lệ vàng</h2>
+        <p class="text-gray-600 mb-2">Đệ quy Fibonacci không khử đệ quy tốn \(O(1.618^n)\).</p>
+        <pre><code class="language-c">int f(int n) { 
+    if (n <= 1) return n;
+    return f(n - 1) + f(n - 2); 
+}</code></pre>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
