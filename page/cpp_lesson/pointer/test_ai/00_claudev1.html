@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Con Trỏ trong C – Hướng dẫn cho người mới</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1e2530;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent2: #f78166;
+      --accent3: #3fb950;
+      --accent4: #d2a8ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0d1117 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 24px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(88,166,255,0.12), transparent);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(88,166,255,0.12);
+      border: 1px solid rgba(88,166,255,0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 60%, #d2a8ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* NAV */
+    .toc-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .toc-bar::-webkit-scrollbar { display: none; }
+    .toc-link {
+      white-space: nowrap;
+      padding: 14px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .toc-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* LAYOUT */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* SECTION */
+    .section {
+      margin-bottom: 56px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .section-num {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent4));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .section h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.4px;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .card p { color: #c9d1d9; }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    /* CODE BLOCKS */
+    .code-wrap {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+    }
+    .code-label {
+      background: var(--surface2);
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-red { background: #f78166; }
+    .dot-yellow { background: #e3b341; }
+    .dot-green { background: #3fb950; }
+    pre[class*="language-"] {
+      margin: 0 !important;
+      border-radius: 0 !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 13.5px !important;
+      line-height: 1.7 !important;
+    }
+
+    /* OUTPUT */
+    .output-box {
+      background: #0a0e14;
+      border: 1px solid #21262d;
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin: 12px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    .output-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent3);
+      margin-bottom: 6px;
+    }
+    .output-val { color: #3fb950; font-size: 1.3rem; font-weight: 700; }
+
+    /* DIAGRAM */
+    .diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    .diagram-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .mem-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .mem-name {
+      width: 30px;
+      text-align: right;
+      color: var(--accent4);
+      font-weight: 700;
+    }
+    .arrow { color: var(--muted); font-size: 16px; }
+    .mem-box {
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 16px;
+      min-width: 60px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .mem-box.active { border-color: var(--accent); color: var(--accent); }
+    .mem-box.changed { border-color: var(--accent2); color: var(--accent2); }
+    .mem-box.same { color: var(--accent3); border-color: var(--accent3); }
+    .ptr-arrow {
+      display: flex; align-items: center; gap: 4px;
+      color: var(--accent);
+    }
+
+    /* COMPARE TABLE */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .compare-table th {
+      background: var(--surface2);
+      padding: 12px 18px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: left;
+    }
+    .compare-table td {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      font-size: 13.5px;
+      vertical-align: top;
+    }
+    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .compare-table code {
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .tag-c { color: var(--accent2); font-weight: 700; }
+    .tag-cpp { color: var(--accent4); font-weight: 700; }
+
+    /* CALLOUT */
+    .callout {
+      display: flex;
+      gap: 14px;
+      background: rgba(88,166,255,0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+    }
+    .callout.warn { background: rgba(247,129,102,0.06); border-color: var(--accent2); }
+    .callout.success { background: rgba(63,185,80,0.06); border-color: var(--accent3); }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout p { color: #c9d1d9; font-size: 14px; }
+
+    /* STEP */
+    .steps { counter-reset: step; }
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      counter-increment: step;
+    }
+    .step-num {
+      width: 28px; height: 28px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--accent);
+      flex-shrink: 0; margin-top: 3px;
+    }
+    .step-num::before { content: counter(step); }
+    .step-body p { color: #c9d1d9; font-size: 14px; margin-bottom: 4px; }
+    .step-body strong { color: var(--text); }
+
+    /* SUMMARY BOX */
+    .summary-box {
+      background: linear-gradient(135deg, rgba(88,166,255,0.08) 0%, rgba(210,168,255,0.08) 100%);
+      border: 1px solid rgba(88,166,255,0.25);
+      border-radius: 14px;
+      padding: 28px;
+      margin-top: 48px;
+    }
+    .summary-box h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--accent);
+    }
+    .summary-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .summary-row .check { color: var(--accent3); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .summary-row p { color: #c9d1d9; font-size: 14px; }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    p + p { margin-top: 10px; }
+
+    @media (max-width: 600px) {
+      .section h2 { font-size: 1.2rem; }
+      .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">C Programming</div>
+  <h1>Con Trỏ trong C<br/>Pass by Value vs Pointer</h1>
+  <p>Hiểu rõ tại sao hàm không thể thay đổi biến ngoài — và cách dùng con trỏ để giải quyết điều đó.</p>
+</div>
+
+<!-- NAV -->
+<nav class="toc-bar">
+  <a href="#phan1" class="toc-link">1. Vấn đề</a>
+  <a href="#phan2" class="toc-link">2. Pass by Value</a>
+  <a href="#phan3" class="toc-link">3. Con trỏ (Pointer)</a>
+  <a href="#phan4" class="toc-link">4. Không dùng pointer</a>
+  <a href="#phan5" class="toc-link">5. C++ Reference</a>
+  <a href="#phan6" class="toc-link">6. So sánh</a>
+  <a href="#phan7" class="toc-link">7. Tóm tắt</a>
+</nav>
+
+<div class="container">
+
+  <!-- SECTION 1 -->
+  <div class="section" id="phan1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Vấn đề: Tại sao hàm không sửa được biến ngoài?</h2>
+    </div>
+
+    <div class="card">
+      <p>Bạn có một biến <strong style="color:var(--accent4)">a = 5</strong>. Bạn muốn viết một hàm <code style="color:var(--accent)">change()</code> để đổi giá trị của <strong style="color:var(--accent4)">a</strong> thành <strong>10</strong>. Điều tưởng chừng đơn giản này lại không hoạt động như bạn nghĩ trong C.</p>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <p><strong>Nguyên tắc cốt lõi:</strong> C luôn truyền tham số theo <em>tham trị</em> (pass by value) — hàm chỉ nhận một <strong>bản sao</strong>, không nhận biến gốc.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="phan2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Pass by Value — Truyền theo giá trị</h2>
+    </div>
+
+    <p style="color:#c9d1d9; margin-bottom:16px;">Hãy xem điều gì xảy ra khi bạn truyền <code style="color:var(--accent)">a</code> thẳng vào hàm:</p>
+
+    <div class="code-wrap">
+      <div class="code-label">
+        <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+        <span style="color:var(--muted)">C — Truyền tham trị (KHÔNG hoạt động như mong muốn)</span>
+      </div>
+      <pre><code class="language-c">#include &lt;stdio.h&gt;
+
+void change(int x)
+{
+    x = 10;   // chỉ sửa bản sao, không sửa a
+}
+
+int main()
+{
+    int a = 5;
+
+    change(a);         // truyền GIÁ TRỊ của a
+
+    printf("%d\n", a); // vẫn in ra 5
+}</code></pre>
+    </div>
+
+    <div class="output-box">
+      <div class="output-label">Kết quả</div>
+      <div class="output-val">5</div>
+    </div>
+
+    <p style="color:#c9d1d9; margin:16px 0 12px; font-weight:600;">📌 Tại sao lại ra 5? Hãy xem sơ đồ bộ nhớ:</p>
+
+    <div class="diagram">
+      <div class="diagram-title">Sơ đồ bộ nhớ — Trước khi gọi hàm</div>
+      <div class="mem-row">
+        <span class="mem-name">a</span>
+        <span class="arrow">───▶</span>
+        <div class="mem-box same">5</div>
+        <span style="color:var(--muted); font-size:12px; margin-left:8px;">← biến gốc</span>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">Sơ đồ bộ nhớ — Bên trong hàm <code style="color:var(--accent)">change()</code></div>
+      <div class="mem-row">
+        <span class="mem-name">a</span>
+        <span class="arrow">───▶</span>
+        <div class="mem-box same">5</div>
+        <span style="color:var(--accent3); font-size:12px; margin-left:8px;">← không đổi</span>
+      </div>
+      <div class="mem-row">
+        <span class="mem-name">x</span>
+        <span class="arrow">───▶</span>
+        <div class="mem-box changed">10</div>
+        <span style="color:var(--accent2); font-size:12px; margin-left:8px;">← bản sao, bị sửa nhưng biến mất sau khi hàm kết thúc</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-icon">💡</div>
+      <p><strong>x</strong> là một ô nhớ <em>riêng biệt</em>. Sửa <strong>x</strong> không ảnh hưởng gì đến <strong>a</strong> vì chúng nằm ở hai địa chỉ bộ nhớ khác nhau.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="phan3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Giải pháp: Dùng Con Trỏ (Pointer)</h2>
+    </div>
+
+    <p style="color:#c9d1d9; margin-bottom:12px;">Thay vì truyền <em>giá trị</em>, hãy truyền <strong style="color:var(--accent)">địa chỉ</strong> của biến. Hàm sẽ nhận địa chỉ và truy cập trực tiếp vào ô nhớ đó để sửa.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <p><strong>Khai báo hàm nhận con trỏ:</strong> <code style="color:var(--accent4)">void change(int *x)</code> — <code>x</code> giờ lưu một <em>địa chỉ</em>, không phải giá trị.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <p><strong>Gọi hàm với toán tử &:</strong> <code style="color:var(--accent)">change(&amp;a)</code> — <code>&amp;a</code> lấy địa chỉ bộ nhớ của biến <code>a</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <p><strong>Dereference để sửa:</strong> <code style="color:var(--accent2)">*x = 10</code> — đi đến địa chỉ mà <code>x</code> đang trỏ tới, rồi ghi giá trị 10 vào đó.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label">
+        <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+        <span style="color:var(--muted)">C — Dùng Pointer (HOẠT ĐỘNG đúng)</span>
+      </div>
+      <pre><code class="language-c">#include &lt;stdio.h&gt;
+
+void change(int *x)   // x nhận ĐỊA CHỈ của biến
+{
+    *x = 10;          // dereference: đến địa chỉ đó và ghi 10
+}
+
+int main()
+{
+    int a = 5;
+
+    change(&a);        // &a = lấy địa chỉ của a
+
+    printf("%d\n", a); // in ra 10
+}</code></pre>
+    </div>
+
+    <div class="output-box">
+      <div class="output-label">Kết quả</div>
+      <div class="output-val">10</div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">Sơ đồ bộ nhớ — Con trỏ x trỏ đến a</div>
+      <div class="mem-row">
+        <span class="mem-name">x</span>
+        <span class="arrow">───▶</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="mem-box active" style="min-width:100px; font-size:11px;">địa chỉ của a</div>
+          <span style="color:var(--accent); font-size:18px;">──▶</span>
+          <div class="mem-box active">a = 5</div>
+        </div>
+      </div>
+      <div style="margin-top:14px; font-size:12px; color:var(--muted);">Khi <code style="color:var(--accent2)">*x = 10</code> được thực thi:</div>
+      <div class="mem-row" style="margin-top:8px;">
+        <span class="mem-name">x</span>
+        <span class="arrow">───▶</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="mem-box active" style="min-width:100px; font-size:11px;">địa chỉ của a</div>
+          <span style="color:var(--accent); font-size:18px;">──▶</span>
+          <div class="mem-box changed">a = 10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-icon">✅</div>
+      <p><strong>x</strong> và <strong>a</strong> cùng trỏ đến một ô nhớ. Khi <code>*x = 10</code>, chính ô nhớ của <strong>a</strong> bị thay đổi — đó là lý do <code>printf("%d\n", a)</code> in ra <strong>10</strong>.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section" id="phan4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Nếu không muốn dùng pointer?</h2>
+    </div>
+
+    <p style="color:#c9d1d9; margin-bottom:12px;">Trong C, nếu không dùng pointer, cách duy nhất còn lại là <strong>trả về giá trị mới</strong> và tự gán lại:</p>
+
+    <div class="code-wrap">
+      <div class="code-label">
+        <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+        <span style="color:var(--muted)">C — Trả về giá trị (không dùng pointer)</span>
+      </div>
+      <pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int change(int x)
+{
+    return 10;    // trả về giá trị mới
+}
+
+int main()
+{
+    int a = 5;
+
+    a = change(a); // bắt buộc gán lại: a = giá trị trả về
+
+    printf("%d\n", a); // in ra 10
+}</code></pre>
+    </div>
+
+    <div class="output-box">
+      <div class="output-label">Kết quả</div>
+      <div class="output-val">10</div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <p>Lưu ý: bạn phải viết <code>a = change(a)</code>, không phải chỉ <code>change(a)</code>. Nếu quên gán lại, giá trị trả về bị bỏ qua và <code>a</code> vẫn là 5.</p>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-title" style="color:var(--muted)">📋 Hai cách hợp lệ trong C</div>
+      <table style="width:100%; font-size:13.5px; font-family:'JetBrains Mono',monospace; border-collapse:collapse;">
+        <tr>
+          <td style="padding:8px 12px; color:var(--accent4); font-weight:700;">Cách 1 — Pointer</td>
+          <td style="padding:8px 12px; color:#c9d1d9;"><code>change(&amp;a);</code> — hàm nhận <code>int *x</code></td>
+        </tr>
+        <tr style="border-top:1px solid var(--border);">
+          <td style="padding:8px 12px; color:var(--accent3); font-weight:700;">Cách 2 — Return</td>
+          <td style="padding:8px 12px; color:#c9d1d9;"><code>a = change(a);</code> — hàm nhận <code>int x</code>, trả về <code>int</code></td>
+        </tr>
+      </table>
+      <p style="margin-top:12px; font-size:13px; color:var(--muted); font-style:italic;">Trong C chuẩn, không có cách thứ ba.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section" id="phan5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>C++ Reference — Tham chiếu (Bonus)</h2>
+    </div>
+
+    <p style="color:#c9d1d9; margin-bottom:12px;">Trong <strong style="color:var(--accent4)">C++</strong> (không phải C), có thêm một cú pháp gọn hơn gọi là <em>reference</em>:</p>
+
+    <div class="code-wrap">
+      <div class="code-label">
+        <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+        <span style="color:var(--muted)">C++ — Reference (chỉ dùng được trong C++)</span>
+      </div>
+      <pre><code class="language-cpp">void change(int &x)   // x là tham chiếu đến biến được truyền vào
+{
+    x = 10;           // sửa x = sửa trực tiếp biến gốc
+}
+
+int main()
+{
+    int a = 5;
+
+    change(a);         // KHÔNG cần &a — gọi như bình thường
+    // a == 10 ngay sau lệnh này
+}</code></pre>
+    </div>
+
+    <div class="output-box">
+      <div class="output-label">Kết quả</div>
+      <div class="output-val">10</div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">Reference: x là bí danh (alias) của a — cùng 1 ô nhớ</div>
+      <div class="mem-row">
+        <span class="mem-name">x</span>
+        <span class="arrow" style="margin-right:-4px;">─┐</span>
+        <span></span>
+      </div>
+      <div class="mem-row" style="margin-top:-4px;">
+        <span class="mem-name" style="opacity:0">.</span>
+        <span class="arrow">─┤</span>
+        <div class="mem-box active">Ô nhớ = 10</div>
+      </div>
+      <div class="mem-row" style="margin-top:-4px;">
+        <span class="mem-name">a</span>
+        <span class="arrow" style="margin-right:-4px;">─┘</span>
+        <span></span>
+      </div>
+      <p style="margin-top:12px; font-size:12px; color:var(--muted);">x và a là hai tên khác nhau của cùng một địa chỉ bộ nhớ.</p>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">🚫</div>
+      <p><strong>Lưu ý:</strong> <code>int &amp;x</code> là cú pháp của <strong>C++</strong>. Nếu bạn đang lập trình C thuần (<code>.c</code>), cú pháp này sẽ báo lỗi compile. Chỉ dùng được khi compile bằng <code>g++</code> hoặc file <code>.cpp</code>.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section" id="phan6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>So sánh ba cách</h2>
+    </div>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Cách</th>
+          <th>Ngôn ngữ</th>
+          <th>Khai báo hàm</th>
+          <th>Cách gọi</th>
+          <th>Bên trong hàm</th>
+          <th>Kết quả</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pass by value</td>
+          <td><span class="tag-c">C</span></td>
+          <td><code>void change(int x)</code></td>
+          <td><code>change(a)</code></td>
+          <td><code>x = 10</code></td>
+          <td style="color:var(--accent2);">❌ a vẫn = 5</td>
+        </tr>
+        <tr>
+          <td>Pointer</td>
+          <td><span class="tag-c">C</span></td>
+          <td><code>void change(int *x)</code></td>
+          <td><code>change(&amp;a)</code></td>
+          <td><code>*x = 10</code></td>
+          <td style="color:var(--accent3);">✅ a = 10</td>
+        </tr>
+        <tr>
+          <td>Return value</td>
+          <td><span class="tag-c">C</span></td>
+          <td><code>int change(int x)</code></td>
+          <td><code>a = change(a)</code></td>
+          <td><code>return 10</code></td>
+          <td style="color:var(--accent3);">✅ a = 10</td>
+        </tr>
+        <tr>
+          <td>Reference</td>
+          <td><span class="tag-cpp">C++</span></td>
+          <td><code>void change(int &amp;x)</code></td>
+          <td><code>change(a)</code></td>
+          <td><code>x = 10</code></td>
+          <td style="color:var(--accent3);">✅ a = 10</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout" style="margin-top:20px;">
+      <div class="callout-icon">🔍</div>
+      <p>C++ Reference và C Pointer cho kết quả giống nhau, nhưng cú pháp của Reference gọn hơn: không cần <code>&amp;a</code> khi gọi, không cần <code>*x</code> bên trong hàm.</p>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- SECTION 7 -->
+  <div class="section" id="phan7">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Tóm tắt nhanh</h2>
+    </div>
+
+    <div class="summary-box">
+      <h3>🎯 Những điều cần nhớ</h3>
+
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>C luôn truyền tham trị.</strong> Khi bạn viết <code>change(a)</code>, hàm nhận một bản sao của <code>a</code> — biến gốc không thay đổi.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>Dùng pointer để sửa biến ngoài.</strong> Truyền <code>&amp;a</code>, nhận <code>int *x</code>, sửa bằng <code>*x = giá_trị</code>.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>Hoặc return giá trị mới.</strong> Hàm trả về <code>int</code>, bạn tự gán: <code>a = change(a)</code>.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>C++ có Reference (<code>int &amp;x</code>)</strong> — cú pháp gọn hơn pointer, hoạt động tương đương, nhưng không có trong C thuần.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>Không có cách thứ ba trong C chuẩn.</strong> Chỉ có pointer hoặc return value.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const el = document.querySelector(a.getAttribute('href'));
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>

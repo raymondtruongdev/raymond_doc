@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Pointer Master Guide</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<style>
+html{scroll-behavior:smooth}
+pre{border-radius:12px}
+</style>
+</head>
+
+<body class="bg-slate-100 text-slate-800">
+
+<div class="flex">
+
+<aside class="hidden lg:block w-80 h-screen sticky top-0 overflow-auto bg-slate-900 text-white p-6">
+<h2 class="text-2xl font-bold mb-4">Mục lục</h2>
+<ul class="space-y-2 text-sm">
+<li><a href="#memory">Memory & Variable</a></li>
+<li><a href="#pointer">Pointer</a></li>
+<li><a href="#declare">Khai báo Pointer</a></li>
+<li><a href="#star">Dấu *</a></li>
+<li><a href="#amp">Dấu &</a></li>
+<li><a href="#value">Pass By Value</a></li>
+<li><a href="#address">Pass By Address</a></li>
+<li><a href="#cpp">C++ Reference</a></li>
+<li><a href="#null">NULL Pointer</a></li>
+<li><a href="#wild">Wild Pointer</a></li>
+<li><a href="#dangling">Dangling Pointer</a></li>
+<li><a href="#array">Array & Pointer</a></li>
+<li><a href="#arith">Pointer Arithmetic</a></li>
+<li><a href="#malloc">malloc/free</a></li>
+<li><a href="#struct">Struct Pointer</a></li>
+<li><a href="#const">Const Pointer</a></li>
+<li><a href="#mistakes">10 Lỗi Thường Gặp</a></li>
+</ul>
+</aside>
+
+<main class="flex-1 max-w-5xl mx-auto p-8 space-y-8">
+
+<header class="bg-white rounded-2xl shadow p-8">
+<h1 class="text-5xl font-bold mb-4">C Pointer Master Guide</h1>
+<p>Tài liệu đầy đủ dành cho người mới học C, Embedded, RTOS và Firmware.</p>
+</header>
+
+<section id="memory" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">1. Variable và Memory</h2>
+<p>Mỗi biến chiếm một vùng nhớ trong RAM.</p>
+<pre><code class="language-c">int a = 5;</code></pre>
+<div class="bg-slate-100 p-4 rounded mt-4 font-mono">
+Address 0x1000<br>
++-----+<br>
+|  5  | ← a<br>
++-----+
+</div>
+<p class="mt-4">a là giá trị. &a là địa chỉ.</p>
+</section>
+
+<section id="pointer" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">2. Pointer là gì?</h2>
+<p>Pointer là biến dùng để lưu địa chỉ bộ nhớ.</p>
+<pre><code class="language-c">int a = 5;
+int *p = &a;</code></pre>
+<div class="bg-slate-100 p-4 rounded mt-4 font-mono">
+p -----> a -----> 5
+</div>
+</section>
+
+<section id="declare" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">3. Cách khai báo Pointer</h2>
+
+<pre><code class="language-c">int *p;
+int* p;
+int * p;</code></pre>
+
+<p>Ba cách trên hoàn toàn giống nhau.</p>
+
+<pre><code class="language-c">int* p1, p2;</code></pre>
+
+<div class="bg-red-100 p-4 rounded mt-4">
+p1 là pointer nhưng p2 chỉ là int.
+</div>
+
+<pre><code class="language-c">int *p1, *p2;</code></pre>
+
+<p>Cả hai đều là pointer.</p>
+</section>
+
+<section id="star" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">4. Dấu *</h2>
+
+<h3 class="font-bold">Ý nghĩa 1: Khai báo Pointer</h3>
+<pre><code class="language-c">int *p;</code></pre>
+
+<h3 class="font-bold mt-4">Ý nghĩa 2: Dereference</h3>
+<pre><code class="language-c">printf("%d", *p);</code></pre>
+
+<h3 class="font-bold mt-4">Ý nghĩa 3: Phép nhân</h3>
+<pre><code class="language-c">int x = 3 * 4;</code></pre>
+</section>
+
+<section id="amp" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">5. Dấu &</h2>
+
+<pre><code class="language-c">int a = 5;
+
+printf("%p", &a);</code></pre>
+
+<p>&a trả về địa chỉ của biến a.</p>
+</section>
+
+<section id="value" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">6. Pass By Value</h2>
+
+<pre><code class="language-c">void change(int x)
+{
+    x = 10;
+}</code></pre>
+
+<p>x chỉ là bản sao.</p>
+</section>
+
+<section id="address" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">7. Pass By Address</h2>
+
+<pre><code class="language-c">void change(int *x)
+{
+    *x = 10;
+}</code></pre>
+
+<pre><code class="language-c">change(&a);</code></pre>
+
+<p>Hàm có thể sửa trực tiếp biến gốc.</p>
+</section>
+
+<section id="cpp" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">8. C++ Reference</h2>
+
+<pre><code class="language-cpp">void change(int &x)
+{
+    x = 10;
+}</code></pre>
+
+<p>Reference không tồn tại trong C.</p>
+</section>
+
+<section id="null" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">9. NULL Pointer</h2>
+
+<pre><code class="language-c">int *p = NULL;</code></pre>
+
+<p>Pointer chưa trỏ tới vùng nhớ hợp lệ nào.</p>
+</section>
+
+<section id="wild" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">10. Wild Pointer</h2>
+
+<pre><code class="language-c">int *p;
+
+*p = 10;</code></pre>
+
+<p>Undefined Behavior.</p>
+</section>
+
+<section id="dangling" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">11. Dangling Pointer</h2>
+
+<pre><code class="language-c">free(p);</code></pre>
+
+<p>Sau free, pointer vẫn còn địa chỉ cũ.</p>
+
+<pre><code class="language-c">free(p);
+p = NULL;</code></pre>
+</section>
+
+<section id="array" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">12. Array và Pointer</h2>
+
+<pre><code class="language-c">int arr[3] = {1,2,3};</code></pre>
+
+<pre><code class="language-c">arr == &arr[0]</code></pre>
+
+<pre><code class="language-c">*arr       // 1
+*(arr+1)   // 2
+*(arr+2)   // 3</code></pre>
+</section>
+
+<section id="arith" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">13. Pointer Arithmetic</h2>
+
+<pre><code class="language-c">int arr[3];
+
+int *p = arr;
+
+p++;
+</code></pre>
+
+<p>Nếu sizeof(int)=4 thì pointer tăng thêm 4 byte.</p>
+</section>
+
+<section id="malloc" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">14. malloc và free</h2>
+
+<pre><code class="language-c">int *p = malloc(sizeof(int));
+
+*p = 123;
+
+free(p);
+p = NULL;</code></pre>
+
+<div class="bg-slate-100 p-4 rounded mt-4 font-mono">
+STACK            HEAP
+
+p ------->     +-----+
+               |123 |
+               +-----+
+</div>
+</section>
+
+<section id="struct" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">15. Struct Pointer</h2>
+
+<pre><code class="language-c">typedef struct
+{
+    int age;
+} Person;
+
+Person p;
+
+Person *ptr = &p;
+
+ptr->age = 20;</code></pre>
+</section>
+
+<section id="const" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">16. Const Pointer</h2>
+
+<pre><code class="language-c">const int *p;</code></pre>
+<p>Đổi địa chỉ được, không đổi dữ liệu.</p>
+
+<pre><code class="language-c">int *const p;</code></pre>
+<p>Đổi dữ liệu được, không đổi địa chỉ.</p>
+</section>
+
+<section id="mistakes" class="bg-white rounded-2xl shadow p-8">
+<h2 class="text-3xl font-bold mb-4">17. 10 Lỗi Pointer Thường Gặp</h2>
+
+<ol class="list-decimal ml-6 space-y-2">
+<li>Quên dấu &</li>
+<li>Quên dấu *</li>
+<li>Dereference NULL</li>
+<li>Wild Pointer</li>
+<li>Dangling Pointer</li>
+<li>Double Free</li>
+<li>Use After Free</li>
+<li>Nhầm int* p1, p2</li>
+<li>Nhầm *p++ và (*p)++</li>
+<li>malloc nhưng quên free</li>
+</ol>
+</section>
+
+</main>
+</div>
+
+</body>
+</html>

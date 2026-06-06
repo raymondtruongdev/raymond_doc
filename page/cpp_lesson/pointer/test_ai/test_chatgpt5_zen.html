@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chuyên đề: Con trỏ trong C/C++</title>
+  <meta name="description" content="Bài học trực quan về con trỏ trong C/C++: bộ nhớ, toán tử &, *, khai báo pointer và pass by value." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+          },
+          boxShadow: {
+            material: '0 14px 35px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.08)',
+            glow: '0 20px 60px rgba(99, 102, 241, 0.28)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Prism theme -->
+  <link id="prism-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root { color-scheme: light; }
+    html.dark { color-scheme: dark; }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(99, 102, 241, .22), transparent 34rem),
+        radial-gradient(circle at 90% 10%, rgba(20, 184, 166, .16), transparent 28rem),
+        linear-gradient(135deg, #f8fafc 0%, #eef2ff 45%, #ecfeff 100%);
+    }
+
+    html.dark body {
+      background:
+        radial-gradient(circle at top left, rgba(129, 140, 248, .20), transparent 34rem),
+        radial-gradient(circle at 90% 10%, rgba(45, 212, 191, .12), transparent 28rem),
+        linear-gradient(135deg, #020617 0%, #0f172a 55%, #111827 100%);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, .78);
+      border: 1px solid rgba(255, 255, 255, .62);
+      backdrop-filter: blur(18px);
+    }
+
+    html.dark .glass-card {
+      background: rgba(15, 23, 42, .74);
+      border-color: rgba(148, 163, 184, .18);
+    }
+
+    .material-card {
+      border: 1px solid rgba(148, 163, 184, .20);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, .10);
+    }
+
+    html.dark .material-card {
+      border-color: rgba(148, 163, 184, .16);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .36);
+    }
+
+    .section-anchor { scroll-margin-top: 7.5rem; }
+
+    .code-toolbar pre[class*="language-"] {
+      border-radius: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, .18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 18px 36px rgba(15, 23, 42, .18);
+    }
+
+    pre[class*="language-"] { margin: 0 !important; }
+
+    .mermaid svg { max-width: 100%; height: auto; margin: auto; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 antialiased transition-colors duration-300 dark:text-slate-100">
+  <div class="fixed inset-x-0 top-0 z-50 border-b border-white/30 bg-white/75 backdrop-blur-xl dark:border-slate-700/40 dark:bg-slate-950/70">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <a href="#top" class="group flex items-center gap-3">
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 text-xl font-black text-white shadow-glow">*</span>
+        <span>
+          <span class="block text-sm font-black uppercase tracking-[0.22em] text-indigo-600 dark:text-indigo-300">C/C++ Pointer</span>
+          <span class="block text-xs font-medium text-slate-500 dark:text-slate-400">Từ cơ bản đến nâng cao</span>
+        </span>
+      </a>
+
+      <button id="theme-toggle" type="button" class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-bold text-white shadow-material transition hover:-translate-y-0.5 hover:bg-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:bg-white dark:text-slate-950 dark:hover:bg-cyan-100">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-label">Dark mode</span>
+      </button>
+    </nav>
+  </div>
+
+  <main id="top" class="mx-auto max-w-7xl px-4 pb-20 pt-28 sm:px-6 lg:px-8">
+    <section class="overflow-hidden rounded-[2rem] bg-gradient-to-br from-indigo-600 via-violet-600 to-cyan-500 p-[1px] shadow-glow">
+      <div class="rounded-[2rem] bg-white/88 p-8 backdrop-blur-xl dark:bg-slate-950/72 sm:p-10 lg:p-14">
+        <div class="max-w-4xl">
+          <p class="mb-4 inline-flex rounded-full bg-indigo-100 px-4 py-2 text-sm font-extrabold text-indigo-700 ring-1 ring-indigo-200 dark:bg-indigo-400/10 dark:text-indigo-200 dark:ring-indigo-300/20">Bài học 01 · Pointer</p>
+          <h1 class="text-4xl font-black tracking-tight text-slate-950 dark:text-white sm:text-5xl lg:text-6xl">Chuyên đề: Con trỏ trong C/C++</h1>
+          <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600 dark:text-slate-300">Một trang học trực quan, hiện đại và dễ đọc về <strong>địa chỉ bộ nhớ</strong>, <strong>toán tử con trỏ</strong>, cách khai báo pointer và sự khác nhau giữa truyền tham trị với truyền địa chỉ.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <div class="glass-card material-card rounded-3xl p-5">
+          <h2 class="text-sm font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Mục lục</h2>
+          <ol class="mt-4 space-y-2 text-sm font-semibold">
+            <li><a class="block rounded-2xl px-4 py-3 text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-indigo-400/10 dark:hover:text-indigo-200" href="#intro">1. Giới thiệu về Con trỏ</a></li>
+            <li><a class="block rounded-2xl px-4 py-3 text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-indigo-400/10 dark:hover:text-indigo-200" href="#memory">2. Biến và Bộ nhớ</a></li>
+            <li><a class="block rounded-2xl px-4 py-3 text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-indigo-400/10 dark:hover:text-indigo-200" href="#basics">3. Khái niệm cơ bản</a></li>
+            <li><a class="block rounded-2xl px-4 py-3 text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-indigo-400/10 dark:hover:text-indigo-200" href="#declare">4. Cách khai báo Pointer</a></li>
+            <li><a class="block rounded-2xl px-4 py-3 text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-700 dark:text-slate-200 dark:hover:bg-indigo-400/10 dark:hover:text-indigo-200" href="#pass">5. Pass By Value vs Address</a></li>
+          </ol>
+        </div>
+      </aside>
+
+      <article class="space-y-8">
+        <section id="intro" class="section-anchor material-card rounded-3xl bg-white p-7 dark:bg-slate-900 sm:p-9">
+          <h2 class="text-3xl font-black text-slate-950 dark:text-white">1. Giới thiệu về Con trỏ (Pointer)</h2>
+          <p class="mt-5 leading-8 text-slate-700 dark:text-slate-300">Trong lập trình C/C++, <strong>Con trỏ (Pointer)</strong> là một trong những khái niệm mạnh mẽ nhất nhưng cũng dễ gây nhầm lẫn nhất.<br>Hiểu về con trỏ chính là hiểu cách máy tính quản lý bộ nhớ.</p>
+          <blockquote class="mt-6 rounded-3xl border-l-4 border-indigo-500 bg-indigo-50 p-5 text-lg font-semibold italic text-indigo-950 dark:bg-indigo-400/10 dark:text-indigo-100">“Con trỏ không phải là một giá trị thông thường, nó là một biến lưu trữ <strong>địa chỉ</strong> của một ô nhớ khác.”</blockquote>
+          <h3 class="mt-8 text-2xl font-extrabold">Hình dung đơn giản</h3>
+          <p class="mt-3 leading-8 text-slate-700 dark:text-slate-300">Hãy tưởng tượng <strong>bộ nhớ là một dãy tủ có khóa</strong>. Biến <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">int a</code> là một ngăn tủ có nhãn <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono dark:bg-slate-800">"a"</code> chứa số 5. Con trỏ <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">int *p</code> là một mảnh giấy ghi <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono dark:bg-slate-800">"số tủ: 0x1000"</code> — nó không chứa số 5, mà chỉ ghi <strong>địa chỉ của ngăn tủ</strong> chứa số 5.</p>
+        </section>
+
+        <section id="memory" class="section-anchor material-card rounded-3xl bg-white p-7 dark:bg-slate-900 sm:p-9">
+          <h2 class="text-3xl font-black text-slate-950 dark:text-white">2. Biến và Bộ nhớ (Variable &amp; Memory)</h2>
+          <p class="mt-5 leading-8 text-slate-700 dark:text-slate-300">Mỗi khi bạn khai báo một biến, ví dụ <code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">int a = 5;</code>, máy tính sẽ dành riêng một khoảng không gian trong RAM để lưu trữ giá trị đó. Mỗi khoảng không gian này có một “số nhà” duy nhất, gọi là <strong>địa chỉ (Address)</strong>.</p>
+
+          <div class="mt-7 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-3xl bg-gradient-to-br from-blue-50 to-indigo-50 p-5 ring-1 ring-blue-100 dark:from-blue-400/10 dark:to-indigo-400/10 dark:ring-blue-300/20">
+              <h3 class="text-xl font-extrabold text-blue-700 dark:text-blue-200">Stack Memory</h3>
+              <p class="mt-2 text-sm leading-7 text-slate-700 dark:text-slate-300">Lưu biến cục bộ, tham số hàm. Tự động cấp phát và giải phóng khi hàm kết thúc.</p>
+            </div>
+            <div class="rounded-3xl bg-gradient-to-br from-emerald-50 to-cyan-50 p-5 ring-1 ring-emerald-100 dark:from-emerald-400/10 dark:to-cyan-400/10 dark:ring-emerald-300/20">
+              <h3 class="text-xl font-extrabold text-emerald-700 dark:text-emerald-200">Heap Memory</h3>
+              <p class="mt-2 text-sm leading-7 text-slate-700 dark:text-slate-300">Dùng cho cấp phát động bằng <code class="font-mono">malloc</code>/<code class="font-mono">new</code>. Người lập trình phải tự quản lý.</p>
+            </div>
+          </div>
+
+          <div class="mt-8 rounded-3xl bg-slate-50 p-5 ring-1 ring-slate-200 dark:bg-slate-950/70 dark:ring-slate-700">
+            <div class="mermaid">
+graph TD
+    subgraph Memory_Layout
+        direction TB
+        subgraph Stack
+            S1[Biến cục bộ: a = 5]
+            S2[Biến cục bộ: b = 10]
+        end
+        subgraph Heap
+            H1[Cấp phát động: malloc]
+            H2[Cấp phát động: new]
+        end
+        subgraph Static_Global
+            G1[Biến toàn cục]
+        end
+    end
+            </div>
+          </div>
+
+          <h3 class="mt-8 text-2xl font-extrabold">Phân loại các vùng nhớ chính</h3>
+          <div class="mt-4 overflow-hidden rounded-3xl ring-1 ring-slate-200 dark:ring-slate-700">
+            <table class="w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-700">
+              <thead class="bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                <tr><th class="px-5 py-4 font-black">Vùng nhớ</th><th class="px-5 py-4 font-black">Đặc điểm</th><th class="px-5 py-4 font-black">Quản lý</th></tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 bg-white dark:divide-slate-800 dark:bg-slate-900">
+                <tr><td class="px-5 py-4 font-bold">Stack</td><td class="px-5 py-4">Biến cục bộ, tham số hàm. Kích thước nhỏ (~8MB).</td><td class="px-5 py-4">Tự động — cấp phát/giải phóng theo hàm.</td></tr>
+                <tr><td class="px-5 py-4 font-bold">Heap</td><td class="px-5 py-4">Dữ liệu cấp phát động. Kích thước lớn.</td><td class="px-5 py-4">Thủ công — dùng <code class="font-mono">malloc()</code> và <code class="font-mono">free()</code>.</td></tr>
+                <tr><td class="px-5 py-4 font-bold">Data Segment</td><td class="px-5 py-4">Lưu biến global, biến static.</td><td class="px-5 py-4">Tự động — tồn tại suốt vòng đời chương trình.</td></tr>
+                <tr><td class="px-5 py-4 font-bold">Code Segment</td><td class="px-5 py-4">Chứa mã máy (instructions) của chương trình.</td><td class="px-5 py-4">Chỉ đọc, cố định.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="basics" class="section-anchor material-card rounded-3xl bg-white p-7 dark:bg-slate-900 sm:p-9">
+          <h2 class="text-3xl font-black text-slate-950 dark:text-white">3. Khái niệm cơ bản về Pointer</h2>
+          <p class="mt-5 leading-8 text-slate-700 dark:text-slate-300">Để làm việc với con trỏ, bạn cần nắm vững hai toán tử quan trọng nhất:</p>
+
+          <div class="mt-6 overflow-hidden rounded-3xl ring-1 ring-slate-200 dark:ring-slate-700">
+            <table class="w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-700">
+              <thead class="bg-slate-100 dark:bg-slate-800"><tr><th class="px-5 py-4 font-black">Toán tử</th><th class="px-5 py-4 font-black">Tên gọi</th><th class="px-5 py-4 font-black">Ý nghĩa</th></tr></thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr><td class="px-5 py-4 font-mono text-xl font-black text-indigo-600 dark:text-indigo-300">&amp;</td><td class="px-5 py-4 font-bold">Toán tử lấy địa chỉ</td><td class="px-5 py-4">Trả về địa chỉ của biến.</td></tr>
+                <tr><td class="px-5 py-4 font-mono text-xl font-black text-indigo-600 dark:text-indigo-300">*</td><td class="px-5 py-4 font-bold">Toán tử giải tham chiếu</td><td class="px-5 py-4">Truy cập vào giá trị tại địa chỉ mà con trỏ đang trỏ tới.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-7 rounded-3xl bg-amber-50 p-5 ring-1 ring-amber-200 dark:bg-amber-400/10 dark:ring-amber-300/20">
+            <h3 class="text-xl font-extrabold text-amber-800 dark:text-amber-100">Cách nhớ</h3>
+            <ul class="mt-3 space-y-2 text-slate-700 dark:text-slate-300">
+              <li><code class="font-mono">&amp;a</code> → “Địa chỉ của a” (address-of a)</li>
+              <li><code class="font-mono">*p</code> → “Giá trị tại địa chỉ p” (value-at-address p)</li>
+            </ul>
+          </div>
+
+          <h3 class="mt-8 text-2xl font-extrabold">Ví dụ minh họa</h3>
+          <div class="mt-4">
+            <pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main() {
+    int a = 5;
+    int *p = &amp;a; // p lưu địa chỉ của a
+
+    printf("Gia tri cua a: %d\n", a);           // 5
+    printf("Dia chi cua a (&amp;a): %p\n", &amp;a);     // Ví dụ: 0x7ffe...
+    printf("Gia tri cua p: %p\n", p);           // Giống &amp;a
+    printf("Gia tri p tro toi (*p): %d\n", *p); // 5
+
+    *p = 10; // Thay đổi giá trị tại địa chỉ p trỏ tới
+    printf("Gia tri moi cua a: %d\n", a);       // 10
+
+    return 0;
+}</code></pre>
+          </div>
+
+          <h3 class="mt-8 text-2xl font-extrabold">Minh họa bộ nhớ</h3>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-3xl bg-slate-50 p-5 ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-slate-700"><span class="text-sm font-bold text-slate-500">Biến <code>a</code></span><p class="mt-2 font-mono text-2xl font-black text-indigo-600 dark:text-indigo-300">5 @ 0x1000</p></div>
+            <div class="rounded-3xl bg-slate-50 p-5 ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-slate-700"><span class="text-sm font-bold text-slate-500">Con trỏ <code>p</code></span><p class="mt-2 font-mono text-2xl font-black text-cyan-600 dark:text-cyan-300">0x1000 → a</p></div>
+          </div>
+
+          <h3 class="mt-8 text-2xl font-extrabold">Bảng quy đổi <code>p + 1</code> tăng bao nhiêu byte?</h3>
+          <div class="mt-4 overflow-hidden rounded-3xl ring-1 ring-slate-200 dark:ring-slate-700">
+            <table class="w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-700">
+              <thead class="bg-slate-100 dark:bg-slate-800"><tr><th class="px-5 py-4 font-black">Kiểu dữ liệu</th><th class="px-5 py-4 text-right font-black">sizeof</th><th class="px-5 py-4 text-right font-black">p + 1 tăng</th></tr></thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr><td class="px-5 py-4 font-mono">char *</td><td class="px-5 py-4 text-right">1 byte</td><td class="px-5 py-4 text-right font-bold">+1 byte</td></tr>
+                <tr><td class="px-5 py-4 font-mono">short *</td><td class="px-5 py-4 text-right">2 bytes</td><td class="px-5 py-4 text-right font-bold">+2 bytes</td></tr>
+                <tr><td class="px-5 py-4 font-mono">int *</td><td class="px-5 py-4 text-right">4 bytes</td><td class="px-5 py-4 text-right font-bold">+4 bytes</td></tr>
+                <tr><td class="px-5 py-4 font-mono">double *</td><td class="px-5 py-4 text-right">8 bytes</td><td class="px-5 py-4 text-right font-bold">+8 bytes</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="declare" class="section-anchor material-card rounded-3xl bg-white p-7 dark:bg-slate-900 sm:p-9">
+          <h2 class="text-3xl font-black text-slate-950 dark:text-white">4. Cách khai báo Pointer</h2>
+          <p class="mt-5 leading-8 text-slate-700 dark:text-slate-300">Trong C, có nhiều cách viết để khai báo một con trỏ, tất cả đều có ý nghĩa như nhau:</p>
+          <ul class="mt-4 space-y-3 leading-8 text-slate-700 dark:text-slate-300">
+            <li><code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">int* p;</code> — Style C++, nhấn mạnh kiểu dữ liệu là con trỏ int.</li>
+            <li><code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">int *p;</code> — Style C truyền thống, nhấn mạnh <code>p</code> là một biến trỏ.</li>
+            <li><code class="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-indigo-700 dark:bg-slate-800 dark:text-indigo-300">int * p;</code> — Khoảng trắng hai bên, ít dùng.</li>
+          </ul>
+
+          <div class="mt-7 rounded-3xl bg-rose-50 p-5 ring-1 ring-rose-200 dark:bg-rose-400/10 dark:ring-rose-300/20">
+            <h3 class="text-xl font-black text-rose-700 dark:text-rose-200">Cảnh báo: Sự khác biệt quan trọng</h3>
+            <p class="mt-2 text-slate-700 dark:text-slate-300">Khi khai báo nhiều biến trên một dòng, hãy cẩn thận:</p>
+          </div>
+
+          <div class="mt-4">
+            <pre><code class="language-c">int* p1, p2; // SAI LẦM PHỔ BIẾN!
+// p1 là con trỏ (int*), nhưng p2 chỉ là một số nguyên (int) thông thường.
+
+int *p1, *p2; // ĐÚNG: Cả p1 và p2 đều là con trỏ.</code></pre>
+          </div>
+
+          <h3 class="mt-8 text-2xl font-extrabold">Minh họa</h3>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-3xl bg-indigo-50 p-5 ring-1 ring-indigo-100 dark:bg-indigo-400/10 dark:ring-indigo-300/20"><strong>p1</strong>: <code class="font-mono">int*</code> → Là con trỏ</div>
+            <div class="rounded-3xl bg-slate-50 p-5 ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-slate-700"><strong>p2</strong>: <code class="font-mono">int</code> → Là biến <code class="font-mono">int</code> bình thường!</div>
+          </div>
+        </section>
+
+        <section id="pass" class="section-anchor material-card rounded-3xl bg-white p-7 dark:bg-slate-900 sm:p-9">
+          <h2 class="text-3xl font-black text-slate-950 dark:text-white">5. Pass By Value vs Pass By Address</h2>
+          <h3 class="mt-6 text-2xl font-extrabold">A. Pass By Value (Truyền tham trị)</h3>
+          <p class="mt-3 leading-8 text-slate-700 dark:text-slate-300">Trong C, mặc định mọi tham số được truyền theo <strong>giá trị</strong>. Hàm nhận được một <strong>bản sao</strong> của biến gốc.</p>
+          <blockquote class="mt-6 rounded-3xl border-l-4 border-cyan-500 bg-cyan-50 p-5 text-slate-700 dark:bg-cyan-400/10 dark:text-cyan-100"><strong>Lưu ý:</strong> Phần này trong nguồn gốc còn tiếp tục ở các dòng sau 400, nên bản HTML này chỉ phản ánh đúng phần nội dung có trong đoạn trích 1-150.</blockquote>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <!-- Mermaid CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- Prism CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+
+  <script>
+    const root = document.documentElement;
+    const toggleButton = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeLabel = document.getElementById('theme-label');
+
+    function preferredTheme() {
+      const savedTheme = localStorage.getItem('pointer-theme');
+      if (savedTheme) return savedTheme;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function renderMermaid(theme) {
+      mermaid.initialize({ startOnLoad: false, theme: theme === 'dark' ? 'dark' : 'default' });
+      document.querySelectorAll('.mermaid').forEach((element, index) => {
+        const originalCode = element.dataset.code || element.textContent.trim();
+        element.dataset.code = originalCode;
+        element.removeAttribute('data-processed');
+        element.innerHTML = originalCode;
+      });
+      mermaid.run({ querySelector: '.mermaid' });
+    }
+
+    function applyTheme(theme) {
+      root.classList.toggle('dark', theme === 'dark');
+      localStorage.setItem('pointer-theme', theme);
+      themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+      themeLabel.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
+      renderMermaid(theme);
+    }
+
+    toggleButton.addEventListener('click', () => {
+      const nextTheme = root.classList.contains('dark') ? 'light' : 'dark';
+      applyTheme(nextTheme);
+    });
+
+    applyTheme(preferredTheme());
+  </script>
+</body>
+</html>

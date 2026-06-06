@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Con Trỏ trong C/C++ - Từ cơ bản đến nâng cao</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <style>
+    :root { --bg: #f8f9fa; --surface: #ffffff; --text: #202124; --accent: #0969da; --border: #e2e8f0; }
+    [data-theme="dark"] { --bg: #0d1117; --surface: #161b22; --text: #e6edf3; --accent: #58a6ff; --border: #30363d; }
+    body { background: var(--bg); color: var(--text); font-family: sans-serif; transition: background 0.3s, color 0.3s; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
+    code { font-family: monospace; }
+    pre { border-radius: 8px; }
+  </style>
+</head>
+<body class="p-8">
+  <button id="theme-toggle" class="fixed top-4 right-4 p-2 bg-gray-200 dark:bg-gray-800 rounded">Toggle Theme</button>
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-4xl font-bold mb-6">Chuyên đề: Con trỏ trong C/C++ - Từ cơ bản đến nâng cao</h1>
+    
+    <div class="card">
+        <h2 class="text-2xl font-semibold mb-4" id="1-giới-thiệu-về-con-trỏ-pointer">1. Giới thiệu về Con trỏ (Pointer)</h2>
+        <p class="mb-4">Trong lập trình C/C++, <strong>Con trỏ (Pointer)</strong> là một trong những khái niệm mạnh mẽ nhất nhưng cũng dễ gây nhầm lẫn nhất. Hiểu về con trỏ chính là hiểu cách máy tính quản lý bộ nhớ.</p>
+        <blockquote class="border-l-4 border-gray-300 pl-4 italic my-4">"Con trỏ không phải là một giá trị thông thường, nó là một biến lưu trữ <strong>địa chỉ</strong> của một ô nhớ khác."</blockquote>
+    </div>
+
+    <div class="card">
+        <h2 class="text-2xl font-semibold mb-4" id="2-biến-và-bộ-nhớ-variable--memory">2. Biến và Bộ nhớ (Variable & Memory)</h2>
+        <p class="mb-4">Mỗi khi bạn khai báo một biến, máy tính dành riêng một không gian trong bộ nhớ (RAM) với một địa chỉ duy nhất.</p>
+        <div class="mermaid">
+            graph TD
+                subgraph Memory_Layout
+                    direction TB
+                    subgraph Stack
+                        S1[Biến cục bộ: a = 5]
+                        S2[Biến cục bộ: b = 10]
+                    end
+                    subgraph Heap
+                        H1[Cấp phát động: malloc]
+                        H2[Cấp phát động: new]
+                    end
+                end
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="text-2xl font-semibold mb-4" id="3-khái-niệm-cơ-bản-về-pointer">3. Khái niệm cơ bản về Pointer</h2>
+        <table class="w-full border-collapse border border-gray-300 mb-4">
+            <thead><tr class="bg-gray-100 dark:bg-gray-700"><th>Toán tử</th><th>Tên gọi</th><th>Ý nghĩa</th></tr></thead>
+            <tbody>
+                <tr><td class="border p-2"><code>&</code></td><td class="border p-2">Lấy địa chỉ</td><td class="border p-2">Trả về địa chỉ của biến</td></tr>
+                <tr><td class="border p-2"><code>*</code></td><td class="border p-2">Giải tham chiếu</td><td class="border p-2">Truy cập giá trị tại địa chỉ</td></tr>
+            </tbody>
+        </table>
+        <pre><code class="language-c">#include &lt;stdio.h&gt;
+int main() {
+    int a = 5;
+    int *p = &a; // p lưu địa chỉ của a
+    *p = 10;     // Thay đổi giá trị a qua p
+    return 0;
+}</code></pre>
+    </div>
+
+    <div class="card">
+        <h2 class="text-2xl font-semibold mb-4" id="4-cách-khai-báo-pointer">4. Cách khai báo Pointer</h2>
+        <p>Cẩn thận khi khai báo nhiều biến:</p>
+        <pre><code class="language-c">int* p1, p2;  // p1 là con trỏ, p2 là int!
+int *p1, *p2; // Cả hai đều là con trỏ.</code></pre>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      mermaid.initialize({ theme: isDark ? 'default' : 'dark' });
+      mermaid.contentLoaded();
+    });
+  </script>
+</body>
+</html>

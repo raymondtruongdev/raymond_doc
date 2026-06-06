@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng dẫn toàn diện về Con trỏ trong C</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-50 text-gray-800 leading-relaxed">
+
+<div class="max-w-4xl mx-auto px-4 py-10">
+    <h1 class="text-4xl font-bold mb-8 text-blue-800 border-b pb-4">Hướng dẫn toàn diện về Con trỏ (Pointer) trong C</h1>
+    
+    <section class="mb-10">
+        <h2 class="text-2xl font-semibold mb-4 text-blue-700">1. Khai báo con trỏ: Những lưu ý quan trọng</h2>
+        <p class="mb-4">Trong C, việc đặt dấu sao (*) rất quan trọng. Dấu sao gắn liền với tên biến chứ không phải kiểu dữ liệu.</p>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="font-bold text-lg mb-2">Cách khai báo đúng</h3>
+                <pre><code class="language-c">int *p;  // p là một con trỏ kiểu int (đúng)
+int* p;  // cũng là con trỏ (đúng, nhưng dễ gây nhầm lẫn)</code></pre>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="font-bold text-lg mb-2">Sai lầm thường gặp</h3>
+                <pre><code class="language-c">int* p1, p2; 
+// p1 là con trỏ int, nhưng p2 CHỈ LÀ biến int bình thường!</code></pre>
+            </div>
+        </div>
+        <p class="mt-4 bg-yellow-50 p-4 border-l-4 border-yellow-500 italic"><strong>Mẹo:</strong> Luôn khai báo <code>int *p1, *p2;</code> để đảm bảo tất cả đều là con trỏ.</p>
+    </section>
+
+    <section class="mb-10">
+        <h2 class="text-2xl font-semibold mb-4 text-blue-700">2. Tại sao cần con trỏ để thay đổi biến?</h2>
+        <p class="mb-4">C truyền tham số theo giá trị (pass by value). Hàm chỉ nhận bản sao, nên muốn sửa biến gốc, ta phải truyền địa chỉ của nó.</p>
+        <pre><code class="language-c">void change(int *x) {
+    *x = 10; // "Đi tới địa chỉ x, ghi giá trị 10 vào đó"
+}
+// Gọi: change(&a);</code></pre>
+    </section>
+
+    <section class="mb-10">
+        <h2 class="text-2xl font-semibold mb-4 text-blue-700">3. So sánh C Pointer vs C++ Reference</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse border border-gray-300">
+                <thead><tr class="bg-gray-100"><th class="border p-2">Đặc điểm</th><th class="border p-2">C (Pointer)</th><th class="border p-2">C++ (Reference)</th></tr></thead>
+                <tbody>
+                    <tr><td class="border p-2">Cú pháp</td><td class="border p-2"><code>int *x</code></td><td class="border p-2"><code>int &x</code></td></tr>
+                    <tr><td class="border p-2">Cách gọi</td><td class="border p-2"><code>change(&a)</code></td><td class="border p-2"><code>change(a)</code></td></tr>
+                    <tr><td class="border p-2">Bản chất</td><td class="border p-2">Chứa địa chỉ</td><td class="border p-2">Bí danh (alias) của biến</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+        <h2 class="text-xl font-bold mb-2">Tóm tắt kỹ thuật</h2>
+        <ul class="list-disc ml-6 space-y-2">
+            <li><strong>Khai báo nhiều con trỏ:</strong> Sử dụng <code>int *p1, *p2, *p3;</code>.</li>
+            <li><strong>Truyền tham số:</strong> C bắt buộc dùng pointer <code>&a</code> hoặc trả về giá trị mới (return).</li>
+            <li><strong>Toán tử *:</strong> Khi khai báo, nó dùng để tạo pointer. Khi sử dụng trong hàm, nó dùng để truy cập/thay đổi giá trị tại địa chỉ đó.</li>
+        </ul>
+    </section>
+</div>
+
+</body>
+</html>

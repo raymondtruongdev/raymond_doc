@@ -1,0 +1,2462 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Con Trỏ trong C Hướng dẫn toàn diện cho người mới</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- MathJax cho công thức toán -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <!-- Mermaid cho sơ đồ -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  
+  <!-- Prism.js cho code highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1e2530;
+      --border: #30363d;
+      /* Material Design inspired shadows */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --accent: #58a6ff;
+      --accent2: #f78166;
+      --accent3: #3fb950;
+      --accent4: #d2a8ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+    }
+    body { font-family: 'Roboto', sans-serif; }
+        
+    [data-theme="light"] {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --surface2: #f1f3f5;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --accent: #0969da;
+      --accent2: #cf222e;
+      --accent3: #1a7f37;
+      --accent4: #8250df;
+      --text: #202124;
+      --muted: #5f6368;
+    }
+    [data-theme="light"] .hero {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f6ff 50%, #ffffff 100%);
+    }
+    [data-theme="light"] .hero h1 {
+      background: linear-gradient(135deg, #1f2328 0%, #0969da 60%, #8250df 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    [data-theme="light"] .callout {
+      background: rgba(9,105,218,0.06);
+    }
+    [data-theme="light"] .callout.warn {
+      background: rgba(207,34,46,0.06);
+    }
+    [data-theme="light"] .callout.success {
+      background: rgba(26,127,55,0.06);
+    }
+    [data-theme="light"] .summary-box {
+      background: linear-gradient(135deg, rgba(9,105,218,0.06) 0%, rgba(130,80,223,0.06) 100%);
+      border-color: rgba(9,105,218,0.25);
+    }
+    [data-theme="light"] .hero::before {
+      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(9,105,218,0.08), transparent);
+    }
+    [data-theme="light"] .mermaid {
+      filter: invert(0.9) hue-rotate(180deg);
+    }
+    [data-theme="light"] .code-label {
+      background: #e8ecf0;
+    }
+    [data-theme="light"] .output-box {
+      background: var(--surface2);
+      border-color: #d0d7de;
+    }
+    [data-theme="light"] .diagram {
+      background: var(--surface);
+      border-color: var(--border);
+    }
+    [data-theme="light"] .diagram-title {
+      color: var(--text);
+    }
+    [data-theme="light"] .mem-box {
+      border-color: #cbd5e1;
+    }
+    [data-theme="light"] .compare-table th {
+      background: #eef1f5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Roboto', sans-serif;
+      line-height: 1.6; /* Adjusted for better readability */
+      font-size: 16px; /* Slightly increased base font size */
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0d1117 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 24px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(88,166,255,0.12), transparent);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(88,166,255,0.12);
+      border: 1px solid rgba(88,166,255,0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 60%, #d2a8ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* THEME TOGGLE BUTTON */
+    .theme-toggle-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: flex-end;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 0;
+    }
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted); /* Changed to muted for less prominence */
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      user-select: none;
+      margin-right: 24px;
+    }
+    .theme-toggle-btn:hover { /* Added subtle shadow on hover */
+      border-color: var(--accent);
+      background: var(--surface2);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .theme-toggle-btn:active {
+      transform: translateY(0);
+    }
+    .theme-icon {
+      font-size: 18px;
+      line-height: 1;
+      transition: transform 0.3s;
+    }
+    .theme-toggle-btn:hover .theme-icon {
+      transform: rotate(20deg);
+    }
+    .theme-label {
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    /* LAYOUT */
+    .main-wrapper {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      flex: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 280px;
+      padding: 40px 20px;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .sidebar { display: block; }
+    }
+    .sidebar-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .sidebar-list {
+      list-style: none;
+    }
+    .sidebar-list li {
+      margin-bottom: 8px;
+    }
+    .sidebar-list a {
+      display: block;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.2s;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-list a:hover {
+      color: var(--text);
+      background: rgba(88,166,255,0.08);
+    }
+    .sidebar-list a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(88,166,255,0.1);
+    }
+    .sidebar-list .sub-item a {
+      padding-left: 28px;
+      font-size: 12px;
+    }
+
+    /* SECTION */
+    .section {
+      margin-bottom: 56px;
+      scroll-margin-top: 80px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .section-num {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent4));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .section h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.4px;
+    }
+    .section h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 24px 0 16px;
+    }
+    .section h4 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 20px 0 12px;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: var(--shadow-md); /* Added shadow */
+      margin-bottom: 16px;
+    }
+    .card p { color: var(--text) }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    /* CODE BLOCKS */
+    .code-wrap {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md); /* Added shadow */
+      border: 1px solid var(--border);
+      margin: 16px 0;
+    }
+    .code-label {
+      background: var(--surface2);
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .code-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-red { background: #f78166; }
+    .dot-yellow { background: #e3b341; }
+    .dot-green { background: #3fb950; }
+    
+    .copy-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    .copy-btn.copied {
+      color: var(--accent3);
+      border-color: var(--accent3);
+    }
+
+    pre[class*="language-"] {
+      margin: 0 !important;
+      border-radius: 0 !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 13.5px !important;
+      line-height: 1.7 !important;
+      max-height: 500px;
+      overflow: auto;
+    }
+
+    /* OUTPUT */
+    .output-box {
+      background: var(--surface2);
+      border: 1px solid #21262d;
+      border-radius: 10px;
+      padding: 14px 20px;
+      box-shadow: var(--shadow-sm); /* Added subtle shadow */
+      margin: 12px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    .output-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent3);
+      margin-bottom: 6px;
+    }
+    .output-val { color: #3fb950; font-size: 1.3rem; font-weight: 700; }
+
+    /* DIAGRAM */
+    .diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-md); /* Added shadow */
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+    }
+    .diagram-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .mem-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .mem-name {
+      width: 30px;
+      text-align: right;
+      color: var(--accent4);
+      font-weight: 700;
+    }
+    .arrow { color: var(--muted); font-size: 16px; }
+    .mem-box {
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 16px;
+      min-width: 60px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .mem-box.active { border-color: var(--accent); color: var(--accent); }
+    .mem-box.changed { border-color: var(--accent2); color: var(--accent2); }
+    .mem-box.same { color: var(--accent3); border-color: var(--accent3); }
+    .ptr-arrow {
+      display: flex; align-items: center; gap: 4px;
+      color: var(--accent);
+    }
+
+    /* COMPARE TABLE */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+    }
+    .compare-table th {
+      background: var(--surface2);
+      padding: 12px 18px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: left;
+    }
+    .compare-table td {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      font-size: 13.5px;
+      vertical-align: top;
+    }
+    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .compare-table code {
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .tag-c { color: var(--accent2); font-weight: 700; }
+    .tag-cpp { color: var(--accent4); font-weight: 700; }
+
+    /* CALLOUT */
+    .callout {
+      display: flex;
+      gap: 14px;
+      background: rgba(88,166,255,0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin: 16px 0;
+    }
+    .callout.warn { background: rgba(247,129,102,0.06); border-color: var(--accent2); }
+    .callout.success { background: rgba(63,185,80,0.06); border-color: var(--accent3); }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout p { color: var(--text); font-size: 14px; }
+
+    /* STEP */
+    .steps { counter-reset: step; }
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      counter-increment: step;
+    }
+    .step-num {
+      width: 28px; height: 28px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--accent);
+      flex-shrink: 0; margin-top: 3px;
+    }
+    .step-num::before { content: counter(step); }
+    .step-body p { color: var(--text); font-size: 14px; margin-bottom: 4px; }
+    .step-body strong { color: var(--text); }
+
+    /* SUMMARY BOX */
+    .summary-box {
+      background: linear-gradient(135deg, rgba(88,166,255,0.08) 0%, rgba(210,168,255,0.08) 100%);
+      border: 1px solid rgba(88,166,255,0.25);
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: var(--shadow-lg); /* Added larger shadow */
+      margin-top: 48px;
+    }
+    .summary-box h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--accent);
+    }
+    .summary-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .summary-row .check { color: var(--accent3); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .summary-row p { color: var(--text); font-size: 14px; }
+
+    /* ERROR LIST */
+    .error-list {
+      list-style: none;
+      counter-reset: error;
+    }
+    .error-list li {
+      counter-increment: error;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm); /* Added subtle shadow */
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 50px;
+    }
+    .error-list li::before {
+      content: counter(error);
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background: var(--accent2);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .error-list .error-title {
+      font-weight: 700;
+      color: var(--accent2);
+      margin-bottom: 6px;
+    }
+    .error-list .error-code {
+      background: var(--surface2);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 8px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    p + p { margin-top: 10px; }
+
+    @media (max-width: 600px) {
+      .section h2 { font-size: 1.2rem; }
+      .card { padding: 16px; }
+      .sidebar { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">C & C++ Programming</div>
+  <h1>Con Trỏ trong C<br/>Hướng dẫn toàn diện</h1>
+  <p>Từ khái niệm cơ bản đến nâng cao — hiểu rõ bộ nhớ, pointer, và cách sử dụng hiệu quả. Dành cho người mới bắt đầu.</p>
+</div>
+
+<div class="main-wrapper">
+  <!-- MAIN CONTENT -->
+  <div class="container">
+
+    <!-- THEME TOGGLE -->
+    <div class="theme-toggle-wrap">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Chuyển đổi giao diện">
+        <span class="theme-icon" id="themeIcon">🌙</span>
+        <span class="theme-label" id="themeLabel">Dark</span>
+      </button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: Biến & Bộ nhớ -->
+    <!-- ============================================================ -->
+    <div class="section" id="section1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Biến và Bộ nhớ</h2>
+      </div>
+
+      <p style="color: var(--text);">Trước khi học về con trỏ, bạn cần hiểu cách máy tính lưu trữ biến trong bộ nhớ. Mỗi biến bạn khai báo sẽ được cấp phát một <strong>vị trí trong bộ nhớ</strong> (memory address).</p>
+
+      <div class="card">
+        <p>Biến <code>int a = 5</code> không chỉ chứa giá trị <strong>5</strong>, mà còn có một <strong>địa chỉ</strong> cụ thể trong RAM. Địa chỉ này là một con số hexa (ví dụ <code>0x7ffee4b8a9bc</code>) xác định vị trí của ô nhớ đó.</p>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Sơ đồ bộ nhớ cho biến int a = 5</div>
+        <div class="mem-row">
+          <span class="mem-name">Địa chỉ</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box">0x7ffee4</div>
+          <span style="color:var(--muted); font-size:12px;">← Địa chỉ bộ nhớ (memory address)</span>
+        </div>
+        <div class="mem-row">
+          <span class="mem-name">Giá trị</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box same">5</div>
+          <span style="color:var(--muted); font-size:12px;">← Giá trị lưu trong ô nhớ đó</span>
+        </div>
+      </div>
+
+      <p style="color: var(--text);">Bộ nhớ máy tính được chia thành các vùng chính, mỗi vùng có mục đích và cách quản lý riêng:</p>
+
+      <div class="mermaid" style="background:var(--surface); padding:20px; border-radius:10px; border:1px solid var(--border);">
+        graph TD
+            A[Memory] --> B[Stack]
+            A --> C[Heap]
+            A --> D[Data Segment]
+            A --> E[Code Segment]
+            
+            B --> B1[Biến cục bộ]
+            B --> B2[Tham số hàm]
+            B --> B3[Địa chỉ trả về]
+            
+            C --> C1[malloc / new / calloc]
+            C --> C2[Dynamic memory]
+            
+            D --> D1[Biến global]
+            D --> D2[Biến static]
+            
+            E --> E1[Mã máy]
+            E --> E2[Code chương trình]
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Vùng nhớ</th>
+            <th>Đặc điểm</th>
+            <th>Quản lý</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Stack</strong></td>
+            <td>Lưu biến cục bộ, tham số hàm, địa chỉ trả về. Kích thước nhỏ (~8MB).</td>
+            <td>Tự động — cấp phát khi hàm được gọi, giải phóng khi hàm kết thúc.</td>
+          </tr>
+          <tr>
+            <td><strong>Heap</strong></td>
+            <td>Lưu dữ liệu cấp phát động. Kích thước lớn, có thể mở rộng.</td>
+            <td>Thủ công — bạn phải tự gọi <code>malloc()</code> và <code>free()</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Data Segment</strong></td>
+            <td>Lưu biến global, biến static.</td>
+            <td>Tự động — tồn tại suốt vòng đời chương trình.</td>
+          </tr>
+          <tr>
+            <td><strong>Code Segment</strong></td>
+            <td>Chứa mã máy (instructions) của chương trình.</td>
+            <td>Chỉ đọc, cố định.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <div class="callout-icon">💡</div>
+        <p><strong>Stack</strong>: Tự động quản lý, biến cục bộ được cấp phát và giải phóng tự động. Nhanh nhưng kích thước hạn chế.<br/>
+        <strong>Heap</strong>: Bạn phải tự quản lý bằng <code>malloc()</code> và <code>free()</code>. Linh hoạt nhưng chậm hơn và dễ gây lỗi (memory leak, dangling pointer).</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: Pointer cơ bản -->
+    <!-- ============================================================ -->
+    <div class="section" id="section2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>Pointer cơ bản — Con trỏ là gì?</h2>
+      </div>
+
+      <p style="color: var(--text);">Con trỏ (pointer) là một biến <strong>lưu địa chỉ bộ nhớ</strong> của một biến khác, thay vì lưu giá trị trực tiếp. Nó "trỏ đến" vị trí của biến kia.</p>
+
+      <div class="card">
+        <p>Nếu <code>int a = 5</code> lưu giá trị <strong>5</strong> tại một ô nhớ nào đó, thì <code>int *p = &a</code> lưu <strong>địa chỉ của a</strong> (tức là số của ô nhớ đó).</p>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Ví dụ cơ bản về pointer</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+int main() {
+    int a = 5;        // Biến a chứa giá trị 5 tại một ô nhớ
+    int *p = &a;      // p là con trỏ, chứa địa chỉ của a
+
+    printf("Giá trị của a: %d\n", a);           // 5
+    printf("Địa chỉ của a: %p\n", &a);          // 0x7ffee4 (ví dụ)
+    printf("Giá trị của p: %p\n", p);           // 0x7ffee4 (giống &a)
+    printf("Giá trị tại địa chỉ p trỏ tới: %d\n", *p); // 5
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="output-box">
+        <div class="output-label">Kết quả</div>
+        <div>Giá trị của a: 5</div>
+        <div>Địa chỉ của a: 0x7ffee4b8a9bc</div>
+        <div>Giá trị của p: 0x7ffee4b8a9bc</div>
+        <div>Giá trị tại địa chỉ p trỏ tới: 5</div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Sơ đồ pointer trỏ đến biến a</div>
+        <div class="mem-row">
+          <span class="mem-name">a</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box same">5</div>
+          <span style="color:var(--muted); font-size:12px;">← Biến a tại địa chỉ 0x1000</span>
+        </div>
+        <div class="mem-row">
+          <span class="mem-name">p</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box active">0x1000</div>
+          <span style="color:var(--accent); font-size:12px;">← p chứa địa chỉ của a</span>
+        </div>
+        <div class="mem-row" style="margin-top:8px;">
+          <span class="ptr-arrow">
+            <span style="font-size:12px; color:var(--muted);">*p dereference</span>
+            <span style="color:var(--accent);">──────────────▶</span>
+          </span>
+          <span style="color:var(--accent3); font-size:12px;">Đi đến địa chỉ 0x1000, lấy giá trị 5</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-icon">💡</div>
+        <p><strong>Hình dung đơn giản:</strong> Hãy tưởng tượng <strong>bộ nhớ là một dãy tủ có khóa</strong>. Biến <code>int a</code> là một ngăn tủ có nhãn "a" chứa số 5. Con trỏ <code>int *p</code> là một mảnh giấy ghi "số tủ: 0x1000" — nó không chứa số 5, mà chỉ ghi <strong>địa chỉ của ngăn tủ</strong> chứa số 5.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: Các kiểu khai báo -->
+    <!-- ============================================================ -->
+    <div class="section" id="section3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>Các kiểu khai báo Pointer</h2>
+      </div>
+
+      <p style="color: var(--text);">Có nhiều cách viết khai báo con trỏ trong C/C++. Tất cả đều đúng, nhưng ý nghĩa và thói quen sử dụng khác nhau:</p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Kiểu khai báo</th>
+            <th>Ý nghĩa</th>
+            <th>Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>int* p;</code></td>
+            <td>p là con trỏ đến int</td>
+            <td>Style phổ biến trong C++, nhấn mạnh "int*" là kiểu pointer</td>
+          </tr>
+          <tr>
+            <td><code>int *p;</code></td>
+            <td>p là con trỏ đến int</td>
+            <td>Style truyền thống trong C, dấu <code>*</code> gắn với biến</td>
+          </tr>
+          <tr>
+            <td><code>int * p;</code></td>
+            <td>p là con trỏ đến int</td>
+            <td>Có khoảng trắng ở cả hai bên, ít dùng</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>📌 CẢNH BÁO QUAN TRỌNG: Phân biệt <code>int* p1, p2</code></h3>
+
+      <div class="callout warn">
+        <div class="callout-icon">⚠️</div>
+        <p><strong>Lỗi rất phổ biến ở người mới:</strong> Khi khai báo nhiều biến trên cùng một dòng với <code>int* p1, p2</code>, chỉ <code>p1</code> là con trỏ, còn <code>p2</code> là int bình thường! Dấu <code>*</code> chỉ gắn với <strong>biến đầu tiên</strong>, không áp dụng cho các biến sau.</p>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Lỗi thường gặp khi khai báo nhiều pointer</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">// ❌ SAI - Chỉ p1 là pointer, p2 là int bình thường!
+int* p1, p2;
+
+// ✅ ĐÚNG - Cả hai đều là pointer
+int *p1, *p2;
+
+// ✅ ĐÚNG - Khai báo riêng rõ ràng
+int* p1;
+int* p2;
+
+// ❌ Cũng sai tương tự
+int *p1, p2;   // p2 là int, không phải pointer</code></pre>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Phân tích: int* p1, p2;</div>
+        <div class="mem-row">
+          <span class="mem-name">p1</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box active">pointer to int</div>
+          <span style="color:var(--accent3); font-size:12px;">← Là con trỏ, lưu địa chỉ</span>
+        </div>
+        <div class="mem-row">
+          <span class="mem-name">p2</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box same">int</div>
+          <span style="color:var(--accent2); font-size:12px;">← Là int bình thường, KHÔNG phải pointer!</span>
+        </div>
+      </div>
+
+      <div class="callout success">
+        <div class="callout-icon">✅</div>
+        <p><strong>Best practice:</strong> Luôn khai báo mỗi biến trên một dòng riêng. Điều này tránh nhầm lẫn và giúp code dễ đọc hơn.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: Ý nghĩa của * và & -->
+    <!-- ============================================================ -->
+    <div class="section" id="section4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Ý nghĩa của * và &</h2>
+      </div>
+
+      <p style="color: var(--text);">Hai toán tử quan trọng nhất khi làm việc với con trỏ là <code>&</code> (address-of) và <code>*</code> (dereference). Hiểu rõ chúng là chìa khóa để làm chủ pointer.</p>
+
+      <h3>📌 Toán tử & — Lấy địa chỉ (Address-of)</h3>
+      <p style="color: var(--text);">Toán tử <code>&</code> trả về <strong>địa chỉ bộ nhớ</strong> của biến. Nó cho bạn biết biến đó nằm ở ô nhớ nào trong RAM.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Toán tử & — Lấy địa chỉ</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+int main() {
+    int a = 10;
+    int *p = &a;  // &a = lấy địa chỉ của a
+
+    printf("a = %d\n", a);        // 10
+    printf("&a = %p\n", &a);      // 0x7ffee4b8a9bc (địa chỉ của a)
+    printf("p = %p\n", p);        // 0x7ffee4b8a9bc (p chứa địa chỉ của a)
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <h3>📌 Toán tử * — Dereference (Giải tham chiếu)</h3>
+      <p style="color: var(--text);">Toán tử <code>*</code> dùng để <strong>truy cập giá trị</strong> tại địa chỉ mà pointer đang trỏ tới. Nó đi đến ô nhớ đó và đọc/ghi giá trị.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Toán tử * — Dereference</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+int main() {
+    int a = 10;
+    int *p = &a;
+
+    printf("*p = %d\n", *p);  // 10 — lấy giá trị tại địa chỉ p
+
+    *p = 20;  // Sửa giá trị tại địa chỉ p trỏ tới (tức là sửa a)
+    printf("a = %d\n", a);    // 20 — a đã thay đổi!
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Minh họa * và &</div>
+        <div class="mem-row">
+          <span class="mem-name">a</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box same">10</div>
+          <span style="color:var(--muted); font-size:12px;">← Địa chỉ: 0x1000</span>
+        </div>
+        <div class="mem-row" style="margin-top:12px;">
+          <span style="color:var(--accent4); font-weight:700;">&a</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box active">0x1000</div>
+          <span style="color:var(--muted); font-size:12px;">← Trả về địa chỉ (số của ô nhớ)</span>
+        </div>
+        <div class="mem-row">
+          <span style="color:var(--accent4); font-weight:700;">*p</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box changed">10</div>
+          <span style="color:var(--muted); font-size:12px;">← Trả về giá trị tại 0x1000</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-icon">💡</div>
+        <p><strong>Cách nhớ đơn giản:</strong><br/>
+        <code>&a</code> → "Địa chỉ của a" (address-of a)<br/>
+        <code>*p</code> → "Giá trị tại địa chỉ p" (value-at-address p)</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5: Pass by Value -->
+    <!-- ============================================================ -->
+    <div class="section" id="section5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Pass by Value — Truyền theo giá trị</h2>
+      </div>
+
+      <div class="card">
+        <p>Bạn có một biến <strong style="color:var(--accent4)">a = 5</strong>. Bạn muốn viết một hàm <code style="color:var(--accent)">change()</code> để đổi giá trị của <strong style="color:var(--accent4)">a</strong> thành <strong>10</strong>. Điều tưởng chừng đơn giản này lại không hoạt động như bạn nghĩ trong C.</p>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-icon">⚠️</div>
+        <p><strong>Nguyên tắc cốt lõi của C:</strong> C luôn truyền tham số theo <em>tham trị</em> (pass by value) — hàm chỉ nhận một <strong>bản sao</strong> của giá trị, không nhận biến gốc. Đây là điểm quan trọng nhất cần ghi nhớ.</p>
+      </div>
+
+      <p style="color: var(--text); margin-bottom:16px;">Hãy xem điều gì xảy ra khi bạn truyền <code style="color:var(--accent)">a</code> thẳng vào hàm:</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">C — Truyền tham trị (KHÔNG hoạt động như mong muốn)</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+void change(int x)
+{
+    x = 10;   // chỉ sửa bản sao, không sửa a
+}
+
+int main()
+{
+    int a = 5;
+
+    change(a);         // truyền GIÁ TRỊ của a (tạo bản sao)
+
+    printf("%d\n", a); // vẫn in ra 5, không thay đổi!
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="output-box">
+        <div class="output-label">Kết quả</div>
+        <div class="output-val">5</div>
+      </div>
+
+      <p style="color: var(--text); margin:16px 0 12px; font-weight:600;">📌 Tại sao lại ra 5? Hãy xem sơ đồ bộ nhớ:</p>
+
+      <div class="details">
+        <p style="color: var(--text); font-size:14px;">Khi gọi <code>change(a)</code>, chương trình thực hiện như sau:</p>
+        <p style="color: var(--text); font-size:14px; background:var(--surface); padding:12px; border-radius:8px; margin:8px 0;">
+          <strong>Bước 1:</strong> Tạo bản sao: <code>x = a</code> — lúc này <code>x = 5</code> (giống a)<br/>
+          <strong>Bước 2:</strong> Gán <code>x = 10</code> — chỉ thay đổi x, không ảnh hưởng đến a<br/>
+          <strong>Bước 3:</strong> Hàm kết thúc — <code>x</code> bị hủy, <code>a</code> vẫn là 5
+        </p>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Sơ đồ bộ nhớ — Trước khi gọi hàm</div>
+        <div class="mem-row">
+          <span class="mem-name">a</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box same">5</div>
+          <span style="color:var(--muted); font-size:12px;">← biến gốc ở ô nhớ 0x1000</span>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Sơ đồ bộ nhớ — Bên trong hàm change()</div>
+        <div class="mem-row">
+          <span class="mem-name">a</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box same">5</div>
+          <span style="color:var(--accent3); font-size:12px;">← không đổi, vẫn là 5</span>
+        </div>
+        <div class="mem-row">
+          <span class="mem-name">x</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box changed">10</div>
+          <span style="color:var(--accent2); font-size:12px;">← bản sao của a, bị sửa thành 10 nhưng sẽ biến mất sau hàm</span>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Hai ô nhớ riêng biệt — a và x không liên quan</div>
+        <div style="display:flex; gap:24px; justify-content:center; padding:12px;">
+          <div style="text-align:center;">
+            <div style="border:2px solid var(--accent3); border-radius:8px; padding:8px 24px; background:var(--surface); margin-bottom:4px; color:var(--accent3);">a = 5</div>
+            <div style="font-size:11px; color:var(--muted);">Ô nhớ: 0x1000</div>
+          </div>
+          <div style="font-size:24px; color:var(--muted); display:flex; align-items:center;">≠</div>
+          <div style="text-align:center;">
+            <div style="border:2px solid var(--accent2); border-radius:8px; padding:8px 24px; background:var(--surface); margin-bottom:4px; color:var(--accent2);">x = 10</div>
+            <div style="font-size:11px; color:var(--muted);">Ô nhớ: 0x5000</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-icon">💡</div>
+        <p><strong>x</strong> là một ô nhớ <em>riêng biệt</em>, nằm ở địa chỉ hoàn toàn khác với <strong>a</strong>. Sửa <strong>x</strong> không ảnh hưởng gì đến <strong>a</strong> vì chúng nằm ở hai địa chỉ bộ nhớ khác nhau. Khi hàm kết thúc, <strong>x</strong> bị xóa khỏi stack, còn <strong>a</strong> vẫn nguyên vẹn.</p>
+      </div>
+
+      <h4>📌 Cách giải quyết "không dùng pointer"</h4>
+      <p style="color: var(--text);">Nếu không dùng pointer, cách duy nhất để lấy giá trị mới từ hàm là <strong>trả về giá trị</strong> và gán lại:</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Cách 1: Trả về giá trị mới — không dùng pointer</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+int change(int x)
+{
+    x = 10;
+    return x;   // trả về giá trị mới
+}
+
+int main()
+{
+    int a = 5;
+
+    a = change(a);  // gán lại giá trị trả về cho a
+
+    printf("%d\n", a); // 10
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout success">
+        <div class="callout-icon">✅</div>
+        <p><strong>Tóm tắt:</strong> Nếu truyền <code>change(a)</code> mà hàm nhận <code>int x</code> thì <code>x</code> là bản sao — không thể sửa <code>a</code>.<br/>
+        Hai giải pháp: (1) Dùng pointer, (2) Trả về giá trị rồi gán lại. Không có cách thứ ba trong C chuẩn.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 6: Pass by Address -->
+    <!-- ============================================================ -->
+    <div class="section" id="section6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Pass by Address — Truyền theo địa chỉ</h2>
+      </div>
+
+      <p style="color: var(--text); margin-bottom:12px;">Thay vì truyền <em>giá trị</em> (và bị copy), hãy truyền <strong style="color:var(--accent)">địa chỉ</strong> của biến. Hàm sẽ nhận địa chỉ đó và truy cập trực tiếp vào ô nhớ gốc để sửa.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <p><strong>Khai báo hàm nhận con trỏ:</strong> <code style="color:var(--accent4)">void change(int *x)</code> — <code>x</code> giờ lưu một <em>địa chỉ</em>, không phải giá trị.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <p><strong>Gọi hàm với toán tử &:</strong> <code style="color:var(--accent)">change(&a)</code> — <code>&a</code> lấy địa chỉ bộ nhớ của biến <code>a</code> và truyền nó vào hàm.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"></div>
+          <div class="step-body">
+            <p><strong>Dereference để sửa:</strong> <code style="color:var(--accent2)">*x = 10</code> — đi đến địa chỉ mà <code>x</code> đang trỏ tới (chính là ô nhớ của a), rồi ghi giá trị 10 vào đó.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">C — Dùng Pointer (HOẠT ĐỘNG đúng)</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+void change(int *x)   // x nhận ĐỊA CHỈ của biến
+{
+    *x = 10;          // dereference: đến địa chỉ đó và ghi 10
+}
+
+int main()
+{
+    int a = 5;
+
+    change(&a);        // &a = lấy địa chỉ của a, truyền vào hàm
+
+    printf("%d\n", a); // in ra 10 — a đã thay đổi!
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="output-box">
+        <div class="output-label">Kết quả</div>
+        <div class="output-val">10</div>
+      </div>
+
+      <p style="color: var(--text); margin:16px 0 8px; font-weight:600;">📌 Điều gì xảy ra bên trong?</p>
+
+      <div class="diagram">
+        <div class="diagram-title">Bước 1: Gọi change(&a) — x nhận địa chỉ của a</div>
+        <div class="mem-row">
+          <span class="mem-name">x</span>
+          <span class="arrow">───▶</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="mem-box active" style="min-width:100px; font-size:11px;">địa chỉ của a = 0x1000</div>
+            <span style="color:var(--accent); font-size:18px;">──▶</span>
+            <div class="mem-box same">a = 5</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Bước 2: Thực thi *x = 10 — sửa trực tiếp ô nhớ của a</div>
+        <div class="mem-row">
+          <span class="mem-name">x</span>
+          <span class="arrow">───▶</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="mem-box active" style="min-width:100px; font-size:11px;">địa chỉ của a = 0x1000</div>
+            <span style="color:var(--accent); font-size:18px;">──▶</span>
+            <div class="mem-box changed">a = 10</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout success">
+        <div class="callout-icon">✅</div>
+        <p><strong>x</strong> và <strong>a</strong> cùng trỏ đến một ô nhớ duy nhất. Khi <code>*x = 10</code>, chính ô nhớ của <strong>a</strong> bị thay đổi — đó là lý do <code>printf("%d\n", a)</code> in ra <strong>10</strong>.</p>
+      </div>
+
+      <h3>📌 So sánh: Pass by Value vs Pass by Address</h3>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Tiêu chí</th>
+            <th>Pass by Value (int x)</th>
+            <th>Pass by Address (int *x)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tham số nhận</td>
+            <td>Bản sao giá trị</td>
+            <td>Địa chỉ của biến gốc</td>
+          </tr>
+          <tr>
+            <td>Cách gọi</td>
+            <td><code>change(a)</code></td>
+            <td><code>change(&a)</code></td>
+          </tr>
+          <tr>
+            <td>Ảnh hưởng biến gốc</td>
+            <td>❌ Không</td>
+            <td>✅ Có (qua *x)</td>
+          </tr>
+          <tr>
+            <td>Dùng khi</td>
+            <td>Chỉ đọc, không cần sửa</td>
+            <td>Cần sửa biến bên ngoài</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 7: C++ Reference -->
+    <!-- ============================================================ -->
+    <div class="section" id="section7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>C++ Reference — Tham chiếu</h2>
+      </div>
+
+      <p style="color: var(--text); margin-bottom:12px;">Trong <strong style="color:var(--accent4)">C++</strong> (không phải C), có thêm một cú pháp gọn hơn gọi là <em>reference</em> (tham chiếu) với ký hiệu <code>&</code> trong khai báo tham số. Nó cho phép bạn thay đổi biến gốc mà không cần dùng pointer.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">C++ — Reference (chỉ dùng được trong C++)</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-cpp">#include <iostream>
+using namespace std;
+
+// int &x: x là tham chiếu (reference) đến biến được truyền vào
+void change(int &x)
+{
+    x = 10;   // sửa x = sửa trực tiếp biến gốc
+}
+
+int main()
+{
+    int a = 5;
+
+    change(a);         // KHÔNG cần &a — gọi như bình thường
+
+    cout << a << endl; // in ra 10
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="output-box">
+        <div class="output-label">Kết quả</div>
+        <div class="output-val">10</div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Reference: x là bí danh (alias) của a — cùng 1 ô nhớ</div>
+        <div class="mem-row">
+          <span class="mem-name">x</span>
+          <span class="arrow" style="margin-right:-4px;">─┐</span>
+          <span></span>
+        </div>
+        <div class="mem-row" style="margin-top:-4px;">
+          <span class="mem-name" style="opacity:0">.</span>
+          <span class="arrow">─┤</span>
+          <div class="mem-box active">Ô nhớ = 10</div>
+        </div>
+        <div class="mem-row" style="margin-top:-4px;">
+          <span class="mem-name">a</span>
+          <span class="arrow" style="margin-right:-4px;">─┘</span>
+          <span></span>
+        </div>
+        <p style="margin-top:12px; font-size:12px; color:var(--muted);">x và a là hai tên khác nhau của cùng một địa chỉ bộ nhớ. Giống như bạn có biệt danh — dù gọi tên thật hay biệt danh thì vẫn là cùng một người.</p>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-icon">🚫</div>
+        <p><strong>Lưu ý cực kỳ quan trọng:</strong> <code>int &x</code> là cú pháp của <strong>C++</strong>. Nếu bạn đang lập trình C thuần (file <code>.c</code>), cú pháp này sẽ báo lỗi compile. Chỉ dùng được khi compile bằng <code>g++</code> hoặc file <code>.cpp</code>.</p>
+      </div>
+
+      <h3>📌 C++ Reference và Pointer tương đương thế nào?</h3>
+      <p style="color: var(--text);">Hai đoạn code sau cho <strong>kết quả hoàn toàn giống nhau</strong>:</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">So sánh: C Pointer vs C++ Reference</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-cpp">// === C (dùng pointer) ===
+void change(int *x) {
+    *x = 10;
+}
+// Gọi: change(&a);
+
+// === C++ (dùng reference) ===
+void change(int &x) {
+    x = 10;
+}
+// Gọi: change(a);</code></pre>
+      </div>
+
+      <p style="color: var(--text);">Kết quả cả hai: <strong>a = 10</strong></p>
+
+      <div class="callout success">
+        <div class="callout-icon">✅</div>
+        <p><strong>Tại sao nhiều người thích Reference?</strong><br/>
+        Vì cú pháp gọn hơn: <code>change(a)</code> thay vì <code>change(&a)</code> ở lời gọi, và <code>x = 10</code> thay vì <code>*x = 10</code> ở trong hàm.</p>
+      </div>
+
+      <h3>📌 So sánh chi tiết: Pointer vs Reference</h3>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Đặc điểm</th>
+            <th>Pointer (C)</th>
+            <th>Reference (C++)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Khai báo</td>
+            <td><code>int *p = &a;</code></td>
+            <td><code>int &r = a;</code></td>
+          </tr>
+          <tr>
+            <td>Gọi hàm</td>
+            <td><code>change(&a)</code></td>
+            <td><code>change(a)</code></td>
+          </tr>
+          <tr>
+            <td>Thao tác trong hàm</td>
+            <td><code>*p = 10</code></td>
+            <td><code>r = 10</code></td>
+          </tr>
+          <tr>
+            <td>NULL</td>
+            <td>Có thể NULL</td>
+            <td>Không thể NULL — phải luôn trỏ đến biến hợp lệ</td>
+          </tr>
+          <tr>
+            <td>Thay đổi đối tượng trỏ đến</td>
+            <td>Có thể đổi sang trỏ đến biến khác</td>
+            <td>Không thể thay đổi — luôn gắn với cùng 1 biến</td>
+          </tr>
+          <tr>
+            <td>Số học (arithmetic)</td>
+            <td>Có thể (p++, p+1, ...)</td>
+            <td>Không thể</td>
+          </tr>
+          <tr>
+            <td>Cần dereference</td>
+            <td>Cần (*p)</td>
+            <td>Không cần — dùng trực tiếp</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 8: Các loại Pointer -->
+    <!-- ============================================================ -->
+    <div class="section" id="section8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>Các loại Pointer đặc biệt</h2>
+      </div>
+
+      <p style="color: var(--text);">Có ba loại pointer đặc biệt mà người mới cần biết để tránh lỗi: <strong>NULL pointer</strong>, <strong>Wild pointer</strong>, và <strong>Dangling pointer</strong>.</p>
+
+      <!-- NULL Pointer -->
+      <h3>📌 NULL Pointer</h3>
+      <div class="card">
+        <p>Con trỏ NULL là con trỏ <strong>không trỏ đến bất kỳ địa chỉ hợp lệ nào</strong>. Nó có giá trị <code>0</code> hoặc <code>(void*)0</code>. Đây là giá trị an toàn để khởi tạo pointer khi chưa dùng ngay.</p>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">NULL Pointer — An toàn khi khởi tạo</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *p = NULL;  // p không trỏ đến đâu cả — an toàn
+
+    // Kiểm tra NULL trước khi sử dụng
+    if (p == NULL) {
+        printf("p đang là NULL, chưa thể dùng\n");
+    }
+
+    // Luôn kiểm tra NULL trước khi dereference
+    if (p != NULL) {
+        printf("%d\n", *p);  // Chỉ thực hiện nếu p không NULL
+    } else {
+        printf("Không thể dereference p vì p là NULL\n");
+    }
+
+    // Ví dụ: malloc trả về NULL nếu không đủ bộ nhớ
+    int *arr = malloc(1000000000 * sizeof(int)); // Có thể thất bại
+    if (arr == NULL) {
+        printf("Không thể cấp phát bộ nhớ!\n");
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-icon">⚠️</div>
+        <p><strong>Dereference NULL pointer</strong> sẽ gây crash chương trình (segmentation fault). Luôn kiểm tra <code>if (p != NULL)</code> trước khi dùng <code>*p</code>.</p>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">NULL Pointer — Không trỏ đến đâu</div>
+        <div class="mem-row">
+          <span class="mem-name">p</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box active">NULL (0)</div>
+          <span style="color:var(--accent2); font-size:12px;">← Không hợp lệ, dereference sẽ crash</span>
+        </div>
+      </div>
+
+      <!-- Wild Pointer -->
+      <h3>📌 Wild Pointer (Con trỏ hoang)</h3>
+      <div class="card">
+        <p>Wild pointer là con trỏ <strong>chưa được khởi tạo</strong>, chứa một địa chỉ rác ngẫu nhiên (bất kỳ giá trị nào còn sót lại trong ô nhớ). Dereference nó là <strong>undefined behavior</strong> — chương trình có thể crash, đọc sai dữ liệu, hoặc tệ hơn là ghi đè dữ liệu quan trọng.</p>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Wild Pointer — NGUY HIỂM — TUYỆT ĐỐI TRÁNH</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+int main() {
+    int *p;  // ❌ Wild pointer — chưa khởi tạo, chứa địa chỉ rác
+
+    // printf("%d\n", *p);  // ❌ NGUY HIỂM — có thể crash hoặc đọc rác
+
+    int a = 5;
+    p = &a;  // ✅ Bây giờ p đã an toàn, trỏ đến a
+
+    printf("%d\n", *p);  // ✅ 5 — kết quả đúng
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout success">
+        <div class="callout-icon">✅</div>
+        <p><strong>Best practice:</strong> Luôn khởi tạo pointer khi khai báo: <code>int *p = NULL;</code> hoặc gán ngay <code>int *p = &a;</code>. Đừng bao giờ để pointer không được khởi tạo.</p>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Wild Pointer — Chứa địa chỉ rác</div>
+        <div class="mem-row">
+          <span class="mem-name">p</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box changed" style="border-style:dashed;">0x????</div>
+          <span style="color:var(--accent2); font-size:12px;">← Giá trị rác — không biết trỏ đến đâu</span>
+        </div>
+      </div>
+
+      <!-- Dangling Pointer -->
+      <h3>📌 Dangling Pointer (Con trỏ treo)</h3>
+      <div class="card">
+        <p>Dangling pointer là con trỏ trỏ đến <strong>bộ nhớ đã được giải phóng</strong> hoặc biến đã ra khỏi scope (biến cục bộ đã bị hủy). Pointer vẫn giữ địa chỉ cũ, nhưng vùng nhớ đó không còn hợp lệ nữa.</p>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Dangling Pointer — Hai trường hợp điển hình</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+#include <stdlib.h>
+
+// Trường hợp 1: Trả về địa chỉ của biến cục bộ (stack)
+int* createDangling1() {
+    int arr[10];  // Biến cục bộ trên stack
+    return arr;   // ❌ TRẢ VỀ ĐỊA CHỈ CỦA BIẾN CỤC BỘ — DANGEROUS!
+}
+
+// Trường hợp 2: Free bộ nhớ nhưng vẫn dùng pointer
+void exampleDangling2() {
+    int *q = malloc(sizeof(int) * 10);
+    free(q);  // Giải phóng bộ nhớ
+    // q bây giờ là dangling pointer
+    // q[0] = 5;  // ❌ NGUY HIỂM — use after free
+    q = NULL;  // ✅ Sau khi free, gán NULL ngay lập tức
+}
+
+int main() {
+    // Dùng pointer trả về từ hàm
+    int *p = createDangling1();
+    // p là dangling pointer — arr đã bị hủy
+    // printf("%d\n", p[0]);  // ❌ Undefined behavior
+
+    exampleDangling2();
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Dangling Pointer — Bộ nhớ đã được giải phóng</div>
+        <div class="mem-row">
+          <span class="mem-name">p</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box active">0x5000</div>
+          <span style="color:var(--accent2); font-size:12px;">← p vẫn chứa địa chỉ cũ</span>
+        </div>
+        <div class="mem-row" style="margin-top:8px;">
+          <span class="mem-name"></span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box changed" style="border-style:dashed; opacity:0.5;"></div>
+          <span style="color:var(--accent2); font-size:12px;">← Bộ nhớ tại 0x5000 đã free — KHÔNG còn hợp lệ!</span>
+        </div>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Loại Pointer</th>
+            <th>Nguyên nhân</th>
+            <th>Hậu quả</th>
+            <th>Cách tránh</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>NULL Pointer</td>
+            <td>Được gán NULL có chủ đích</td>
+            <td>Segmentation fault nếu dereference</td>
+            <td>Kiểm tra NULL trước khi dùng</td>
+          </tr>
+          <tr>
+            <td>Wild Pointer</td>
+            <td>Chưa khởi tạo</td>
+            <td>Undefined behavior — đọc/ghi địa chỉ rác</td>
+            <td>Luôn khởi tạo ngay khi khai báo</td>
+          </tr>
+          <tr>
+            <td>Dangling Pointer</td>
+            <td>Trỏ đến bộ nhớ đã free hoặc biến đã hết scope</td>
+            <td>Use-after-free, undefined behavior</td>
+            <td>Gán NULL sau free, không trả về địa chỉ biến cục bộ</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 9: Array & Pointer -->
+    <!-- ============================================================ -->
+    <div class="section" id="section9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>Array & Pointer — Mối liên hệ mật thiết</h2>
+      </div>
+
+      <p style="color: var(--text);">Trong C, <strong>tên mảng</strong> thực chất là một <strong>con trỏ hằng</strong> (constant pointer) trỏ đến phần tử đầu tiên của mảng. Đây là lý do bạn có thể dùng pointer để thao tác với mảng.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Mảng và Pointer tương đương nhau</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    int *p = arr;  // p trỏ đến phần tử đầu tiên của arr (arr[0])
+
+    // === Các cách truy cập tương đương ===
+    printf("Cách 1: arr[0] = %d\n", arr[0]);        // 10
+    printf("Cách 2: *arr = %d\n", *arr);             // 10
+    printf("Cách 3: p[0] = %d\n", p[0]);             // 10
+    printf("Cách 4: *p = %d\n", *p);                 // 10
+
+    // Truy cập phần tử thứ 3 (index 2):
+    printf("arr[2] = %d\n", arr[2]);                 // 30
+    printf("*(arr + 2) = %d\n", *(arr + 2));         // 30
+    printf("p[2] = %d\n", p[2]);                     // 30
+    printf("*(p + 2) = %d\n", *(p + 2));             // 30
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout">
+        <div class="callout-icon">💡</div>
+        <p><code>arr[i]</code> thực chất là <code>*(arr + i)</code> — đi đến địa chỉ <code>arr + i</code> (tự động nhân với sizeof(int)) rồi lấy giá trị tại đó. Đây là lý do <code>arr[0]</code> tương đương <code>*arr</code>.</p>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Sơ đồ mảng và pointer</div>
+        <div class="mem-row">
+          <span class="mem-name">arr</span>
+          <span class="arrow">───▶</span>
+          <div style="display:flex; gap:4px;">
+            <div class="mem-box same">10</div>
+            <div class="mem-box same">20</div>
+            <div class="mem-box same">30</div>
+            <div class="mem-box same">40</div>
+            <div class="mem-box same">50</div>
+          </div>
+        </div>
+        <div class="mem-row" style="margin-top:8px;">
+          <span class="mem-name">p</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box active">10</div>
+          <span style="color:var(--muted); font-size:12px;">← p trỏ đến arr[0]</span>
+        </div>
+        <div class="mem-row" style="margin-top:8px;">
+          <span class="mem-name">p+2</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box changed">30</div>
+          <span style="color:var(--muted); font-size:12px;">← p+2 trỏ đến arr[2]</span>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-icon">⚠️</div>
+        <p><strong>Khác biệt quan trọng giữa arr và p:</strong><br/>
+        <code>arr</code> là <strong>con trỏ hằng</strong> (constant pointer) — <strong>không thể</strong> gán <code>arr = p</code> hay <code>arr++</code>. Bạn chỉ có thể dùng nó để đọc.<br/>
+        <code>p</code> là biến pointer bình thường — <strong>có thể</strong> thay đổi, gán lại, hay tăng giảm.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 10: Pointer Arithmetic -->
+    <!-- ============================================================ -->
+    <div class="section" id="section10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <h2>Pointer Arithmetic — Số học con trỏ</h2>
+      </div>
+
+      <p style="color: var(--text);">Bạn có thể thực hiện các phép toán cộng, trừ trên pointer. Khi cộng/trừ, pointer sẽ <strong>tự động nhân với kích thước kiểu dữ liệu</strong> (sizeof). Điều này rất hữu ích khi duyệt mảng.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Pointer Arithmetic với mảng int</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    int *p = arr;
+
+    printf("p = %p\n", p);         // 0x1000 (giả sử)
+    printf("p + 1 = %p\n", p + 1); // 0x1004 (tăng 4 bytes vì sizeof(int) = 4)
+    printf("p + 2 = %p\n", p + 2); // 0x1008
+    printf("p + 3 = %p\n", p + 3); // 0x100C
+
+    // Truy cập giá trị qua pointer arithmetic:
+    printf("*p = %d\n", *p);           // 10
+    printf("*(p+1) = %d\n", *(p+1));   // 20
+    printf("*(p+2) = %d\n", *(p+2));   // 30
+
+    // Duyệt mảng bằng pointer
+    printf("Duyệt mảng: ");
+    for (int *q = arr; q < arr + 5; q++) {
+        printf("%d ", *q);  // 10 20 30 40 50
+    }
+    printf("\n");
+
+    // Pointer subtraction: trả về SỐ PHẦN TỬ, không phải bytes
+    int *q = &arr[4];
+    printf("q - p = %ld\n", q - p); // 4 (có 4 phần tử giữa p và q)
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Pointer arithmetic với int (sizeof = 4 bytes)</div>
+        <div style="display:flex; gap:0; border:2px solid var(--border); border-radius:8px; overflow:hidden;">
+          <div style="padding:8px 16px; border-right:1px solid var(--border); background:var(--surface2);">
+            <div style="font-size:11px; color:var(--muted);">0x1000</div>
+            <div style="color:var(--accent3);">10 ← p</div>
+          </div>
+          <div style="padding:8px 16px; border-right:1px solid var(--border); background:var(--surface2);">
+            <div style="font-size:11px; color:var(--muted);">0x1004</div>
+            <div style="color:var(--accent);">20 ← p+1</div>
+          </div>
+          <div style="padding:8px 16px; border-right:1px solid var(--border); background:var(--surface2);">
+            <div style="font-size:11px; color:var(--muted);">0x1008</div>
+            <div>30 ← p+2</div>
+          </div>
+          <div style="padding:8px 16px; border-right:1px solid var(--border); background:var(--surface2);">
+            <div style="font-size:11px; color:var(--muted);">0x100C</div>
+            <div>40 ← p+3</div>
+          </div>
+          <div style="padding:8px 16px; background:var(--surface2);">
+            <div style="font-size:11px; color:var(--muted);">0x1010</div>
+            <div>50 ← p+4</div>
+          </div>
+        </div>
+        <p style="margin-top:12px; font-size:12px; color:var(--muted);">Mỗi lần <code>p + 1</code>, địa chỉ tăng <strong>4 bytes</strong> (kích thước của int). Nếu là char, chỉ tăng 1 byte.</p>
+      </div>
+
+      <p style="color: var(--text); font-weight:600; margin-top:16px;">Bảng quy đổi — p + 1 tăng bao nhiêu?</p>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Kiểu dữ liệu</th>
+            <th>sizeof</th>
+            <th>p + 1 tăng (bytes)</th>
+            <th>Ví dụ địa chỉ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>char *</code></td>
+            <td>1 byte</td>
+            <td>+1 byte</td>
+            <td><code>0x1000 → 0x1001</code></td>
+          </tr>
+          <tr>
+            <td><code>short *</code></td>
+            <td>2 bytes</td>
+            <td>+2 bytes</td>
+            <td><code>0x1000 → 0x1002</code></td>
+          </tr>
+          <tr>
+            <td><code>int *</code></td>
+            <td>4 bytes</td>
+            <td>+4 bytes</td>
+            <td><code>0x1000 → 0x1004</code></td>
+          </tr>
+          <tr>
+            <td><code>long *</code></td>
+            <td>8 bytes (trên 64-bit)</td>
+            <td>+8 bytes</td>
+            <td><code>0x1000 → 0x1008</code></td>
+          </tr>
+          <tr>
+            <td><code>double *</code></td>
+            <td>8 bytes</td>
+            <td>+8 bytes</td>
+            <td><code>0x1000 → 0x1008</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 11: malloc/free -->
+    <!-- ============================================================ -->
+    <div class="section" id="section11">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <h2>malloc và free — Cấp phát bộ nhớ động</h2>
+      </div>
+
+      <p style="color: var(--text);">Khi bạn cần cấp phát bộ nhớ <strong>tại runtime</strong> (kích thước không biết trước, hoặc cần dữ liệu tồn tại lâu hơn scope của hàm), dùng <code>malloc()</code> để cấp phát trên heap và <code>free()</code> để giải phóng.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">malloc và free — Cấp phát mảng động</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n;
+
+    printf("Nhập số phần tử: ");
+    scanf("%d", &n);
+
+    // Cấp phát mảng n số nguyên trên heap
+    int *arr = (int*)malloc(n * sizeof(int));
+
+    // Luôn kiểm tra malloc có thành công không
+    if (arr == NULL) {
+        printf("Không thể cấp phát bộ nhớ!\n");
+        return 1;
+    }
+
+    // Sử dụng như mảng bình thường
+    for (int i = 0; i < n; i++) {
+        arr[i] = (i + 1) * 10;
+    }
+
+    printf("Mảng: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    // QUAN TRỌNG: Giải phóng bộ nhớ khi không dùng nữa
+    free(arr);
+    arr = NULL;  // Tránh dangling pointer
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Stack vs Heap — Bộ nhớ được quản lý thế nào</div>
+        <div class="mem-row">
+          <span class="mem-name" style="color:var(--accent3);">Stack</span>
+          <span class="arrow">───▶</span>
+          <div style="display:flex; gap:4px;">
+            <div class="mem-box same">arr (pointer: 0x5000)</div>
+            <div class="mem-box same">n</div>
+            <div class="mem-box same">...biến cục bộ</div>
+          </div>
+          <span style="color:var(--muted); font-size:12px;">← Tự động quản lý, cấp phát và giải phóng khi hàm kết thúc</span>
+        </div>
+        <div class="mem-row" style="margin-top:12px;">
+          <span class="mem-name" style="color:var(--accent);">Heap</span>
+          <span class="arrow">───▶</span>
+          <div style="display:flex; gap:4px;">
+            <div class="mem-box active">arr[0]</div>
+            <div class="mem-box active">arr[1]</div>
+            <div class="mem-box active">...</div>
+            <div class="mem-box active">arr[n-1]</div>
+          </div>
+          <span style="color:var(--muted); font-size:12px;">← Bạn phải tự quản lý bằng malloc/free</span>
+        </div>
+      </div>
+
+      <div class="callout success">
+        <div class="callout-icon">✅</div>
+        <p><strong>3 Best practices khi dùng malloc/free:</strong><br/>
+        1. Luôn kiểm tra <code>malloc()</code> trả về NULL (hết bộ nhớ)<br/>
+        2. Luôn <code>free()</code> bộ nhớ khi không dùng nữa — nếu quên sẽ gây <strong>memory leak</strong><br/>
+        3. Sau <code>free()</code>, gán pointer = NULL để tránh dangling pointer</p>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-icon">⚠️</div>
+        <p><strong>Memory leak là gì?</strong> Nếu bạn <code>malloc()</code> mà quên <code>free()</code>, bộ nhớ sẽ không được trả về cho hệ thống. Nếu chương trình chạy lâu, nó sẽ tiêu tốn ngày càng nhiều RAM cho đến khi đầy. Dùng Valgrind để phát hiện memory leak:</p>
+        <p style="margin-top:8px; font-family: 'JetBrains Mono', monospace; font-size:12px; background:var(--surface); padding:8px; border-radius:4px;">$ valgrind ./program</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 12: Struct Pointer -->
+    <!-- ============================================================ -->
+    <div class="section" id="section12">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <h2>Struct Pointer — Con trỏ đến struct</h2>
+      </div>
+
+      <p style="color: var(--text);">Khi làm việc với struct, pointer giúp <strong>tránh copy toàn bộ struct</strong> khi truyền vào hàm — chỉ truyền địa chỉ (8 bytes), tiết kiệm bộ nhớ và thời gian, đặc biệt với struct lớn.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">Struct Pointer và toán tử -></span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+#include <string.h>
+
+typedef struct {
+    char name[50];
+    int age;
+    float gpa;
+} Student;
+
+// ❌ Cách 1: Truyền cả struct (copy toàn bộ — tốn bộ nhớ)
+void printStudent(Student s) {
+    printf("Tên: %s - %d tuổi - GPA: %.2f\n", s.name, s.age, s.gpa);
+}
+
+// ✅ Cách 2: Truyền pointer (chỉ truyền địa chỉ — nhanh, tiết kiệm)
+void printStudentPtr(const Student *s) {
+    // Dùng (*s).name hoặc s->name — cả hai đều được
+    printf("Tên: %s - %d tuổi - GPA: %.2f\n", s->name, s->age, s->gpa);
+}
+
+// ✅ Dùng -> operator để sửa field
+void updateGPA(Student *s, float newGPA) {
+    s->gpa = newGPA;  // Tương đương (*s).gpa = newGPA
+}
+
+int main() {
+    Student sv1 = {"Nguyen Van A", 20, 3.5};
+
+    // Cách 1: Copy cả struct (kém hiệu quả với struct lớn)
+    printStudent(sv1);
+
+    // Cách 2: Chỉ truyền địa chỉ (hiệu quả)
+    printStudentPtr(&sv1);
+
+    // Sửa field qua pointer
+    updateGPA(&sv1, 3.8);
+    printf("GPA mới: %.2f\n", sv1.gpa);  // 3.8
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">Struct Pointer — Tránh copy, chỉ truyền địa chỉ</div>
+        <div class="mem-row">
+          <span class="mem-name">sv1</span>
+          <span class="arrow">───▶</span>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <div class="mem-box same" style="font-size:11px;">name: "Nguyen Van A"</div>
+            <div class="mem-box same" style="font-size:11px;">age: 20</div>
+            <div class="mem-box same" style="font-size:11px;">gpa: 3.5</div>
+          </div>
+          <span style="color:var(--muted); font-size:12px;">← Toàn bộ struct (~58 bytes)</span>
+        </div>
+        <div class="mem-row" style="margin-top:8px;">
+          <span class="mem-name">ptr</span>
+          <span class="arrow">───▶</span>
+          <div class="mem-box active" style="font-size:11px;">địa chỉ của sv1</div>
+          <span style="color:var(--accent3); font-size:12px;">← Chỉ truyền 8 bytes (địa chỉ), không copy struct</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-icon">💡</div>
+        <p><strong>Toán tử ->:</strong> <code>s->name</code> tương đương <code>(*s).name</code> — dereference rồi truy cập field. Toán tử <code>-></code> ngắn gọn và dễ đọc hơn, đặc biệt khi có nhiều field. Hãy luôn dùng <code>-></code> với struct pointer.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 13: Const Pointer -->
+    <!-- ============================================================ -->
+    <div class="section" id="section13">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <h2>Const Pointer — Con trỏ hằng</h2>
+      </div>
+
+      <p style="color: var(--text);">Có 3 kiểu kết hợp <code>const</code> với pointer, mỗi kiểu có ý nghĩa và ràng buộc khác nhau. Đây là chủ đề gây nhầm lẫn nhất cho người mới.</p>
+
+      <h3>📌 Cách đọc khai báo const pointer</h3>
+      <p style="color: var(--text);"><strong>Quy tắc:</strong> Đọc từ phải sang trái. <code>const</code> áp dụng cho phần tử đứng ngay bên trái nó.</p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Kiểu</th>
+            <th>Khai báo</th>
+            <th>Đọc từ phải sang trái</th>
+            <th>Có thể...</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1. Pointer to const</td>
+            <td><code>const int *p</code><br/><code>int const *p</code></td>
+            <td>"p là pointer đến int const"</td>
+            <td>✅ p = &b (đổi pointer)<br/>❌ *p = 10 (không sửa giá trị)</td>
+          </tr>
+          <tr>
+            <td>2. Const pointer</td>
+            <td><code>int * const p = &a</code></td>
+            <td>"p là const pointer đến int"</td>
+            <td>❌ p = &b (không đổi pointer)<br/>✅ *p = 10 (sửa giá trị)</td>
+          </tr>
+          <tr>
+            <td>3. Const pointer to const</td>
+            <td><code>const int * const p = &a</code></td>
+            <td>"p là const pointer đến int const"</td>
+            <td>❌ p = &b (không đổi pointer)<br/>❌ *p = 10 (không sửa giá trị)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <div class="code-dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span style="color:var(--muted)">3 kiểu Const Pointer — Ví dụ chi tiết</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">#include <stdio.h>
+
+int main() {
+    int a = 5, b = 10;
+
+    // === 1. Pointer to const ===
+    // Không thể sửa giá trị qua pointer, nhưng có thể đổi pointer
+    const int *p1 = &a;
+    // *p1 = 20;  // ❌ Lỗi: không thể sửa giá trị qua p1
+    p1 = &b;       // ✅ OK: có thể đổi pointer sang biến khác
+    printf("*p1 = %d\n", *p1); // 10 (giá trị của b)
+
+    // === 2. Const pointer ===
+    // Có thể sửa giá trị, nhưng không thể đổi pointer
+    int * const p2 = &a;
+    *p2 = 20;      // ✅ OK: có thể sửa giá trị (a = 20)
+    // p2 = &b;    // ❌ Lỗi: không thể đổi pointer
+    printf("a = %d\n", a); // 20
+
+    // === 3. Const pointer to const ===
+    // Không thể sửa giá trị, cũng không thể đổi pointer
+    const int * const p3 = &a;
+    // *p3 = 30;   // ❌ Lỗi: không thể sửa giá trị
+    // p3 = &b;    // ❌ Lỗi: không thể đổi pointer
+    printf("*p3 = %d\n", *p3); // 20
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout">
+        <div class="callout-icon">💡</div>
+        <p><strong>Mẹo nhớ:</strong> Đọc từ phải sang trái và nhìn chữ <code>const</code>:<br/>
+        - <code>const int *p</code> → "con trỏ đến int <strong>const</strong>" → int là const<br/>
+        - <code>int * const p</code> → "con trỏ <strong>const</strong> đến int" → pointer là const<br/>
+        - <code>const int * const p</code> → "con trỏ <strong>const</strong> đến int <strong>const</strong>" → cả hai đều const</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Tình huống</th>
+            <th>Nên dùng</th>
+            <th>Lý do</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Hàm chỉ đọc dữ liệu, không sửa</td>
+            <td><code>const int *p</code></td>
+            <td>Đảm bảo không vô tình sửa dữ liệu</td>
+          </tr>
+          <tr>
+            <td>Hàm cần sửa dữ liệu tại địa chỉ cố định</td>
+            <td><code>int * const p</code></td>
+            <td>Đảm bảo pointer không bị đổi</td>
+          </tr>
+          <tr>
+            <td>Hằng số toàn cục</td>
+            <td><code>const int * const p</code></td>
+            <td>Bảo vệ tuyệt đối khỏi sửa đổi</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 14: 10 lỗi Pointer thường gặp -->
+    <!-- ============================================================ -->
+    <div class="section" id="section14">
+      <div class="section-header">
+        <div class="section-num">14</div>
+        <h2>10 Lỗi Pointer thường gặp và cách khắc phục</h2>
+      </div>
+
+      <p style="color: var(--text); margin-bottom:20px;">Dưới đây là 10 lỗi phổ biến nhất khi làm việc với pointer mà người mới học thường gặp, kèm cách phòng tránh và sửa lỗi.</p>
+
+      <ul class="error-list">
+        <li>
+          <div class="error-title">Dereference NULL pointer</div>
+          <p style="color: var(--text); font-size:14px;">Truy cập giá trị qua pointer NULL sẽ gây segmentation fault — chương trình crash ngay lập tức.</p>
+          <div class="error-code">
+int *p = NULL;<br/>
+printf("%d\n", *p);  // ❌ SEGMENTATION FAULT — crash
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Luôn kiểm tra NULL trước khi dereference: <code>if (p != NULL) { ... }</code></p>
+        </li>
+
+        <li>
+          <div class="error-title">Dereference uninitialized pointer (Wild pointer)</div>
+          <p style="color: var(--text); font-size:14px;">Pointer chưa khởi tạo chứa địa chỉ rác. Dereference nó dẫn đến undefined behavior — có thể crash, sai kết quả, hoặc tệ hơn là ghi đè dữ liệu quan trọng.</p>
+          <div class="error-code">
+int *p;   // Chưa khởi tạo — chứa rác<br/>
+*p = 10;  // ❌ Undefined behavior — ghi vào địa chỉ rác
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Luôn khởi tạo pointer ngay khi khai báo: <code>int *p = NULL;</code> hoặc <code>int *p = &a;</code></p>
+        </li>
+
+        <li>
+          <div class="error-title">Dangling pointer (Use after free)</div>
+          <p style="color: var(--text); font-size:14px;">Sử dụng pointer sau khi đã free bộ nhớ. Pointer vẫn giữ địa chỉ cũ, nhưng vùng nhớ đó đã được trả về hệ thống.</p>
+          <div class="error-code">
+int *p = malloc(sizeof(int));<br/>
+free(p);<br/>
+*p = 10;  // ❌ Use after free — undefined behavior
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Sau <code>free()</code>, gán ngay <code>p = NULL;</code> — free(NULL) là an toàn (no-op).</p>
+        </li>
+
+        <li>
+          <div class="error-title">Memory leak (Rò rỉ bộ nhớ)</div>
+          <p style="color: var(--text); font-size:14px;">malloc() mà không free(). Bộ nhớ không được trả lại, chương trình tốn dần RAM cho đến khi đầy.</p>
+          <div class="error-code">
+void func() {<br/>
+&nbsp;&nbsp;int *p = malloc(1000);<br/>
+&nbsp;&nbsp;// Quên free(p); — memory leak!<br/>
+} // Mỗi lần gọi func() mất 1000 bytes vĩnh viễn
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Luôn free bộ nhớ khi không dùng. Dùng Valgrind để kiểm tra: <code>valgrind ./program</code></p>
+        </li>
+
+        <li>
+          <div class="error-title">Return address of local variable</div>
+          <p style="color: var(--text); font-size:14px;">Trả về địa chỉ của biến cục bộ. Khi hàm kết thúc, biến cục bộ bị hủy, địa chỉ trở nên không hợp lệ.</p>
+          <div class="error-code">
+int* func() {<br/>
+&nbsp;&nbsp;int a = 5;<br/>
+&nbsp;&nbsp;return &a;  // ❌ Dangling pointer — a bị hủy khi hàm kết thúc<br/>
+}
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Dùng malloc để cấp phát trên heap, hoặc truyền pointer vào hàm để nhận kết quả.</p>
+        </li>
+
+        <li>
+          <div class="error-title">Pointer arithmetic sai kiểu / nhầm lẫn</div>
+          <p style="color: var(--text); font-size:14px;">Cộng pointer với số bytes thay vì số phần tử. Hoặc nhầm lẫn giữa các kiểu dữ liệu.</p>
+          <div class="error-code">
+int arr[10];<br/>
+int *p = arr;<br/>
+p = p + 4;  // ✅ Tăng 4 phần tử (16 bytes với int)<br/>
+// p = (int*)((char*)p + 4);  // ❌ Ý đồ: chỉ tăng 4 bytes = 1 phần tử
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Hiểu rằng p+1 tăng sizeof(type) bytes. Với int, p+1 = +4 bytes.</p>
+        </li>
+
+        <li>
+          <div class="error-title">Nhầm lẫn giữa * trong khai báo và * dereference</div>
+          <p style="color: var(--text); font-size:14px;">Dấu * trong <code>int *p</code> (khai báo) khác với <code>*p = 10</code> (dereference). Nhầm lẫn dẫn đến khai báo sai nhiều biến.</p>
+          <div class="error-code">
+int* p, q;  // ❌ Chỉ p là pointer, q là int<br/>
+// Đúng: int *p, *q; hoặc int *p; int *q;<br/>
+*p = 5;    // OK — p là pointer<br/>
+q = 10;    // OK — q là int, không phải pointer
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Khai báo mỗi biến trên một dòng riêng, hoặc nhớ dấu * gắn với từng biến.</p>
+        </li>
+
+        <li>
+          <div class="error-title">Quên & khi truyền vào hàm cần sửa biến</div>
+          <p style="color: var(--text); font-size:14px;">Hàm nhận <code>int *x</code> (cần địa chỉ) nhưng bạn lại truyền <code>a</code> (giá trị) thay vì <code>&a</code> (địa chỉ).</p>
+          <div class="error-code">
+void change(int *x) { *x = 10; }<br/>
+int a = 5;<br/>
+change(a);   // ❌ Sai: truyền giá trị (int) nhưng hàm cần địa chỉ (int*)<br/>
+change(&a);  // ✅ Đúng: truyền địa chỉ
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Khi muốn hàm sửa biến, luôn dùng <code>&</code> ở lời gọi: <code>change(&a)</code>.</p>
+        </li>
+
+        <li>
+          <div class="error-title">Array-Pointer confusion</div>
+          <p style="color: var(--text); font-size:14px;">Nhầm tên mảng với pointer — không thể gán mảng hay increment mảng vì mảng là const pointer.</p>
+          <div class="error-code">
+int arr[10];<br/>
+int *p = arr;  // ✅ OK: arr decay thành pointer<br/>
+arr = p;       // ❌ Lỗi: arr là const pointer, không thể gán<br/>
+arr++;         // ❌ Lỗi: không thể increment array
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Hiểu rằng tên mảng là const pointer — chỉ đọc, không ghi đè. Dùng biến pointer riêng để thao tác.</p>
+        </li>
+
+        <li>
+          <div class="error-title">Double free (Free cùng một pointer hai lần)</div>
+          <p style="color: var(--text); font-size:14px;">Free cùng một địa chỉ hai lần gây hỏng heap manager, dẫn đến crash khó debug.</p>
+          <div class="error-code">
+int *p = malloc(100);<br/>
+free(p);<br/>
+free(p);  // ❌ Double free — undefined behavior, thường crash
+          </div>
+          <p style="color: var(--text); font-size:14px; margin-top:8px;"><strong>✅ Fix:</strong> Sau free, gán p = NULL. Free(NULL) là an toàn (không làm gì cả).</p>
+        </li>
+      </ul>
+
+      <div class="callout warn" style="margin-top:24px;">
+        <div class="callout-icon">🛡️</div>
+        <p><strong>5 Chiến lược phòng ngừa lỗi pointer:</strong><br/>
+        1. Luôn khởi tạo pointer khi khai báo (<code>int *p = NULL</code>)<br/>
+        2. Kiểm tra NULL trước khi dereference.<br/>
+        3. Free bộ nhớ và gán NULL ngay sau đó.<br/>
+        4. Dùng tools như Valgrind để detect memory leaks và lỗi.<br/>
+        5. Compile với đầy đủ warnings: <code>gcc -Wall -Wextra -pedantic</code></p>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- ============================================================ -->
+    <!-- SUMMARY -->
+    <!-- ============================================================ -->
+    <div class="summary-box">
+      <h3>🎯 Tổng kết — Những điều cần nhớ</h3>
+
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>Pointer là biến lưu địa chỉ</strong> của biến khác. Dùng <code>&</code> để lấy địa chỉ, <code>*</code> để dereference (truy cập giá trị tại địa chỉ).</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>C truyền tham trị</strong> (pass by value) — muốn hàm sửa biến ngoài, phải truyền địa chỉ bằng pointer: <code>change(&a)</code>.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>C++ có reference</strong> (<code>int &x</code>) — cú pháp gọn hơn pointer, nhưng <strong>không tồn tại trong C</strong>.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>Khởi tạo pointer ngay lập tức</strong> để tránh wild pointer. Luôn kiểm tra NULL trước khi dùng.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>Array name là const pointer</strong> — không thể gán hay increment. Dùng biến pointer riêng để thao tác.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>Pointer arithmetic</strong> tự động nhân với sizeof kiểu dữ liệu. <code>int *p</code> → <code>p+1</code> tăng 4 bytes.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>malloc/free</strong> dùng để cấp phát và giải phóng bộ nhớ động trên heap. Luôn free sau khi dùng để tránh memory leak.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>Struct pointer</strong> dùng <code>-></code> operator để truy cập fields — gọn nhẹ và hiệu quả hơn truyền cả struct.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>3 loại pointer nguy hiểm:</strong> NULL (crash khi dereference), Wild (rác), Dangling (đã free). Phòng tránh bằng khởi tạo, kiểm tra, và gán NULL sau free.</p>
+      </div>
+      <div class="summary-row">
+        <span class="check">▸</span>
+        <p><strong>10 lỗi thường gặp:</strong> NULL dereference, wild pointer, dangling pointer, memory leak, return local, sai số học, nhầm * trong khai báo, quên &, array-pointer confusion, double free. Ghi nhớ và luôn cẩn thận!</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Mục lục</div>
+    <ul class="sidebar-list" id="sidebarList">
+      <li><a href="#section1">1. Biến & Bộ nhớ</a></li>
+      <li><a href="#section2">2. Pointer cơ bản</a></li>
+      <li><a href="#section3">3. Các kiểu khai báo</a></li>
+      <li><a href="#section4">4. Ý nghĩa * và &</a></li>
+      <li><a href="#section5">5. Pass by Value</a></li>
+      <li><a href="#section6">6. Pass by Address</a></li>
+      <li><a href="#section7">7. C++ Reference</a></li>
+      <li><a href="#section8">8. Các loại Pointer</a>
+        <ul style="list-style:none; padding-left:0; margin-top:4px;">
+          <li class="sub-item"><a href="#section8">• NULL Pointer</a></li>
+          <li class="sub-item"><a href="#section8">• Wild Pointer</a></li>
+          <li class="sub-item"><a href="#section8">• Dangling Pointer</a></li>
+        </ul>
+      </li>
+      <li><a href="#section9">9. Array & Pointer</a></li>
+      <li><a href="#section10">10. Pointer Arithmetic</a></li>
+      <li><a href="#section11">11. malloc/free</a></li>
+      <li><a href="#section12">12. Struct Pointer</a></li>
+      <li><a href="#section13">13. Const Pointer</a></li>
+      <li><a href="#section14">14. 10 lỗi thường gặp</a></li>
+    </ul>
+  </aside>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Mermaid
+    if (typeof mermaid !== 'undefined') {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: isLight ? 'default' : 'dark', /* Ensure Mermaid theme matches */
+        securityLevel: 'loose',
+        themeVariables: {
+          primaryColor: '#1e2530',
+          primaryTextColor: '#e6edf3',
+          primaryBorderColor: '#58a6ff',
+          lineColor: '#58a6ff',
+          secondaryColor: '#161b22',
+          tertiaryColor: '#161b22',
+          fontFamily: 'Sora, sans-serif'
+        }
+      });
+    }
+  });
+
+  // Copy code functionality
+  function copyCode(btn) {
+    const pre = btn.closest('.code-wrap').querySelector('pre');
+    const code = pre.textContent;
+    
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy:', err);
+      btn.textContent = 'Failed';
+    });
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const el = document.querySelector(a.getAttribute('href'));
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Active TOC highlighting
+  const sections = document.querySelectorAll('.section');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sidebarLinks = document.querySelectorAll('.sidebar-list a');
+
+  function updateActiveLink() {
+    let current = '';
+    
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      const sectionHeight = section.offsetHeight;
+      if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+        current = section.getAttribute('id');
+      }
+    });
+
+    tocLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+
+    sidebarLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveLink);
+  window.addEventListener('load', updateActiveLink);
+
+  // ========== THEME TOGGLE ==========
+  const THEMES = ['dark', 'light', 'system'];
+  const THEME_ICONS = { dark: '🌙', light: '☀️', system: '💻' };
+  const THEME_LABELS = { dark: 'Dark', light: 'Light', system: 'System' };
+
+  function getSystemTheme() {
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  function applyTheme(mode) {
+    const effective = mode === 'system' ? getSystemTheme() : mode;
+    if (effective === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    // Update Mermaid theme
+    try {
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: effective === 'light' ? 'default' : 'dark',
+        securityLevel: 'loose', /* Ensure Mermaid theme matches */
+      });
+    } catch(e) {}
+  }
+
+  function updateThemeUI(mode) {
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (icon) icon.textContent = THEME_ICONS[mode];
+    if (label) label.textContent = THEME_LABELS[mode];
+  }
+
+  function toggleTheme() {
+    const current = localStorage.getItem('theme') || 'dark';
+    const idx = THEMES.indexOf(current);
+    const next = THEMES[(idx + 1) % THEMES.length];
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+    updateThemeUI(next);
+  }
+
+  // Init theme on load
+  (function() {
+    const saved = localStorage.getItem('theme') || 'dark';
+    applyTheme(saved);
+    updateThemeUI(saved);
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function() {
+      const current = localStorage.getItem('theme') || 'dark';
+      if (current === 'system') {
+        applyTheme('system');
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

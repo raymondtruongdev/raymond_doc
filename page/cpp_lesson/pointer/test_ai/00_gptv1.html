@@ -1,0 +1,411 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Pointer Fundamentals</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Prism CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        pre {
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white py-10">
+        <div class="max-w-5xl mx-auto px-6">
+            <h1 class="text-4xl font-bold mb-3">
+                C Pointer Fundamentals
+            </h1>
+
+            <p class="text-slate-300 text-lg">
+                Hướng dẫn dành cho người mới học C:
+                Variable → Function Parameter → Pass By Value →
+                Pointer → Pass By Address → C++ Reference
+            </p>
+        </div>
+    </header>
+
+    <!-- TOC -->
+    <section class="max-w-5xl mx-auto px-6 py-8">
+        <div class="bg-white rounded-2xl shadow p-6">
+            <h2 class="text-2xl font-bold mb-4">
+                Mục lục
+            </h2>
+
+            <ul class="space-y-2 list-disc ml-5">
+                <li><a href="#variable" class="text-blue-600">1. Variable là gì?</a></li>
+                <li><a href="#pass-by-value" class="text-blue-600">2. Pass By Value trong C</a></li>
+                <li><a href="#cannot-change" class="text-blue-600">3. Vì sao hàm không đổi được biến bên ngoài?</a></li>
+                <li><a href="#pointer" class="text-blue-600">4. Pointer là gì?</a></li>
+                <li><a href="#change-by-pointer" class="text-blue-600">5. Thay đổi biến bằng Pointer</a></li>
+                <li><a href="#without-pointer" class="text-blue-600">6. Không dùng Pointer thì làm sao?</a></li>
+                <li><a href="#cpp-reference" class="text-blue-600">7. C++ Reference (&)</a></li>
+                <li><a href="#summary" class="text-blue-600">8. Tổng kết</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <main class="max-w-5xl mx-auto px-6 pb-16 space-y-8">
+
+        <!-- Variable -->
+        <section id="variable" class="bg-white rounded-2xl shadow p-8">
+            <h2 class="text-3xl font-bold mb-4">
+                1. Variable (Biến) là gì?
+            </h2>
+
+            <p class="mb-4">
+                Một biến là một vùng nhớ dùng để lưu dữ liệu.
+            </p>
+
+<pre><code class="language-c">int a = 5;</code></pre>
+
+            <p class="mt-4">
+                Có thể hình dung:
+            </p>
+
+            <div class="bg-slate-100 p-4 rounded-lg mt-2 font-mono">
+                a → 5
+            </div>
+        </section>
+
+        <!-- Pass by value -->
+        <section id="pass-by-value" class="bg-white rounded-2xl shadow p-8">
+            <h2 class="text-3xl font-bold mb-4">
+                2. Pass By Value trong C
+            </h2>
+
+            <p class="mb-4">
+                C luôn truyền tham số theo giá trị (Pass By Value).
+                Nghĩa là hàm sẽ nhận một bản sao của dữ liệu.
+            </p>
+
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+void change(int x)
+{
+    x = 10;
+}
+
+int main()
+{
+    int a = 5;
+
+    change(a);
+
+    printf("%d\n", a);
+}</code></pre>
+
+            <div class="mt-4 bg-green-100 p-4 rounded-lg">
+                Kết quả: 5
+            </div>
+        </section>
+
+        <!-- Why -->
+        <section id="cannot-change" class="bg-white rounded-2xl shadow p-8">
+            <h2 class="text-3xl font-bold mb-4">
+                3. Vì sao a không thay đổi?
+            </h2>
+
+            <p>
+                Khi gọi:
+            </p>
+
+<pre><code class="language-c">change(a);</code></pre>
+
+            <p class="mt-4">
+                Hệ thống tạo ra một bản sao:
+            </p>
+
+            <div class="bg-slate-100 rounded-lg p-4 font-mono mt-3">
+                a = 5
+                <br>
+                x = 5 (bản sao của a)
+            </div>
+
+            <p class="mt-4">
+                Sau đó:
+            </p>
+
+<pre><code class="language-c">x = 10;</code></pre>
+
+            <div class="bg-slate-100 rounded-lg p-4 font-mono mt-3">
+                a = 5
+                <br>
+                x = 10
+            </div>
+
+            <p class="mt-4">
+                Chỉ x thay đổi, a hoàn toàn không bị ảnh hưởng.
+            </p>
+        </section>
+
+        <!-- Pointer -->
+        <section id="pointer" class="bg-white rounded-2xl shadow p-8">
+            <h2 class="text-3xl font-bold mb-4">
+                4. Pointer là gì?
+            </h2>
+
+            <p class="mb-4">
+                Pointer là biến dùng để lưu địa chỉ bộ nhớ.
+            </p>
+
+<pre><code class="language-c">int a = 5;
+
+int *p = &a;</code></pre>
+
+            <div class="bg-slate-100 rounded-lg p-4 font-mono mt-4">
+                p
+                <br>
+                ↓
+                <br>
+                a = 5
+            </div>
+
+            <div class="mt-6">
+                <h3 class="font-bold text-xl mb-2">
+                    Ý nghĩa ký hiệu
+                </h3>
+
+<pre><code class="language-c">a      // giá trị
+&a     // địa chỉ của a
+
+p      // địa chỉ đang lưu trong pointer
+*p     // giá trị tại địa chỉ p trỏ tới</code></pre>
+            </div>
+        </section>
+
+        <!-- Change by pointer -->
+        <section id="change-by-pointer" class="bg-white rounded-2xl shadow p-8">
+            <h2 class="text-3xl font-bold mb-4">
+                5. Thay đổi biến bằng Pointer
+            </h2>
+
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+void change(int *x)
+{
+    *x = 10;
+}
+
+int main()
+{
+    int a = 5;
+
+    change(&a);
+
+    printf("%d\n", a);
+}</code></pre>
+
+            <div class="mt-4 bg-green-100 p-4 rounded-lg">
+                Kết quả: 10
+            </div>
+
+            <h3 class="text-xl font-bold mt-6 mb-3">
+                Điều gì xảy ra?
+            </h3>
+
+            <p>
+                Khi gọi:
+            </p>
+
+<pre><code class="language-c">change(&a);</code></pre>
+
+            <p class="mt-4">
+                Hàm nhận địa chỉ của a.
+            </p>
+
+            <div class="bg-slate-100 rounded-lg p-4 font-mono mt-3">
+                x
+                <br>
+                ↓
+                <br>
+                a = 5
+            </div>
+
+            <p class="mt-4">
+                Khi thực hiện:
+            </p>
+
+<pre><code class="language-c">*x = 10;</code></pre>
+
+            <p class="mt-4">
+                Nghĩa là:
+            </p>
+
+<pre><code class="language-c">a = 10;</code></pre>
+
+            <p>
+                Vì x đang trỏ trực tiếp tới a.
+            </p>
+        </section>
+
+        <!-- Without pointer -->
+        <section id="without-pointer" class="bg-white rounded-2xl shadow p-8">
+            <h2 class="text-3xl font-bold mb-4">
+                6. Không dùng Pointer thì làm sao?
+            </h2>
+
+            <p>
+                Trong C chuẩn, nếu không dùng pointer thì không thể thay đổi trực tiếp biến của caller.
+            </p>
+
+            <p class="mt-4">
+                Cách làm là trả về giá trị mới:
+            </p>
+
+<pre><code class="language-c">int change(int x)
+{
+    x = 10;
+    return x;
+}
+
+int main()
+{
+    int a = 5;
+
+    a = change(a);
+}</code></pre>
+
+            <p class="mt-4">
+                Hoặc:
+            </p>
+
+<pre><code class="language-c">int change(int x)
+{
+    return 10;
+}</code></pre>
+
+            <div class="bg-yellow-100 p-4 rounded-lg mt-4">
+                Trong C chuẩn chỉ có hai cách:
+                <ul class="list-disc ml-6 mt-2">
+                    <li>Dùng Pointer</li>
+                    <li>Trả về giá trị mới rồi gán lại</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- C++ -->
+        <section id="cpp-reference" class="bg-white rounded-2xl shadow p-8">
+            <h2 class="text-3xl font-bold mb-4">
+                7. C++ Reference (&)
+            </h2>
+
+            <p>
+                Đoạn code sau là C++, không phải C:
+            </p>
+
+<pre><code class="language-cpp">void change(int &x)
+{
+    x = 10;
+}
+
+int main()
+{
+    int a = 5;
+
+    change(a);
+}</code></pre>
+
+            <p class="mt-4">
+                <strong>int &x</strong> là reference (tham chiếu).
+            </p>
+
+            <div class="bg-slate-100 rounded-lg p-4 font-mono mt-4">
+                x ----+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+                <br>
+                a ----+
+            </div>
+
+            <p class="mt-4">
+                x trở thành một bí danh (alias) của a.
+            </p>
+
+<pre><code class="language-cpp">x = 10;</code></pre>
+
+            <p class="mt-4">
+                Thực chất tương đương:
+            </p>
+
+<pre><code class="language-cpp">a = 10;</code></pre>
+
+            <h3 class="text-xl font-bold mt-6 mb-3">
+                So sánh với Pointer trong C
+            </h3>
+
+<div class="grid md:grid-cols-2 gap-4">
+<div class="bg-slate-100 p-4 rounded-lg">
+<h4 class="font-bold mb-2">C++</h4>
+
+<pre><code class="language-cpp">void change(int &x)
+{
+    x = 10;
+}
+
+change(a);</code></pre>
+</div>
+
+<div class="bg-slate-100 p-4 rounded-lg">
+<h4 class="font-bold mb-2">C</h4>
+
+<pre><code class="language-c">void change(int *x)
+{
+    *x = 10;
+}
+
+change(&a);</code></pre>
+</div>
+</div>
+
+            <div class="mt-4 bg-blue-100 p-4 rounded-lg">
+                Reference và Pointer cho kết quả gần như tương đương,
+                nhưng Reference có cú pháp ngắn gọn hơn.
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section id="summary" class="bg-slate-900 text-white rounded-2xl shadow p-8">
+            <h2 class="text-3xl font-bold mb-4">
+                8. Tổng kết cần nhớ
+            </h2>
+
+            <ul class="space-y-3 list-disc ml-6">
+                <li>C luôn truyền tham số theo giá trị (Pass By Value).</li>
+                <li>int x nhận bản sao dữ liệu.</li>
+                <li>int *x nhận địa chỉ.</li>
+                <li>*x truy cập dữ liệu tại địa chỉ đó.</li>
+                <li>Muốn sửa biến bên ngoài hàm trong C → dùng Pointer.</li>
+                <li>Hoặc trả về giá trị mới rồi gán lại.</li>
+                <li>int &x là Reference của C++, không tồn tại trong C.</li>
+                <li>Reference là bí danh của biến gốc.</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- Prism JS -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+
+</body>
+
+</html>
+```
