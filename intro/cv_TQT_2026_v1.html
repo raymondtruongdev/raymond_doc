@@ -1,0 +1,1051 @@
+<!-- https://docs.google.com/document/d/1reOS6v-m2KOaPqzQOXV3jwqkbtMSA65x/edit -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Toan Truong | Senior Mechatronics & AI Engineer – Complete CV</title>
+    <!-- Google Fonts + Font Awesome 6 -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #eef2f5;
+        font-family: "Inter", sans-serif;
+        color: #1a2c3e;
+        line-height: 1.5;
+        padding: 2rem 1.5rem;
+      }
+
+      .cv-footer {
+        grid-column: 1 / -1; /* Trải đều cả 2 cột */
+        padding: 1rem 2rem;
+        text-align: center;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .footer-text {
+        font-size: 0.8rem;
+        color: #5f7f9a;
+        letter-spacing: 0.3px;
+      }
+
+      .cv-container {
+        max-width: 1380px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 32px;
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      /* ========== CẤU HÌNH GRID VỚI SIDEBAR CỐ ĐỊNH 350px ========== */
+      .cv-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr; /* Sidebar cố định 350px, phần còn lại tự động co giãn */
+      }
+
+      /* LEFT SIDEBAR */
+      .sidebar {
+        background: #f8fafc;
+        border-right: 1px solid #e2e8f0;
+        padding: 2rem 1.8rem;
+        height: 100%;
+        /* ===== LEFT ALIGN CHO CỘT TRÁI ===== */
+        text-align: left;
+      }
+      /* Đảm bảo tất cả nội dung trong sidebar đều căn trái */
+      .sidebar,
+      .sidebar * {
+        text-align: left;
+      }
+
+      /* Avatar + tên */
+      .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+        justify-content: flex-start;
+      }
+
+      /* Avatar bằng ảnh thật */
+      .avatar-icon {
+        flex-shrink: 0;
+      }
+
+      .avatar-icon img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(44, 125, 160, 0.2);
+      }
+
+      .profile-header h1 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #2c7da0;
+        line-height: 1.3;
+        margin: 0;
+      }
+
+      .profile-header h1 span {
+        font-size: 0.9rem; /* Kích thước chữ nickname */
+        color: #1e4a6e;
+        font-weight: 600;
+        display: block; /* Xuống dòng */
+        margin-top: 0.25rem; /* Khoảng cách với tên chính */
+      }
+
+      .profile .title-tag {
+        font-size: 0.85rem;
+        font-weight: 500;
+        background: #e9edf2;
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 40px;
+        color: #1e4a6e;
+        margin-top: 0.5rem;
+        margin-bottom: 0rem;
+        text-align: left;
+        margin-left: 0;
+        margin-right: auto;
+      }
+
+      .contact-info {
+        margin: 1.5rem 0 2rem 0;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1.5rem;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.85rem;
+        color: #2c3f4f;
+        margin-bottom: 0.9rem;
+        word-break: break-word;
+        text-align: left;
+      }
+
+      .contact-item i {
+        width: 1.6rem;
+        font-size: 1.1rem;
+        color: #2c7da0;
+      }
+
+      .section-left {
+        margin-top: 2rem;
+      }
+
+      .section-left h3 {
+        font-size: 0.8rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #2c7da0;
+        margin-bottom: 1rem;
+        border-left: 3px solid #2c7da0;
+        padding-left: 0.8rem;
+        text-align: left;
+      }
+
+      .skill-badge {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.8rem;
+        justify-content: flex-start;
+      }
+
+      .skill-badge span {
+        background: white;
+        border: 1px solid #cfdfe9;
+        padding: 0.3rem 0.9rem;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #1f4e6e;
+      }
+
+      .research-list,
+      .cert-list {
+        list-style: none;
+        margin-bottom: 1.8rem;
+        text-align: left;
+      }
+
+      .research-list li,
+      .cert-list li {
+        font-size: 0.85rem;
+        margin-bottom: 0.6rem;
+        padding-left: 0.2rem;
+        color: #2c3f4f;
+        line-height: 1.4;
+        text-align: left;
+      }
+
+      .lang-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        margin-bottom: 0.7rem;
+        text-align: left;
+      }
+
+      /* ===== RIGHT CONTENT - JUSTIFY ===== */
+      .main-content {
+        background: white;
+        padding: 2rem 2rem 2rem 2rem;
+        overflow-x: auto;
+      }
+
+      /* Căn đều 2 bên cho nội dung cột phải */
+      .main-content,
+      .exp-desc,
+      .exp-desc ul,
+      .exp-desc li,
+      .exp-desc p,
+      .publication-list,
+      .publication-list li,
+      .ref-card p {
+        text-align: justify;
+        text-justify: inter-word;
+      }
+
+      /* Giữ căn trái cho các heading */
+      .main-section h2,
+      .exp-header h3,
+      .exp-sub,
+      .ref-name {
+        text-align: left;
+      }
+
+      .main-section {
+        margin-bottom: 2.2rem;
+      }
+
+      .main-section h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f2b3d;
+        letter-spacing: -0.2px;
+        border-bottom: 3px solid #2c7da0;
+        display: inline-block;
+        padding-bottom: 0.2rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .exp-item {
+        margin-bottom: 1.8rem;
+      }
+
+      .exp-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.4rem;
+      }
+
+      .exp-header h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1e4a6e;
+      }
+
+      .exp-date {
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: #eef2f5;
+        padding: 0.2rem 0.8rem;
+        border-radius: 30px;
+        color: #2c7da0;
+      }
+
+      .exp-sub {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #2c7da0;
+        margin-bottom: 0.5rem;
+      }
+
+      .exp-desc {
+        font-size: 0.85rem;
+        color: #2c3f4f;
+        margin-left: 0.2rem;
+        padding-left: 0.6rem;
+        border-left: 2px solid #cbdde6;
+      }
+
+      .exp-desc ul {
+        margin-top: 0.3rem;
+        padding-left: 1.2rem;
+      }
+
+      .exp-desc li {
+        margin-bottom: 0.5rem;
+        line-height: 1.45;
+      }
+
+      .publication-list {
+        list-style: none;
+        margin-top: 0.5rem;
+      }
+
+      .publication-list li {
+        font-size: 0.82rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px dashed #e2edf2;
+        padding-bottom: 0.7rem;
+      }
+
+      .referee-block {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .ref-card {
+        background: #f8fafc;
+        padding: 1rem 1.2rem;
+        border-radius: 20px;
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .ref-card p {
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+      }
+
+      .ref-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #0f2b3d;
+      }
+
+      hr {
+        margin: 1rem 0;
+        border: 0;
+        height: 1px;
+        background: #e2e8f0;
+      }
+
+      /* ===== RESPONSIVE ===== */
+
+      /* Mobile (< 768px) */
+      @media (max-width: 768px) {
+        body {
+          padding: 0.5rem;
+        }
+        .cv-grid {
+          grid-template-columns: 1fr; /* Chuyển về 1 cột */
+        }
+
+        .cv-container {
+          border-radius: 20px;
+        }
+
+        .sidebar,
+        .main-content {
+          padding: 1.25rem;
+        }
+
+        /* Sidebar vẫn căn trái trên mobile */
+        .sidebar,
+        .sidebar * {
+          text-align: left;
+        }
+
+        .profile-header {
+          flex-direction: column;
+          text-align: center;
+          gap: 0.75rem;
+          align-items: center;
+        }
+
+        .profile-header .avatar-icon {
+          margin: 0 auto;
+        }
+
+        .profile h1 {
+          font-size: 1.3rem;
+          text-align: center;
+        }
+        .profile h1 span {
+          text-align: center;
+        }
+
+        .profile .title-tag {
+          display: block;
+          text-align: center;
+          width: fit-content;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        /* Contact items căn trái trên mobile */
+        .contact-item {
+          text-align: left;
+          justify-content: flex-start;
+        }
+
+        .exp-header {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .exp-date {
+          align-self: flex-start;
+        }
+
+        .referee-block {
+          flex-direction: column;
+        }
+
+        .skill-badge span {
+          font-size: 0.7rem;
+          padding: 0.25rem 0.7rem;
+        }
+
+        /* Cột phải vẫn justify trên mobile */
+        .main-content,
+        .exp-desc,
+        .exp-desc li,
+        .publication-list li {
+          text-align: justify;
+        }
+      }
+
+      /* Mobile rất nhỏ (< 480px) */
+      @media (max-width: 480px) {
+        .sidebar,
+        .main-content {
+          padding: 1rem;
+        }
+
+        .profile h1 {
+          font-size: 1.2rem;
+        }
+
+        .avatar-icon img {
+          width: 70px;
+          height: 70px;
+        }
+
+        .profile .title-tag {
+          font-size: 0.75rem;
+        }
+
+        .contact-item {
+          font-size: 0.75rem;
+          gap: 0.5rem;
+        }
+
+        .skill-badge {
+          gap: 0.4rem;
+        }
+
+        .skill-badge span {
+          font-size: 0.65rem;
+          padding: 0.2rem 0.6rem;
+        }
+      }
+
+      /* ===== PRINT ===== */
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+          margin: 0;
+        }
+
+        .cv-container {
+          box-shadow: none;
+          border-radius: 0;
+          max-width: 100%;
+        }
+
+        .sidebar {
+          background: #fafcfd;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        .cv-grid {
+          grid-template-columns: 380px 1fr;
+        }
+
+        /* Sidebar căn trái khi in */
+        .sidebar,
+        .sidebar * {
+          text-align: left !important;
+        }
+
+        /* Cột phải justify khi in */
+        .main-content,
+        .exp-desc,
+        .exp-desc p,
+        .exp-desc li,
+        .publication-list li,
+        .contact-item,
+        .ref-card p {
+          text-align: justify !important;
+          text-justify: inter-word;
+        }
+
+        /* Giữ left cho heading */
+        h1,
+        h2,
+        h3,
+        .exp-header h3,
+        .section-left h3,
+        .main-section h2,
+        .ref-name {
+          text-align: left !important;
+        }
+
+        p,
+        li,
+        .exp-desc,
+        .exp-sub {
+          text-align: justify !important;
+        }
+      }
+
+      .mini-badge {
+        background: #eef2f8;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-weight: 500;
+        display: inline-block;
+        margin-top: 0.3rem;
+      }
+
+      a {
+        color: #2c7da0;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .fa,
+      .fas,
+      .far {
+        margin-right: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cv-container">
+      <div class="cv-grid">
+        <!-- LEFT COLUMN: PERSONAL & SKILLS (width: 350px trên desktop) - Nội dung từ file DOCX -->
+        <div class="sidebar">
+          <div class="profile">
+            <!-- Phần header có avatar và tên -->
+            <div class="profile-header">
+              <div class="avatar-icon">
+                <img
+                  src="https://raw.githubusercontent.com/raymondtruongdev/raymond_doc/refs/heads/main/res/img/raymond_1.png"
+                  alt="avatar"
+                />
+              </div>
+              <h1>
+                TRUONG QUOC TOAN
+                <span>(RAYMOND)</span>
+              </h1>
+            </div>
+            <div class="title-tag">Senior Mechatronics & AI Engineer</div>
+            <div class="contact-info">
+              <div class="contact-item"><i class="fas fa-phone-alt"></i> (+84) 908228702</div>
+              <div class="contact-item"><i class="fas fa-envelope"></i> quoctoan2202@gmail.com</div>
+              <div class="contact-item"><i class="fas fa-calendar-alt"></i> DOB: 1987</div>
+              <div class="contact-item"><i class="fas fa-flag"></i> Nationality: Vietnamese</div>
+            </div>
+          </div>
+
+          <div class="section-left">
+            <h3><i class="fas fa-microchip"></i> SKILLS</h3>
+            <div class="skill-badge">
+              <span>C</span><span>C++</span><span>Java</span><span>Kotlin</span><span>Flutter</span>
+              <span>Android Studio</span><span>MATLAB/Simulink</span> <span>PLC</span><span>AC Servo</span
+              ><span>Embedded</span> <span>Solidworks</span><span>AutoCAD</span>
+            </div>
+          </div>
+
+          <div class="section-left">
+            <h3><i class="fas fa-brain"></i> RESEARCH INTEREST</h3>
+            <ul class="research-list">
+              <li>
+                • <strong>Control Systems:</strong> Mechanical system design and modeling, system identification, and
+                advanced process control.
+              </li>
+              <li>
+                • <strong>Intelligent Systems:</strong> Artificial intelligence for manufacturing automation and
+                sensor-based algorithm development.
+              </li>
+              <li>
+                • <strong>Embedded & Software:</strong> Signal processing, firmware development for embedded systems,
+                and full-stack development (Android & Web).
+              </li>
+            </ul>
+          </div>
+
+          <div class="section-left">
+            <h3><i class="fas fa-certificate"></i> PROFESSIONAL CERTIFICATIONS</h3>
+            <ul class="cert-list">
+              <li>✅ Certified SOLIDWORKS Professional Mechanical Design (CSWP), ID: C-4VW9JXVSL2</li>
+              <li>📘 Coursera: Neural Networks and Deep Learning Specialization (UVEZ42DM52BM)</li>
+              <li>📘 Coursera: Structuring Machine Learning Projects (BZNCXK55DAA2)</li>
+              <li>📘 Coursera: Digital Signal Processing (LPRH32XU67LF)</li>
+              <li>📘 Coursera: Advanced Machine Learning and Signal Processing (MP5G4MHJWN6D)</li>
+              <li>
+                📘 Coursera: Improving Deep Neural Networks: Hyperparameter tuning, Regularization and Optimization
+                (2WKVGE743DQV)
+              </li>
+            </ul>
+          </div>
+
+          <div class="section-left">
+            <h3><i class="fas fa-language"></i> LANGUAGES</h3>
+            <div class="lang-item"><span>Vietnamese</span><span>Native</span></div>
+            <div class="lang-item"><span>English</span><span>Proficiency</span></div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: COMPLETE EXPERIENCE & DETAILS (lấy nội dung chuẩn từ DOCX) -->
+        <div class="main-content">
+          <!-- EDUCATION -->
+          <div class="main-section">
+            <h2>🎓 EDUCATION</h2>
+            <!-- Master -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Master of Mechatronics</h3>
+                <div class="exp-date">2012 – 2013</div>
+              </div>
+              <div class="exp-sub">HCM City University of Technology, Vietnam – GPA: 9.13/10, Excellent</div>
+              <div class="exp-desc">
+                <strong>Thesis:</strong> Development of a 3D Overhead Crane Controller<br />
+                <strong>Objective:</strong>
+                <ul>
+                  <li>
+                    Developing mathematical models and control algorithms to minimize payload sway and enhance
+                    positioning accuracy in a 3D overhead crane system. Utilized MATLAB/Simulink for controller
+                    validation and implemented a C#-based real-time application to interface with AC servo drives for
+                    experimental verification on a laboratory-scale prototype.
+                  </li>
+                </ul>
+                <span class="mini-badge">Supervisor: Assoc. Prof. Nguyen Quoc Chi</span>
+              </div>
+            </div>
+            <!-- Bachelor -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Bachelor of Mechanical Engineering</h3>
+                <div class="exp-date">2005 – 2010</div>
+              </div>
+              <div class="exp-sub">HCM City University of Technology, Vietnam – GPA: 8.13/10, Good</div>
+              <div class="exp-desc">
+                <strong>Thesis:</strong> Mobile welding robot (2008-2010)<br />
+                <strong>Objective:</strong>
+                <ul>
+                  <li>
+                    Designed, fabricated, and programmed a four-wheeled mobile robot for automated MAG straight-line
+                    welding in shipbuilding. Developed the PIC-based control system, DC motor drive, and magnetic
+                    adhesion mechanism to ensure stable operation on horizontal, vertical, and overhead steel surfaces.
+                  </li>
+                </ul>
+                <span class="mini-badge">Supervisor: Assoc. Prof. Bui Trong Hieu</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RESEARCH AND WORK EXPERIENCES (toàn bộ chi tiết từ file DOCX) -->
+          <div class="main-section">
+            <h2>💼 RESEARCH AND WORK EXPERIENCES</h2>
+
+            <!-- Co-Founder & Engineer @ T2DTECH -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Co-Founder & Engineer</h3>
+                <div class="exp-date">Jul 2025 – Present</div>
+              </div>
+              <div class="exp-sub">T2DTECH Co., Ltd.</div>
+              <div class="exp-desc">
+                <ul>
+                  <li>
+                    Designed a 6-DOF desktop robotic arm using 3D-printed components, capable of executing complex tasks
+                    including precision handwriting, object sorting, and autonomous chess playing.
+                  </li>
+                  <li>
+                    Participated in a team to develop a cross-platform RTOS firmware abstraction layers, significantly
+                    reducing development time and effort when migrating across multiple MCU architectures, including
+                    STM32, Apollo3, and BES.
+                  </li>
+                  <li>
+                    Developed a web-based interface for real-time data streaming and high-speed file transfers between
+                    embedded systems and PCs through Web BLE and UART protocols.
+                  </li>
+                  <li>
+                    Participated in the product architecture design, embedded software development, and the integration
+                    of advanced robotics systems.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Software Engineer @ Mijo Vietnam -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Software Engineer</h3>
+                <div class="exp-date">11/2023 – 6/2025</div>
+              </div>
+              <div class="exp-sub">Mijo Vietnam</div>
+              <div class="exp-desc">
+                <ul>
+                  <li>
+                    Developed custom Android AOSP applications for IoT devices, including Watch Face, Launcher, Weather,
+                    Calendar, Navigation, and AI-driven chatbots integrated with OpenAI and Mapbox APIs using Kotlin,
+                    Jetpack Compose, and Flutter.
+                  </li>
+                  <li>
+                    Participated in porting OpenGL-based watch face rendering using Kotlin, significantly optimizing
+                    graphics performance across AOSP platforms.
+                  </li>
+                  <li>
+                    Participated in developing a graphics SDK for RTOS devices based on LVGL (C++), providing reusable UI
+                    components such as layouts, keyboards, notifications, and Android-style interface libraries to
+                    accelerate embedded application development.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Senior AI Engineer @ Fossil Vietnam (đầy đủ mô tả) -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Senior AI Engineer</h3>
+                <div class="exp-date">7/2018 – 9/2023</div>
+              </div>
+              <div class="exp-sub">Fossil Vietnam</div>
+              <div class="exp-desc">
+                <ul>
+                  <li>
+                    <strong>Validation & Vendor Management:</strong> Developed and executed validation protocols for
+                    Heart Rate and SpO₂ algorithms, aligned with industry standards and Google-recommended evaluation
+                    frameworks. Led vendor benchmarking (Philips, LifeQ) to support algorithm selection for Fossil's new
+                    product, and collaborated directly with partners to enhance accuracy, stability, and real-world
+                    robustness.
+                  </li>
+                  <li>
+                    <strong>Algorithm Leadership & Mentorship:</strong> Led research, development, and optimization of
+                    sensor-based algorithms for Fossil smartwatches. Mentored team members and interns in signal
+                    processing, feature engineering, and machine learning model evaluation, delivering solutions
+                    deployed to millions of active users.
+                  </li>
+                  <ul>
+                    <li>
+                      <strong>Activity Recognition:</strong> Developed and deployed a real-time activity recognition
+                      system for hybrid smartwatches to recognize six activities (walking, running, cycling, rowing,
+                      elliptical). Leveraged 3-axis accelerometer data with signal processing techniques, extracting
+                      discriminative features from both time and frequency domains. Reduced model complexity by
+                      performing correlation-based feature selection to retain the most relevant features per activity.
+                      Implemented a Decision Tree classifier, achieving robust on-device inference for real-world use.
+                    </li>
+                    <li>
+                      <strong>Gesture Recognition:</strong> Enhanced the "Double-Tap Wake-Up" algorithm for smartwatches
+                      by filtering accelerometer noise and engineering discriminative features via correlation-based
+                      selection. Developed a Logistic Regression classifier that reduced false-positive triggers during
+                      daily activities (typing, office work, motorbike riding, cycling) from &gt;50 to about 10 per day
+                      — an 80% reduction — while maintaining high gesture sensitivity.
+                    </li>
+                    <li>
+                      <strong>Sleep Tracking:</strong> Enhanced sleep detection algorithm by reducing misclassified
+                      awake-but-stationary sessions (e.g., reading, watching TV, phone browsing while lying down) from
+                      approximately 300 to 100 per 10,000 sessions through additional real-world data collection and
+                      model retraining. Introduced novel features combining heart-rate signal quality with accelerometer
+                      data to detect non-wear scenarios (device left on glass tables, sofas, or cardboard),
+                      significantly reducing false sleep sessions caused by surface placement and improving overall
+                      tracking reliability.
+                    </li>
+                    <li>
+                      <strong>On-Wrist / Off-Wrist Detection:</strong> Developed and deployed an algorithm to
+                      distinguish human skin from other surfaces (e.g. glass tables, sofas, cardboard, wood). Leveraged
+                      3-axis accelerometer and PPG sensor data with signal processing techniques to extract time-domain
+                      discriminative features. Reduced model complexity using correlation-based feature selection and
+                      implemented a Logistic Regression classifier for accurate skin detection. The solution achieves
+                      high classification accuracy across diverse surfaces while maintaining low latency on low-power
+                      devices. This significantly reduces unnecessary sensor and screen wake-up events on smartwatches,
+                      thereby extending battery life.
+                    </li>
+                    <li>
+                      <strong>Floor Counting:</strong> Built a floor-counting system to estimate daily floors climbed
+                      using barometric pressure and step-rate data. Employed a Decision Tree–based method to dynamically
+                      determine optimal transition thresholds, ensuring accurate floor detection while eliminating false
+                      positives caused by elevator movement. Distinctly separated stair climbing from elevator rides,
+                      improving real-world usability.
+                    </li>
+                    <li>
+                      <strong>Step Counting:</strong> Mentored team members and interns on enhancing the algorithm to
+                      address false step detections during motorbike and bus commutes (a common issue in Vietnam).
+                      Guiding data collection, real-world motion signal analysis, feature engineering, correlation-based
+                      feature selection, and evaluation of ML models (Logistic Regression, Random Forest, Decision
+                      Tree). Utilized Decision Tree models to reduce false step counts by >90% in high-vibration
+                      environments, lowering motorbike-ride false detections from 300–400 to 20–30 steps per 30-minute
+                      trip and eliminating false counts during bus commutes.
+                    </li>
+                  </ul>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Lecturer 2016-2018 (bao gồm dự án Pillow + Pharma) -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Lecturer</h3>
+                <div class="exp-date">9/2016 – 6/2018</div>
+              </div>
+              <div class="exp-sub">Ho Chi Minh City University of Technology (ĐH Bach Khoa)</div>
+              <div class="exp-desc">
+                <ul>
+                  <li>
+                    <strong>PLC Programming:</strong> Developed and delivered comprehensive curricula covering ladder
+                    logic, industrial sensors/actuators, and I/O integration. Mentored students through laboratory
+                    exercises focused on real-world industrial automation and control system design.
+                  </li>
+                  <li>
+                    <strong>Microcontroller Systems:</strong> Instructed on embedded system architectures, peripheral
+                    interfacing, and real-time control using C. Supervised hands-on projects involving sensor fusion,
+                    motor control, and embedded application development.
+                  </li>
+                  <li>
+                    <strong>Industrial Robotics:</strong> Provided instruction on robot kinematics, trajectory planning,
+                    and motion control. Supported laboratory sessions and guided student-led projects on industrial
+                    robot integration.
+                  </li>
+                  <li>
+                    <strong>Industrial Projects:</strong>
+                    <ul>
+                      <li>
+                        <strong>Pillow Testing Machine | Kymdan Rubber Joint Stock Company (07/2017 – 02/2018):</strong
+                        ><br />- <strong>System Architecture:</strong> Designed a PLC-based automated system to evaluate
+                        the "Pillow Comfort Scale," integrating load-cell measurement data for precise analysis.<br />-
+                        <strong>Software Development:</strong> Engineered a C# supervisory application with SQL database
+                        integration for real-time data acquisition, test result management, and automated reporting.<br />-
+                        <strong>Communication & Control:</strong> Implemented an RS-485 communication protocol to enable
+                        centralized control and simultaneous monitoring of multiple testing machines, significantly
+                        increasing throughput and data accuracy.
+                      </li>
+                      <li>
+                        <strong>Automated Pharmaceutical Distribution System | DHG Pharma (02/2017 – 05/2017):</strong
+                        ><br />- <strong>Automation Design:</strong> Developed an automated, conveyor-based sorting
+                        system to optimize warehouse distribution operations.<br />-
+                        <strong>Integration & Control:</strong> Built a C# supervisory interface with direct PLC
+                        communication for real-time monitoring. Integrated industrial barcode-reading vision systems to
+                        match medicine packages against prescription orders stored in the SQL database.<br />-
+                        <strong>Sorting Logic:</strong> Programmed the control logic for automatic sorting mechanisms,
+                        ensuring precise product distribution into containers and minimizing manual handling errors.
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Research Scholar NTU -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Research Scholar</h3>
+                <div class="exp-date">8/2014 – 8/2016</div>
+              </div>
+              <div class="exp-sub">Nanyang Technological University, Singapore</div>
+              <div class="exp-desc">
+                <ul>
+                  <li>
+                    <strong>Research Project: Monocular Smartphone-Based 3D Human Reconstruction:</strong> Investigated
+                    low-cost 3D human reconstruction using smartphone cameras. Developed reconstruction algorithms
+                    involving feature extraction, camera pose estimation, Structure-from-Motion (SfM), and dense surface
+                    generation.
+                  </li>
+                  <li>
+                    <strong>Teaching Assistant – General Physics Laboratory:</strong> Assisted undergraduate students in
+                    mechanics and optics laboratory courses. Guided experimental procedures, measurement techniques,
+                    data acquisition, and analysis of experimental results.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Lecturer 2010-2014 (Air Duct Cleaning Robot + Greenhouse) -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Lecturer</h3>
+                <div class="exp-date">8/2010 – 7/2014</div>
+              </div>
+              <div class="exp-sub">Ho Chi Minh City University of Technology (ĐH Bach Khoa)</div>
+              <div class="exp-desc">
+                <ul>
+                  <li>
+                    <strong>Manufacturing Automation:</strong> Delivered comprehensive instruction on automated
+                    production systems, material handling, industrial control architectures, and Computer-Integrated
+                    Manufacturing (CIM).
+                  </li>
+                  <li>
+                    <strong>Dynamic Systems (Teaching Assistant):</strong> Supported undergraduate curricula on
+                    mathematical modeling, system dynamics, stability analysis, and control fundamentals. Facilitated
+                    laboratory exercises and simulation-based tutorials to reinforce theoretical concepts.
+                  </li>
+                  <li>
+                    <strong>Capstone Project Supervision:</strong> Supervised undergraduate research projects in
+                    manufacturing automation, mentoring students through the end-to-end development cycle: system
+                    design, controller programming, hardware integration, and performance validation.
+                  </li>
+                  <li>
+                    <strong>Industrial Projects:</strong>
+                    <ul>
+                      <li>
+                        <strong>Air Duct Cleaning Robot (3/2011 – 8/2011):</strong> Designed and fabricated a four-wheel
+                        mobile robot for air duct cleaning applications. Developed the mechanical structure and
+                        integrated a drive system with four independently controlled DC motors, enabling precise
+                        movement in confined duct environments. Designed a lifting mechanism driven by an additional
+                        motor to raise and lower the cleaning brush during operation. Conducted system integration,
+                        testing, and performance validation of the robotic platform.
+                      </li>
+                      <li>
+                        <strong>Greenhouse Automation Project (6/2010 – 2/2011):</strong> Designed and implemented
+                        automation systems for a greenhouse in Da Lat, including irrigation, climate control management.
+                        Designed the air distribution and ventilation system to maintain optimal temperature conditions
+                        for plant growth. Conducted system modeling, controller tuning, and performance evaluation under
+                        greenhouse operating conditions.
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Undergraduate research and thesis -->
+            <div class="exp-item">
+              <div class="exp-header">
+                <h3>Undergraduate research and thesis</h3>
+                <div class="exp-date">2008 – 2010</div>
+              </div>
+              <div class="exp-sub">Ho Chi Minh City University of Technology</div>
+              <div class="exp-desc">
+                <ul>
+                  <li>
+                    <strong>Mobile Welding Robot for Shipbuilding:</strong> Designed, fabricated, and developed the
+                    control system for a four-wheel autonomous welding robot for shipbuilding applications. Implemented
+                    a magnetic adhesion mechanism enabling operation on horizontal, vertical, and overhead steel
+                    surfaces. Developed a PIC-based controller for robot locomotion and welding-torch oscillation, using
+                    two DC motors to achieve precise travel speed and weld-bead formation during MAG welding. Conducted
+                    prototype testing and validation in shipyard environments.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- PUBLICATIONS (đầy đủ từ file DOCX) -->
+          <div class="main-section">
+            <h2>📄 PUBLICATIONS</h2>
+            <ul class="publication-list">
+              <li>
+                <strong>2017:</strong> Quoc-Nguyen Banh, <strong>Quoc-Toan Truong</strong> and Fang-Jung Shiou,
+                "Optimization parameters for small ball-burnishing using 3- axis machine centers on complex Polmax
+                surfaces", <em>21st International Conference on Mechatronics Technology (ICMT),</em> pp. 437-442, Ho Chi
+                Minh City, Vietnam, October 20–23, 2017 (ISBN: 978-604-63-2635-9).
+              </li>
+              <li>
+                <strong>2016:</strong> Anh-Huy Vo, <strong>Quoc-Toan Truong</strong>, Ha-Quang-Thinh Ngo, Quoc-Chi
+                Nguyen, "Nonlinear tracking control of a 3-D overhead crane with friction and payload compensations",
+                <em>Mechatronics, Electrical Power & Vehicular Technology, Vol 7, No 1, 2016</em>.
+              </li>
+              <li>
+                <strong>2014:</strong> Cong Bang Pham, Trong Nghia Nguyen, <strong>Quoc-Toan Truong</strong>, Hong Thinh
+                Phan, "Balancing robots: An interesting educational topic for students in mechatronic engineering",
+                <em>Proceeding of 7th Vietnam Conference on Mechatronics</em>, Vietnam, 2014.
+              </li>
+              <li>
+                <strong>2012:</strong> <strong>Quoc-Toan Truong</strong>, Anh-Huy Vo, and Quoc-Chi Nguyen, "Nonlinear
+                adaptive control of a 3D overhead crane",
+                <em>Proceeding of the 6th Vietnam Conference on Mechatronics</em>, pp. 296-305, Hanoi, Vietnam, December
+                14-15, 2012 (ISBN: 978-604-62-0753-5).
+              </li>
+              <li>
+                <strong>2011:</strong> <strong>Quoc-Toan Truong</strong>, Thanh-Son Tran, Thien-Phuc Tran, Duy-Anh
+                Nguyen and Tan-Tien Nguyen, "Study on Control of Autonomous Air Duct Cleaning Robot",
+                <em>3rd Regional Conference on Mechanical and Aerospace Technology, Manila</em>, Philippines, March 4 –
+                5, 2011.
+              </li>
+              <li>
+                <strong>2010:</strong> Quoc Dat Le, <strong>Quoc-Toan Truong</strong>, Ky Hao Lu, Duy Anh Nguyen, and
+                Tan Tien Nguyen, "Study on pH Control for Agricultural Irrigation", Proceeding of the 5th Vietnam
+                Conference on Mechatronics, pp. 321-325, Hochiminh City, Vietnam, October 22-23, 2010.
+              </li>
+              <li>
+                <strong>2010:</strong> <strong>Quoc-Toan Truong</strong>, "Thiết kế, chế tạo mô hình Robot di động ứng
+                dụng trong hàn đứng và hàn trần"( Study on design and manufacturing the welding mobile robot),
+                <em>Proceeding of the 5th Vietnam Conference on Mechatronics, pp. 225-230, Hochiminh City</em>, Vietnam,
+                October 22-23, 2010.
+              </li>
+            </ul>
+          </div>
+
+          <!-- REFEREES (chính xác từ DOCX) -->
+          <div class="main-section">
+            <h2>📌 REFEREES</h2>
+            <div class="referee-block">
+              <div class="ref-card">
+                <div class="ref-name">Dr. Cong Bang Pham</div>
+                <p>
+                  <em>Associate Professor</em><br />Faculty of Mechanical Engineering, HCM City University of
+                  Technology, Vietnam
+                </p>
+                <p>
+                  <i class="fas fa-phone-alt"></i> +84-903686334<br /><i class="fas fa-envelope"></i>
+                  cbpham@hcmut.edu.vn
+                </p>
+              </div>
+              <div class="ref-card">
+                <div class="ref-name">Dr. Bui Trong Hieu</div>
+                <p>
+                  <em>Associate Professor</em><br />Faculty of Mechanical Engineering, HCM City University of
+                  Technology, Vietnam
+                </p>
+                <p>
+                  <i class="fas fa-phone-alt"></i> +84 989502020<br /><i class="fas fa-envelope"></i>
+                  hieubt@hcmut.edu.vn
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Footer riêng -->
+      <div class="cv-footer">
+        <div class="footer-text"><i class="fas fa-copyright"></i> Raymond Truong | Last updated: 2026</div>
+      </div>
+    </div>
+  </body>
+</html>
